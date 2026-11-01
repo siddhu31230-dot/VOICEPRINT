@@ -99,6 +99,17 @@ export const PORTFOLIO_KNOWLEDGE_BASE = `
 - Learnings from Failures: Software architecture without physical operational physics (e.g. food prep times) fails in the real world.
 - How He Uses AI: As a cognitive co-processor for rapid intent externalization, scaffolding, and stress-testing edge cases, never for blind unreviewed code generation.
 - Deciding What NOT to Build: Cutting the Private Wellness tool from 18 metrics to 3 to prevent cognitive friction and user dropout.
+
+## 8. VERIFIED HACKATHON CHAMPIONSHIPS & AWARDS
+- Event: Hacktoberfest 2026 (24-Hour Overnight Hackathon)
+- Award / Result: 1ST PLACE WINNER — TRACK 2 (CHAMPION)
+- Date: October 30–31, 2026
+- Location / Venue: SMRU Campus, Hyderabad, India
+- Organizers: Newton School of Technology & St. Mary's Rehabilitation University (SMRU)
+- Partners: Powered by Major League Hacking (MLH), DEV; in partnership with Hacktoberfest 26
+- Track Partner: Google Gemma
+- Key Context: Track 2 focused on Google Gemma AI model integration, agentic workflows, and developer tooling. Competing over 24 continuous hours against collegiate engineering teams in Hyderabad, Siddharth's team built and shipped an overnight prototype that claimed First Place in Track 2.
+- Significance for Wispr Flow Application: Demonstrates high-speed builder grit, direct hands-on mastery with Google Gemma models under hackathon pressure, and authentic collegiate developer empathy.
 `;
 
 export const GEMMA_SYSTEM_INSTRUCTION = `

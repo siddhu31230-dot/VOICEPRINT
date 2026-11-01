@@ -276,6 +276,39 @@ Siddharth is currently a student builder and independent explorer. No venture fu
     };
   }
 
+  // 0. HACKATHON & RECENT COMPETITION AWARDS CHECK
+  if (
+    q.includes('hackathon') ||
+    q.includes('hacktoberfest') ||
+    q.includes('competition') ||
+    q.includes('contest') ||
+    (q.includes('won') && !q.includes('goduet')) ||
+    (q.includes('win') && !q.includes('goduet')) ||
+    q.includes('first place') ||
+    q.includes('1st place') ||
+    q.includes('achievement')
+  ) {
+    return {
+      reply: `**Hackathon Championship: 1st Place Winner — Hacktoberfest 2026 (Track 2: Google Gemma)**
+
+Siddharth and his team won **1st Place in Track 2** at **Hacktoberfest 2026**, a 24-hour overnight hackathon held at **SMRU Campus, Hyderabad** on **October 30–31, 2026**.
+
+**Key Event Details:**
+- **Event:** Hacktoberfest 2026 (24-Hour Overnight Hackathon)
+- **Organizers:** Newton School of Technology & St. Mary's Rehabilitation University (SMRU)
+- **Official Partners:** Powered by Major League Hacking (MLH) and DEV; in partnership with Hacktoberfest 26
+- **Track Partner:** **Google Gemma** (Track 2)
+- **Result:** **1st Place (Championship)**
+
+**The Builder Takeaway:**
+Competing under 24-hour time pressure against collegiate engineering teams in Hyderabad, their solution combined Google Gemma's instruction-following models with high-speed developer workflows, turning a concept into a winning production-ready prototype overnight. This firsthand hackathon victory directly reinforces Siddharth's conviction in voice velocity for Indian builders and the Wispr Flow campus campaign.`,
+      model,
+      provider: providerInfo,
+      grounded: true,
+      isFallback: true
+    };
+  }
+
   // 1. SPECIFIC PROJECT CHECK: GODUET (Must take priority over generic "project" or "built" queries)
   if (q.includes('goduet') || q.includes('go duet')) {
     return {

@@ -116,7 +116,7 @@ for (const p of protectedCommands) {
 }
 console.log(`   ✓ All ${protectedCommands.length} protected actions require explicit confirmation before execution.`);
 
-// 5. Topic-Grounded Voice Queries (GoDuet, Vault, Tech Stack)
+// 5. Topic-Grounded Voice Queries (GoDuet, Vault, Tech Stack, Hackathon)
 console.log('\n5. Testing Topic-Grounded Spoken Inquiries...');
 const goduetVariants = ['explain goduet', 'what is goduet', 'tell me about goduet', 'GoDuet architecture'];
 for (const v of goduetVariants) {
@@ -125,6 +125,13 @@ for (const v of goduetVariants) {
   assert.ok(res.query.includes('GoDuet'), `"${v}" query should specifically focus on GoDuet`);
 }
 console.log('   ✓ All GoDuet speech variations mapped exclusively to GoDuet architectural query.');
+
+const hackathonVariants = ['show me your hackathon win', 'tell me about your hackathon', 'did you win any hackathons', 'show hackathon'];
+for (const h of hackathonVariants) {
+  const res = parseVoiceCommand(h);
+  assert.ok(res.type === 'navigation' || res.type === 'question', `"${h}" should be handled`);
+}
+console.log('   ✓ Hackathon championship navigation and question speech variations verified.');
 
 // 6. General Recruiter Queries
 console.log('\n6. Testing General Spoken Queries...');

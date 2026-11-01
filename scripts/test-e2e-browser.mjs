@@ -166,6 +166,24 @@ async function runE2ETests() {
     assert.ok(hasStoryDrawer, 'Audio story player drawer must reveal on click');
     console.log('   ✓ Audio story player drawer revealed with playback controls.');
 
+    // Interactive Test: Hacktoberfest 2026 Championship Spotlight & Poster in Origin
+    console.log('\n6b. Testing Hacktoberfest 2026 Championship Spotlight & Poster in Origin...');
+    await page.evaluate(() => {
+      document.querySelector('#origin')?.scrollIntoView();
+    });
+    await new Promise((r) => setTimeout(r, 400));
+
+    const hasHackathonChampionship = await page.evaluate(() => {
+      const text = document.querySelector('#origin')?.textContent || '';
+      return text.includes('1ST PLACE WINNER') &&
+             text.includes('Hacktoberfest 2026') &&
+             text.includes('Track 2') &&
+             text.includes('Google Gemma') &&
+             text.includes('Hyderabad');
+    });
+    assert.ok(hasHackathonChampionship, 'Origin section must showcase Hacktoberfest 2026 1st Place win with Track 2: Google Gemma');
+    console.log('   ✓ Verified Hacktoberfest 2026 Track 2 Championship spotlight in Origin section.');
+
     // Interactive Test: Contact Section AES-256-GCM Vault
     console.log('\n7. Testing Contact Section AES-256-GCM Client Vault...');
     // Scroll to contact section

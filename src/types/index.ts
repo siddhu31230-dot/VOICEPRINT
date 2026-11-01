@@ -93,7 +93,7 @@ export interface CampaignProposal {
 
 export interface RecruiterQAItem {
   id: string;
-  category: 'Projects' | 'Technical' | 'Failures' | 'Product Mindset' | 'Growth' | 'Wispr Flow' | 'Learning';
+  category: 'Projects' | 'Technical' | 'Failures' | 'Product Mindset' | 'Growth' | 'Wispr Flow' | 'Learning' | 'Achievements';
   question: string;
   shortAnswer: string;
   detailedAnswer: string;
@@ -117,7 +117,7 @@ export interface TimelineEvent {
   year: string;
   period: string;
   title: string;
-  category: 'Foundation' | 'Builder Experiment' | 'Product Exploration' | 'Current Focus';
+  category: 'Foundation' | 'Builder Experiment' | 'Product Exploration' | 'Current Focus' | 'Hackathon Win' | 'Milestone';
   description: string;
   learning: string;
   isPlaceholder?: boolean;

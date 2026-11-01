@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { SectionHeading } from '../common/SectionHeading';
-import { ORIGIN_SECTIONS, TIMELINE_EVENTS } from '../../data/portfolioData';
+import { ORIGIN_SECTIONS, TIMELINE_EVENTS, HACKATHON_ACHIEVEMENT } from '../../data/portfolioData';
 import { VoiceWaveform } from '../common/VoiceWaveform';
 import {
   Compass,
@@ -16,7 +16,11 @@ import {
   Headphones,
   Square,
   Play,
-  RotateCcw
+  RotateCcw,
+  Trophy,
+  MapPin,
+  Calendar,
+  X
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -28,6 +32,7 @@ export const OriginSection: React.FC<OriginSectionProps> = ({ onOpenConfigLinks 
   const [activeStoryTab, setActiveStoryTab] = useState(ORIGIN_SECTIONS[0].id);
   const [selectedTimelineIndex, setSelectedTimelineIndex] = useState<number>(TIMELINE_EVENTS.length - 1);
   const [isSpeakingChapter, setIsSpeakingChapter] = useState(false);
+  const [isPosterModalOpen, setIsPosterModalOpen] = useState(false);
 
   const activeStory = ORIGIN_SECTIONS.find((s) => s.id === activeStoryTab) || ORIGIN_SECTIONS[0];
   const activeTimeline = TIMELINE_EVENTS[selectedTimelineIndex];
@@ -238,6 +243,109 @@ export const OriginSection: React.FC<OriginSectionProps> = ({ onOpenConfigLinks 
           </div>
         </div>
 
+        {/* Verified Hackathon Championship Spotlight */}
+        <div className="mt-16 p-6 sm:p-9 rounded-3xl bg-gradient-to-br from-[#12160e] via-[#090a0f] to-[#07070a] border border-acid/30 relative overflow-hidden shadow-2xl">
+          {/* Subtle glowing halo */}
+          <div className="absolute top-0 right-0 w-96 h-96 bg-acid/10 blur-[120px] pointer-events-none rounded-full" />
+
+          <div className="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+            {/* Left: Poster Thumbnail with Click to Expand */}
+            <div className="lg:col-span-4 flex flex-col items-center sm:items-start">
+              <button
+                type="button"
+                onClick={() => setIsPosterModalOpen(true)}
+                className="relative group cursor-pointer rounded-2xl overflow-hidden border border-acid/40 shadow-xl max-w-[280px] w-full aspect-[4/5] bg-black/60 text-left block"
+              >
+                <img
+                  src={HACKATHON_ACHIEVEMENT.posterImage}
+                  alt="Hacktoberfest 2026 Hyderabad Hackathon Winner Official Poster"
+                  className="w-full h-full object-cover object-top transition duration-300 group-hover:scale-105 group-hover:brightness-110"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent flex items-end p-4">
+                  <div className="flex items-center gap-2 text-xs font-mono text-acid font-bold">
+                    <Trophy className="w-4 h-4 text-acid shrink-0" />
+                    <span>Click to view official poster</span>
+                  </div>
+                </div>
+                <div className="absolute top-2.5 right-2.5 px-2 py-0.5 rounded-full bg-black/80 backdrop-blur-md border border-acid/40 text-[10px] font-mono text-acid font-bold">
+                  OCT 30-31
+                </div>
+              </button>
+            </div>
+
+            {/* Right: Championship Details & Context */}
+            <div className="lg:col-span-8 space-y-4">
+              <div className="flex flex-wrap items-center gap-2">
+                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-acid/15 border border-acid/40 text-acid font-mono text-xs font-bold tracking-wider uppercase shadow-sm">
+                  <Trophy className="w-3.5 h-3.5 text-acid" />
+                  <span>{HACKATHON_ACHIEVEMENT.badge}</span>
+                </span>
+
+                <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-[#12121e] border border-white/10 text-[#A1A1AA] font-mono text-xs">
+                  <MapPin className="w-3 h-3 text-acid" />
+                  <span>{HACKATHON_ACHIEVEMENT.venue}</span>
+                </span>
+
+                <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-[#12121e] border border-white/10 text-[#A1A1AA] font-mono text-xs">
+                  <Calendar className="w-3 h-3 text-acid" />
+                  <span>{HACKATHON_ACHIEVEMENT.date}</span>
+                </span>
+              </div>
+
+              <div>
+                <h3 className="text-2xl sm:text-3xl lg:text-4xl font-display font-black text-white tracking-tight">
+                  {HACKATHON_ACHIEVEMENT.title} — 24-Hour Overnight Hackathon
+                </h3>
+                <p className="text-xs sm:text-sm font-mono text-acid mt-1 font-bold">
+                  Championship Victory in {HACKATHON_ACHIEVEMENT.track}
+                </p>
+              </div>
+
+              <p className="text-xs sm:text-sm text-[#A1A1AA] leading-relaxed font-sans">
+                {HACKATHON_ACHIEVEMENT.summary}
+              </p>
+
+              {/* Verified Partner Badges */}
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-1">
+                <div className="p-2.5 rounded-xl bg-black/40 border border-white/10">
+                  <span className="text-[10px] font-mono text-[#71717A] uppercase block">ORGANIZERS</span>
+                  <span className="text-xs font-mono font-bold text-white block mt-0.5 truncate">
+                    Newton School & SMRU
+                  </span>
+                </div>
+                <div className="p-2.5 rounded-xl bg-black/40 border border-white/10">
+                  <span className="text-[10px] font-mono text-[#71717A] uppercase block">POWERED BY</span>
+                  <span className="text-xs font-mono font-bold text-white block mt-0.5 truncate">
+                    MLH & DEV
+                  </span>
+                </div>
+                <div className="p-2.5 rounded-xl bg-black/40 border border-acid/30">
+                  <span className="text-[10px] font-mono text-acid uppercase block">TRACK PARTNER</span>
+                  <span className="text-xs font-mono font-bold text-acid block mt-0.5 truncate">
+                    Google Gemma
+                  </span>
+                </div>
+                <div className="p-2.5 rounded-xl bg-black/40 border border-white/10">
+                  <span className="text-[10px] font-mono text-[#71717A] uppercase block">FORMAT</span>
+                  <span className="text-xs font-mono font-bold text-white block mt-0.5 truncate">
+                    24h Overnight Build
+                  </span>
+                </div>
+              </div>
+
+              {/* Takeaway */}
+              <div className="p-3.5 rounded-2xl bg-acid/5 border border-acid/20">
+                <span className="text-[10px] font-mono text-acid uppercase tracking-wider block font-bold mb-1">
+                  BUILDER TAKEAWAY
+                </span>
+                <p className="text-xs text-[#D4D4D8] leading-relaxed italic">
+                  "{HACKATHON_ACHIEVEMENT.builderTakeaway}"
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
         {/* Interactive Timeline Visualization */}
         <div className="mt-20">
           <div className="flex flex-wrap items-center justify-between gap-4 mb-7">
@@ -255,7 +363,7 @@ export const OriginSection: React.FC<OriginSectionProps> = ({ onOpenConfigLinks 
           </div>
 
           {/* Timeline Milestones Navigation */}
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3 mb-5">
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 mb-5">
             {TIMELINE_EVENTS.map((event, idx) => {
               const isSelected = selectedTimelineIndex === idx;
               return (
@@ -323,6 +431,50 @@ export const OriginSection: React.FC<OriginSectionProps> = ({ onOpenConfigLinks 
           )}
         </div>
       </div>
+
+      {/* Modal for full official hackathon poster view */}
+      <AnimatePresence>
+        {isPosterModalOpen && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={() => setIsPosterModalOpen(false)}
+            className="fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex items-center justify-center p-4"
+          >
+            <div
+              onClick={(e) => e.stopPropagation()}
+              className="relative max-w-lg w-full bg-[#0a0a10] border border-acid/40 rounded-3xl overflow-hidden shadow-2xl p-4 sm:p-6 space-y-4"
+            >
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <Trophy className="w-4 h-4 text-acid" />
+                  <span className="font-mono text-xs font-bold text-white uppercase">
+                    Official Event Poster // Hacktoberfest 2026
+                  </span>
+                </div>
+                <button
+                  onClick={() => setIsPosterModalOpen(false)}
+                  aria-label="Close poster view"
+                  className="p-1 rounded-lg bg-white/10 hover:bg-white/20 text-[#A1A1AA] hover:text-white transition"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              </div>
+              <div className="rounded-2xl overflow-hidden border border-white/10 bg-black">
+                <img
+                  src={HACKATHON_ACHIEVEMENT.posterImage}
+                  alt="Hacktoberfest 2026 Hyderabad Hackathon Winner Official Poster"
+                  className="w-full max-h-[70vh] object-contain mx-auto"
+                />
+              </div>
+              <div className="text-center font-mono text-[11px] text-[#8E8E98]">
+                SMRU Campus, Hyderabad • Oct 30–31, 2026 • 1st Place Winner Track 2 (Gemma)
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </section>
   );
 };

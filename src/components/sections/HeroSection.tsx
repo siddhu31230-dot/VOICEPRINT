@@ -14,7 +14,8 @@ import {
   Headphones,
   Compass,
   Play,
-  ChevronDown
+  ChevronDown,
+  Trophy
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -65,9 +66,13 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
 
           <span className="hidden sm:inline-block h-3 w-px bg-white/20" />
 
-          <span className="text-[11px] font-mono text-[#71717A] italic">
-            "{PERSONAL_INFO.supportingLine}"
-          </span>
+          <a
+            href="#origin"
+            className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-acid/15 hover:bg-acid/25 border border-acid/40 text-acid font-mono text-[11px] font-bold transition shadow-sm"
+          >
+            <Trophy className="w-3.5 h-3.5 text-acid shrink-0" />
+            <span>🏆 1st Place — Hacktoberfest 2026 (Track 2: Gemma)</span>
+          </a>
         </motion.div>
 
         {/* Primary Tagline & Editorial Headline */}

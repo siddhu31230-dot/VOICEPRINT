@@ -151,6 +151,32 @@ Building forces honesty. When a multi-restaurant basket synchronization fails on
   },
 ];
 
+export const HACKATHON_ACHIEVEMENT = {
+  title: 'Hacktoberfest 2026',
+  badge: '1ST PLACE WINNER // TRACK 2',
+  track: 'Track 2 (Google Gemma)',
+  award: '1st Place (Championship)',
+  format: '24-Hour Overnight Hackathon',
+  date: 'October 30–31, 2026',
+  venue: 'SMRU Campus, Hyderabad',
+  city: 'Hyderabad, India',
+  organizers: [
+    'Newton School of Technology',
+    "St. Mary's Rehabilitation University (SMRU)"
+  ],
+  poweredBy: [
+    'Major League Hacking (MLH)',
+    'DEV',
+    'Hacktoberfest 26'
+  ],
+  trackPartner: 'Google Gemma',
+  posterImage: '/images/hacktoberfest-2026-winner.jpg',
+  summary:
+    'Won 1st Place in Track 2 at the 24-hour overnight Hacktoberfest 2026 hackathon held at SMRU Campus in Hyderabad (October 30–31, 2026). Competing overnight against collegiate engineering teams, our team built and shipped an overnight prototype leveraging Google Gemma and high-speed developer workflows to claim the top championship prize in the Gemma track.',
+  builderTakeaway:
+    '24-hour hackathons strip away overthinking and demand relentless execution velocity. Combining voice-first intent with Google Gemma models proved that a focused team can take a raw concept to a winning, production-ready prototype before the clock runs out.'
+};
+
 export const TIMELINE_EVENTS: TimelineEvent[] = [
   {
     year: 'Phase 01',
@@ -187,6 +213,14 @@ export const TIMELINE_EVENTS: TimelineEvent[] = [
   },
   {
     year: 'Phase 05',
+    period: 'Hackathon Championship',
+    title: '1st Place Winner — Hacktoberfest 2026 (Track 2: Gemma)',
+    category: 'Hackathon Win',
+    description: "Won 1st Place in Track 2 at the 24-hour overnight Hacktoberfest 2026 hackathon held at SMRU Campus, Hyderabad (Oct 30–31, 2026). Organized by Newton School of Technology & St. Mary's Rehabilitation University, powered by MLH, DEV, and Google Gemma.",
+    learning: 'High-pressure 24-hour hackathons prove that voice-first intent and grounded AI architectures turn raw ideas into winning products overnight.',
+  },
+  {
+    year: 'Phase 06',
     period: 'Present Day',
     title: 'Wispr Flow India Hiring Challenge & Voiceprint',
     category: 'Current Focus',
@@ -968,6 +1002,16 @@ export const FLAGSHIP_CAMPAIGNS: CampaignProposal[] = [
 // Curated questions strictly aligned with Prompt Section 9 & Master Guidelines
 export const RECRUITER_QA: RecruiterQAItem[] = [
   {
+    id: 'hackathon-achievements',
+    category: 'Achievements',
+    question: 'Have you won any hackathons or competitions?',
+    shortAnswer: 'Yes! Our team won 1st Place in Track 2 at Hacktoberfest 2026 (24-Hour Overnight Hackathon in Hyderabad, powered by MLH, DEV, and Google Gemma).',
+    detailedAnswer:
+      "At Hacktoberfest 2026—a 24-hour overnight hackathon held at SMRU Campus, Hyderabad (October 30–31, 2026) organized by Newton School of Technology and St. Mary's Rehabilitation University, powered by Major League Hacking (MLH) and DEV—our team competed in Track 2 (partnered with Google Gemma) and won 1st Place. Building under intense 24-hour time pressure proved that combining voice-first intent with Google Gemma's instruction models allows a focused team to take a raw concept to a winning, production-ready prototype overnight.",
+    keyTakeaway: 'Competitive 24-hour hackathons validate speed of execution, team coordination, and practical AI implementation under pressure.',
+    relatedTags: ['Hackathon', '1st Place Winner', 'MLH', 'Google Gemma', 'Hacktoberfest 2026', 'Hyderabad'],
+  },
+  {
     id: 'what-have-you-built',
     category: 'Projects',
     question: 'What have you built?',
@@ -1238,7 +1282,7 @@ export const WHY_WISPR_FLOW_CONTENT = {
       id: 'what-i-bring',
       title: 'What I Bring to the Growth Team',
       summary: 'A rare fusion of engineering execution, product intuition, and grassroots growth grit.',
-      content: 'I don’t just understand growth metrics on spreadsheets; I build products, test live prototypes with hostel roommates, and design interactive campaigns that give builders an unfair speed advantage. I am eager to learn from Wispr Flow’s leadership while executing relentless ground-level growth in India.'
+      content: 'I don’t just understand growth metrics on spreadsheets; I build products, test live prototypes with hostel roommates, win competitive hackathons (1st Place in Track 2 at Hacktoberfest 2026, powered by MLH and Google Gemma), and design interactive campaigns that give builders an unfair speed advantage. I am eager to learn from Wispr Flow’s leadership while executing relentless ground-level growth in India.'
     }
   ]
 };

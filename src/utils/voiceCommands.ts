@@ -247,6 +247,21 @@ export function parseVoiceCommand(rawTranscript: string): VoiceCommandResult {
     };
   }
 
+  if (
+    t === 'show hackathon' ||
+    t === 'show me your hackathon win' ||
+    t === 'show hackathon award' ||
+    t === 'go to hackathon' ||
+    t === 'show hacktoberfest'
+  ) {
+    return {
+      type: 'navigation',
+      targetId: '#origin',
+      label: 'Hacktoberfest 2026 Championship',
+      explanation: 'Navigating to Hacktoberfest 2026 Championship Spotlight in Origin Section (#origin)',
+    };
+  }
+
   if (t === 'go to top' || t === 'scroll to top' || t === 'go home') {
     return {
       type: 'navigation',
@@ -307,6 +322,23 @@ export function parseVoiceCommand(rawTranscript: string): VoiceCommandResult {
     return {
       type: 'question',
       query: 'Explain your technology stack choices, performance rationale, and frontend architecture.',
+      originalCommand: clean,
+    };
+  }
+
+  if (
+    t.includes('hackathon') ||
+    t.includes('hacktoberfest') ||
+    t.includes('competition') ||
+    t.includes('contest') ||
+    t.includes('did you win') ||
+    t.includes('first place') ||
+    t.includes('1st place') ||
+    t.includes('awards')
+  ) {
+    return {
+      type: 'question',
+      query: 'Tell me about your 1st place hackathon win at Hacktoberfest 2026 (Track 2: Gemma).',
       originalCommand: clean,
     };
   }
