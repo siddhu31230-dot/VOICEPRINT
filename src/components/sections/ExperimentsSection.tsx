@@ -1,10 +1,17 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { SectionHeading } from '../common/SectionHeading';
 import { PROJECTS } from '../../data/portfolioData';
 import { ProjectCaseStudy } from '../../types';
 import { Modal } from '../common/Modal';
 import { AnimatedCounter } from '../common/AnimatedCounter';
 import { MagneticButton } from '../common/MagneticButton';
+import {
+  generateAes256GcmKey,
+  encryptData,
+  decryptData,
+  tamperEnvelope,
+  EncryptedEnvelope
+} from '../../utils/crypto';
 import {
   ExternalLink,
   Layers,
@@ -23,7 +30,10 @@ import {
   Moon,
   Compass,
   Activity,
-  Zap
+  Zap,
+  Key,
+  ShieldAlert,
+  ShieldX
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 
@@ -45,7 +55,7 @@ export const ExperimentsSection: React.FC<ExperimentsSectionProps> = ({
     restaurantB: true,
   });
 
-  // 2. Wellness Interactive State
+  // 2. Wellness Interactive State (AES-256-GCM Web Crypto)
   const [wellnessMood, setWellnessMood] = useState<{
     energy: number;
     stress: number;
@@ -55,7 +65,81 @@ export const ExperimentsSection: React.FC<ExperimentsSectionProps> = ({
     stress: 4,
     sleep: 2,
   });
-  const [encryptedDigest, setEncryptedDigest] = useState<string>('0x9f83...a1b2 (AES-GCM-256)');
+
+  const cryptoKeyRef = useRef<CryptoKey | null>(null);
+  const [currentEnvelope, setCurrentEnvelope] = useState<EncryptedEnvelope | null>(null);
+  const [decryptedPlaintext, setDecryptedPlaintext] = useState<string | null>(null);
+  const [tamperError, setTamperError] = useState<string | null>(null);
+  const [ivGenerationCount, setIvGenerationCount] = useState<number>(0);
+
+  // Initialize key & encrypt mood metrics whenever sliders change
+  useEffect(() => {
+    let isCurrent = true;
+    async function performEncryption() {
+      try {
+        if (!cryptoKeyRef.current) {
+          cryptoKeyRef.current = await generateAes256GcmKey();
+        }
+        const record = JSON.stringify({
+          energyScore: wellnessMood.energy,
+          academicStress: wellnessMood.stress,
+          sleepQuality: wellnessMood.sleep,
+          hostelId: 'HOSTEL_BLOCK_B_ANON',
+          timestamp: new Date().toISOString()
+        });
+
+        const envelope = await encryptData(record, cryptoKeyRef.current);
+        if (isCurrent) {
+          setCurrentEnvelope(envelope);
+          setTamperError(null);
+          setDecryptedPlaintext(null);
+          setIvGenerationCount((c) => c + 1);
+        }
+      } catch (err: any) {
+        console.warn('Web Crypto operation failed:', err);
+      }
+    }
+
+    performEncryption();
+    return () => { isCurrent = false; };
+  }, [wellnessMood]);
+
+  const handleVerifyDecryption = async () => {
+    if (!currentEnvelope || !cryptoKeyRef.current) return;
+    const res = await decryptData(currentEnvelope, cryptoKeyRef.current);
+    if (res.success) {
+      setDecryptedPlaintext(res.plaintext || '');
+      setTamperError(null);
+    } else {
+      setTamperError(res.error || 'Decryption failed.');
+    }
+  };
+
+  const handleSimulateTampering = async () => {
+    if (!currentEnvelope || !cryptoKeyRef.current) return;
+    const tampered = tamperEnvelope(currentEnvelope);
+    const res = await decryptData(tampered, cryptoKeyRef.current);
+    if (!res.success) {
+      setTamperError(`GCM Tag Rejection: ${res.error}`);
+      setDecryptedPlaintext(null);
+    }
+  };
+
+  const handleRotateKey = async () => {
+    cryptoKeyRef.current = await generateAes256GcmKey();
+    const record = JSON.stringify({
+      energyScore: wellnessMood.energy,
+      academicStress: wellnessMood.stress,
+      sleepQuality: wellnessMood.sleep,
+      hostelId: 'HOSTEL_BLOCK_B_ANON',
+      timestamp: new Date().toISOString()
+    });
+    const envelope = await encryptData(record, cryptoKeyRef.current);
+    setCurrentEnvelope(envelope);
+    setTamperError(null);
+    setDecryptedPlaintext(null);
+    setIvGenerationCount((c) => c + 1);
+  };
 
   // 3. 3D Floor Plan Interactive State
   const [floorPlanRotation, setFloorPlanRotation] = useState<number>(30);
@@ -287,23 +371,31 @@ export const ExperimentsSection: React.FC<ExperimentsSectionProps> = ({
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
               {/* Left Column: Interactive Security Vault & Mood Radar */}
               <div className="lg:col-span-5 order-2 lg:order-1">
-                <div className="p-5 sm:p-6 rounded-2xl bg-[#0e0e16] border border-white/10 shadow-2xl relative space-y-3.5">
+                <div className="p-5 sm:p-6 rounded-2xl bg-[#0e0e16] border border-white/10 shadow-2xl relative space-y-4">
+                  {/* Vault Header */}
                   <div className="flex items-center justify-between pb-2.5 border-b border-white/10">
                     <div className="flex items-center gap-2">
                       <Lock className="w-3.5 h-3.5 text-acid" />
                       <span className="font-mono text-xs font-bold text-white uppercase">
-                        Zero-Knowledge Crypto Simulator
+                        Client-Side AES-256-GCM Vault
                       </span>
                     </div>
-                    <span className="text-[10px] font-mono text-emerald-400 font-bold">
-                      WEB CRYPTO API
+                    <span className="text-[10px] font-mono text-emerald-400 font-bold px-2 py-0.5 rounded bg-emerald-500/10 border border-emerald-500/20">
+                      LIVE WEB CRYPTO API
                     </span>
                   </div>
 
+                  {/* Telemetry info */}
+                  <div className="flex items-center justify-between text-[10px] font-mono text-[#71717A] bg-black/40 p-2 rounded-xl">
+                    <span>KEY: 256-BIT (IN-MEMORY)</span>
+                    <span className="text-acid">NONCE #{ivGenerationCount} (12-BYTE IV)</span>
+                  </div>
+
                   <p className="text-[11px] font-mono text-[#8E8E98]">
-                    Adjust student mood metrics to calculate client-side encrypted ciphertext:
+                    Adjust student mood metrics to trigger instant client-side encryption with a fresh cryptographic IV:
                   </p>
 
+                  {/* Metric Sliders */}
                   <div className="space-y-3 font-mono text-xs">
                     <div>
                       <div className="flex justify-between text-[11px] mb-1">
@@ -318,9 +410,6 @@ export const ExperimentsSection: React.FC<ExperimentsSectionProps> = ({
                         onChange={(e) => {
                           const val = Number(e.target.value);
                           setWellnessMood((p) => ({ ...p, energy: val }));
-                          setEncryptedDigest(
-                            `0x${Math.random().toString(16).substring(2, 8)}...${Math.random().toString(16).substring(2, 6)} (AES-GCM-256)`
-                          );
                         }}
                         className="w-full accent-acid bg-[#1f1f2e] h-1.5 rounded-lg appearance-none cursor-pointer"
                       />
@@ -339,9 +428,6 @@ export const ExperimentsSection: React.FC<ExperimentsSectionProps> = ({
                         onChange={(e) => {
                           const val = Number(e.target.value);
                           setWellnessMood((p) => ({ ...p, stress: val }));
-                          setEncryptedDigest(
-                            `0x${Math.random().toString(16).substring(2, 8)}...${Math.random().toString(16).substring(2, 6)} (AES-GCM-256)`
-                          );
                         }}
                         className="w-full accent-acid bg-[#1f1f2e] h-1.5 rounded-lg appearance-none cursor-pointer"
                       />
@@ -360,35 +446,97 @@ export const ExperimentsSection: React.FC<ExperimentsSectionProps> = ({
                         onChange={(e) => {
                           const val = Number(e.target.value);
                           setWellnessMood((p) => ({ ...p, sleep: val }));
-                          setEncryptedDigest(
-                            `0x${Math.random().toString(16).substring(2, 8)}...${Math.random().toString(16).substring(2, 6)} (AES-GCM-256)`
-                          );
                         }}
                         className="w-full accent-acid bg-[#1f1f2e] h-1.5 rounded-lg appearance-none cursor-pointer"
                       />
                     </div>
                   </div>
 
-                  {/* Encrypted Digest Readout */}
-                  <div className="p-3.5 rounded-xl bg-black/70 border border-white/10 space-y-1">
-                    <span className="text-[10px] font-mono text-acid font-bold uppercase block">
-                      CLIENT CIPHERTEXT DIGEST:
-                    </span>
-                    <code className="text-[10px] font-mono text-[#A1A1AA] block break-all">
-                      {encryptedDigest}
-                    </code>
-                    <div className="text-[10px] font-mono mt-1">
+                  {/* Real Encrypted Envelope Display */}
+                  <div className="p-3.5 rounded-xl bg-black/70 border border-white/10 space-y-1.5 font-mono text-[10px]">
+                    <div className="flex justify-between text-[#71717A]">
+                      <span>FRESH IV (96-BIT):</span>
+                      <span className="text-acid">{currentEnvelope?.iv || 'Generating...'}</span>
+                    </div>
+
+                    <div className="space-y-0.5">
+                      <span className="text-[#71717A] block">CIPHERTEXT + 128-BIT AUTH TAG:</span>
+                      <code className="text-[#A1A1AA] block break-all bg-black/50 p-1.5 rounded border border-white/5">
+                        {currentEnvelope?.ciphertext || 'Encrypting...'}
+                      </code>
+                    </div>
+
+                    <div className="pt-1">
                       {wellnessMood.stress >= 4 && wellnessMood.sleep <= 2 ? (
-                        <span className="text-amber-400 font-semibold">
-                          ⚠️ Burnout pattern flagged. Self-care escalation unlocked.
+                        <span className="text-amber-400 font-semibold block">
+                          ⚠️ Burnout pattern flagged locally. Self-care escalation unlocked.
                         </span>
                       ) : (
-                        <span className="text-emerald-400">
+                        <span className="text-emerald-400 block">
                           ✓ Metrics within healthy bounds.
                         </span>
                       )}
                     </div>
                   </div>
+
+                  {/* Interactive Security Demonstration Buttons */}
+                  <div className="space-y-2 pt-1 font-mono text-xs">
+                    <div className="grid grid-cols-2 gap-2">
+                      <button
+                        onClick={handleVerifyDecryption}
+                        className="px-2.5 py-2 rounded-xl bg-[#141424] border border-white/10 hover:border-acid text-white text-[11px] flex items-center justify-center gap-1.5 transition"
+                      >
+                        <CheckCircle2 className="w-3.5 h-3.5 text-acid" />
+                        <span>Verify Decrypt</span>
+                      </button>
+
+                      <button
+                        onClick={handleSimulateTampering}
+                        className="px-2.5 py-2 rounded-xl bg-red-500/10 border border-red-500/30 hover:bg-red-500/20 text-red-300 text-[11px] flex items-center justify-center gap-1.5 transition"
+                      >
+                        <ShieldAlert className="w-3.5 h-3.5 text-red-400" />
+                        <span>Test Tamper</span>
+                      </button>
+                    </div>
+
+                    <button
+                      onClick={handleRotateKey}
+                      className="w-full px-2.5 py-1.5 rounded-xl bg-black/40 border border-white/10 hover:border-white/20 text-[#8E8E98] hover:text-white text-[10px] flex items-center justify-center gap-1.5 transition"
+                    >
+                      <RotateCcw className="w-3 h-3 text-acid" />
+                      <span>Rotate In-Memory 256-bit Key</span>
+                    </button>
+                  </div>
+
+                  {/* Tamper Warning Feedback */}
+                  {tamperError && (
+                    <div className="p-3 rounded-xl bg-red-500/15 border border-red-500/40 text-red-300 text-[11px] font-mono space-y-1">
+                      <div className="flex items-center gap-1.5 font-bold">
+                        <ShieldX className="w-4 h-4 text-red-400" />
+                        <span>AUTHENTICATION FAILED</span>
+                      </div>
+                      <p className="text-[10px] text-red-200 leading-tight">
+                        {tamperError}. Web Crypto AES-GCM successfully rejected tampered ciphertext.
+                      </p>
+                    </div>
+                  )}
+
+                  {/* Successful Decryption Feedback */}
+                  {decryptedPlaintext && (
+                    <div className="p-3 rounded-xl bg-emerald-500/15 border border-emerald-500/40 text-emerald-300 text-[11px] font-mono space-y-1">
+                      <div className="flex items-center gap-1.5 font-bold">
+                        <ShieldCheck className="w-4 h-4 text-emerald-400" />
+                        <span>INTEGRITY VERIFIED & DECRYPTED</span>
+                      </div>
+                      <code className="text-[9px] text-[#A1A1AA] block break-all bg-black/60 p-1.5 rounded">
+                        {decryptedPlaintext}
+                      </code>
+                    </div>
+                  )}
+
+                  <p className="text-[9px] font-mono text-[#71717A] leading-tight">
+                    * Zero-knowledge architecture: Keys are stored exclusively in volatile browser memory. Plaintext is never saved to web storage or transmitted to Gemma AI.
+                  </p>
                 </div>
               </div>
 

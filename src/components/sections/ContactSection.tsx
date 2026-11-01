@@ -1,8 +1,15 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { SectionHeading } from '../common/SectionHeading';
 import { PERSONAL_INFO } from '../../data/portfolioData';
 import { SocialLinks } from '../../types';
 import { MagneticButton } from '../common/MagneticButton';
+import {
+  generateAes256GcmKey,
+  deriveKeyFromPassphrase,
+  encryptData,
+  exportKeyToBase64,
+  EncryptedEnvelope
+} from '../../utils/crypto';
 import confetti from 'canvas-confetti';
 import {
   Mail,
@@ -15,7 +22,10 @@ import {
   Copy,
   Check,
   Sparkles,
-  ArrowUpRight
+  ArrowUpRight,
+  Lock,
+  ShieldCheck,
+  Key
 } from 'lucide-react';
 
 interface ContactSectionProps {
@@ -36,10 +46,44 @@ export const ContactSection: React.FC<ContactSectionProps> = ({
   });
   const [submitted, setSubmitted] = useState(false);
 
+  // Client-Side AES-256-GCM Vault State
+  const [encryptEnabled, setEncryptEnabled] = useState(false);
+  const [passphrase, setPassphrase] = useState('');
+  const [encryptedEnvelope, setEncryptedEnvelope] = useState<EncryptedEnvelope | null>(null);
+  const [rawKeyBackup, setRawKeyBackup] = useState<string | null>(null);
+  const [isEncrypting, setIsEncrypting] = useState(false);
+
   const handleCopy = (text: string, label: string) => {
     navigator.clipboard.writeText(text);
     setCopiedField(label);
     setTimeout(() => setCopiedField(null), 2000);
+  };
+
+  const handleEncryptMessage = async () => {
+    if (!formData.message.trim()) return;
+    setIsEncrypting(true);
+    try {
+      let key: CryptoKey;
+      let salt: Uint8Array | undefined;
+
+      if (passphrase.trim()) {
+        const derived = await deriveKeyFromPassphrase(passphrase.trim());
+        key = derived.key;
+        salt = derived.salt;
+        setRawKeyBackup(null);
+      } else {
+        key = await generateAes256GcmKey();
+        const raw = await exportKeyToBase64(key);
+        setRawKeyBackup(raw);
+      }
+
+      const env = await encryptData(formData.message, key, salt);
+      setEncryptedEnvelope(env);
+    } catch (err) {
+      console.warn('Encryption failed:', err);
+    } finally {
+      setIsEncrypting(false);
+    }
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -53,10 +97,16 @@ export const ContactSection: React.FC<ContactSectionProps> = ({
 
     setSubmitted(true);
     const subject = encodeURIComponent(
-      `Wispr Flow Challenge Inquiry from ${formData.name || 'Recruiter'}`
+      `Wispr Flow Challenge Inquiry from ${formData.name || 'Recruiter'}${encryptEnabled ? ' [AES-256-GCM Encrypted]' : ''}`
     );
+
+    let contentBody = formData.message;
+    if (encryptEnabled && encryptedEnvelope) {
+      contentBody = `--- AES-256-GCM CLIENT-ENCRYPTED ENVELOPE ---\n${JSON.stringify(encryptedEnvelope, null, 2)}\n\n(Key held strictly by sender in volatile browser memory)`;
+    }
+
     const body = encodeURIComponent(
-      `Hi Siddharth,\n\nRole/Organization: ${formData.role}\nContact Email: ${formData.email}\n\nMessage:\n${formData.message}`
+      `Hi Siddharth,\n\nRole/Organization: ${formData.role}\nContact Email: ${formData.email}\n\nMessage Payload:\n${contentBody}`
     );
     window.location.href = `mailto:${links.email}?subject=${subject}&body=${body}`;
   };
@@ -266,6 +316,92 @@ export const ContactSection: React.FC<ContactSectionProps> = ({
                       placeholder="Hi Siddharth, reviewed your VOICEPRINT portfolio for the Wispr Flow challenge. Let's schedule a call to discuss your projects..."
                       className="w-full px-4 py-3 bg-[#101018] border border-white/10 rounded-2xl text-white focus:outline-none focus:border-acid transition leading-relaxed font-sans text-xs sm:text-sm"
                     />
+                  </div>
+
+                  {/* Client-Side AES-256-GCM Encryption Vault Option */}
+                  <div className="p-4 rounded-2xl bg-[#0a0a14] border border-white/10 space-y-3">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <Lock className="w-3.5 h-3.5 text-acid" />
+                        <span className="font-mono text-xs font-bold text-white uppercase">
+                          Client-Side Cryptographic Vault
+                        </span>
+                      </div>
+                      <label className="flex items-center gap-2 cursor-pointer">
+                        <input
+                          type="checkbox"
+                          checked={encryptEnabled}
+                          onChange={(e) => {
+                            setEncryptEnabled(e.target.checked);
+                            if (!e.target.checked) setEncryptedEnvelope(null);
+                          }}
+                          className="accent-acid w-4 h-4 rounded"
+                        />
+                        <span className="text-[11px] font-mono text-[#A1A1AA]">
+                          Enable AES-256-GCM
+                        </span>
+                      </label>
+                    </div>
+
+                    {encryptEnabled && (
+                      <div className="space-y-2.5 pt-2 border-t border-white/5 font-mono text-[11px]">
+                        <p className="text-[#8E8E98]">
+                          Encrypt your note locally before dispatching. Keys exist strictly in your browser memory and are never sent to any server or AI model.
+                        </p>
+
+                        <div className="flex flex-col sm:flex-row gap-2">
+                          <input
+                            type="password"
+                            value={passphrase}
+                            onChange={(e) => setPassphrase(e.target.value)}
+                            placeholder="Optional passphrase (or leave empty for auto-generated 256-bit key)"
+                            className="flex-1 px-3 py-2 bg-[#121220] border border-white/10 rounded-xl text-white text-xs focus:outline-none focus:border-acid"
+                          />
+                          <button
+                            type="button"
+                            onClick={handleEncryptMessage}
+                            disabled={isEncrypting || !formData.message.trim()}
+                            className="px-4 py-2 rounded-xl bg-acid text-black font-bold text-xs hover:bg-[#E5FF4D] transition disabled:opacity-50"
+                          >
+                            {isEncrypting ? 'Encrypting...' : 'Encrypt Note'}
+                          </button>
+                        </div>
+
+                        {encryptedEnvelope && (
+                          <div className="p-3 rounded-xl bg-black/70 border border-emerald-500/30 space-y-1.5">
+                            <div className="flex items-center justify-between text-emerald-400">
+                              <span className="font-bold flex items-center gap-1">
+                                <ShieldCheck className="w-3.5 h-3.5" />
+                                <span>Note Encrypted (AES-GCM-256)</span>
+                              </span>
+                              <button
+                                type="button"
+                                onClick={() => handleCopy(JSON.stringify(encryptedEnvelope, null, 2), 'envelope')}
+                                className="text-xs text-[#A1A1AA] hover:text-white flex items-center gap-1"
+                              >
+                                {copiedField === 'envelope' ? <Check className="w-3.5 h-3.5 text-acid" /> : <Copy className="w-3.5 h-3.5" />}
+                                <span>Copy JSON</span>
+                              </button>
+                            </div>
+
+                            <div className="text-[10px] text-[#71717A] space-y-0.5">
+                              <div>IV: <span className="text-white">{encryptedEnvelope.iv}</span></div>
+                              <div className="truncate">Ciphertext: <span className="text-[#A1A1AA]">{encryptedEnvelope.ciphertext}</span></div>
+                            </div>
+
+                            {rawKeyBackup && (
+                              <div className="pt-1 text-[10px] text-amber-300">
+                                <span>Auto-generated 256-bit Key: </span>
+                                <code className="bg-black/80 px-1 py-0.5 rounded text-white">{rawKeyBackup}</code>
+                                <span className="block text-[9px] text-[#71717A] mt-0.5">
+                                  Save this key if you need to decrypt this note later. It is not saved in localStorage.
+                                </span>
+                              </div>
+                            )}
+                          </div>
+                        )}
+                      </div>
+                    )}
                   </div>
 
                   <MagneticButton strength={0.2} className="w-full block">

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { SectionHeading } from '../common/SectionHeading';
 import { RECRUITER_QA } from '../../data/portfolioData';
 import { RecruiterQAItem } from '../../types';
@@ -11,19 +11,39 @@ import {
   UserCheck,
   Zap,
   ArrowRight,
-  MessageSquare,
+  RefreshCw,
+  RotateCcw,
   CheckCircle2,
+  AlertTriangle,
+  ShieldCheck,
+  Cpu,
+  Send,
   HelpCircle
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
+interface ChatTurn {
+  id: string;
+  question: string;
+  answer: string;
+  shortAnswer?: string;
+  category: string;
+  model: string;
+  provider: string;
+  grounded: boolean;
+  isFallback: boolean;
+  timestamp: string;
+}
+
 export const AskMeAnythingSection: React.FC = () => {
-  const [searchQuery, setSearchQuery] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState<string>('All');
+  const [inputQuery, setInputQuery] = useState('');
   const [activeQAId, setActiveQAId] = useState<string>('what-have-you-built');
   const [isListening, setIsListening] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [apiError, setApiError] = useState<string | null>(null);
+  const [lastAskedQuestion, setLastAskedQuestion] = useState<string>('');
 
-  // Exact 6 Suggested Questions as requested in Prompt Section 9 & Master Guidelines
+  // 6 Core Recruiter Suggested Questions
   const suggestedQuestions = [
     { label: 'What have you built?', id: 'what-have-you-built' },
     { label: 'What is GoDuet?', id: 'what-is-goduet' },
@@ -33,9 +53,7 @@ export const AskMeAnythingSection: React.FC = () => {
     { label: 'How do you use AI tools?', id: 'how-do-you-use-ai-tools' },
   ];
 
-  const categories = ['All', 'Projects', 'Technical', 'Failures', 'Wispr Flow', 'Product Mindset'];
-
-  // Contextual Follow-Up Suggestions for seamless recruiter conversation continuation
+  // Contextual Follow-Up Suggestions
   const followUpMap: Record<string, string[]> = {
     'what-have-you-built': ['what-is-goduet', 'biggest-technical-challenge', 'how-do-you-use-ai-tools'],
     'what-is-goduet': ['what-did-you-learn-from-failures', 'biggest-technical-challenge'],
@@ -45,25 +63,130 @@ export const AskMeAnythingSection: React.FC = () => {
     'how-do-you-use-ai-tools': ['why-wispr-flow', 'biggest-technical-challenge'],
   };
 
-  // Find active item
-  const activeQA =
+  // Find curated fallback QA
+  const curatedQA =
     RECRUITER_QA.find((q) => q.id === activeQAId) ||
     RECRUITER_QA.find((q) => q.id === 'what-have-you-built') ||
     RECRUITER_QA[0];
 
-  // Search filtering across all QAs
-  const searchMatches = searchQuery.trim() === ''
-    ? []
-    : RECRUITER_QA.filter((qa) => {
-        const q = searchQuery.toLowerCase();
-        return (
-          qa.question.toLowerCase().includes(q) ||
-          qa.shortAnswer.toLowerCase().includes(q) ||
-          qa.detailedAnswer.toLowerCase().includes(q) ||
-          qa.relatedTags.some((t) => t.toLowerCase().includes(q))
-        );
+  // Conversation history for Gemma 4
+  const [chatHistory, setChatHistory] = useState<ChatTurn[]>([
+    {
+      id: 'initial',
+      question: curatedQA.question,
+      answer: curatedQA.detailedAnswer,
+      shortAnswer: curatedQA.shortAnswer,
+      category: curatedQA.category,
+      model: 'gemma-4-it',
+      provider: 'Portfolio Grounded Engine (Gemma 4)',
+      grounded: true,
+      isFallback: false,
+      timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+    },
+  ]);
+
+  const currentTurn = chatHistory[chatHistory.length - 1];
+
+  // Async function to ask Gemma 4 via secure backend
+  const handleAskGemma = async (questionText: string, categoryOverride?: string) => {
+    const q = questionText.trim();
+    if (!q || isLoading) return;
+
+    setIsLoading(true);
+    setApiError(null);
+    setLastAskedQuestion(q);
+
+    // Prepare history payload for server
+    const historyPayload = chatHistory.slice(-4).map((item) => [
+      { role: 'user' as const, content: item.question },
+      { role: 'assistant' as const, content: item.answer },
+    ]).flat();
+
+    try {
+      const res = await fetch('/api/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          message: q,
+          history: historyPayload,
+        }),
       });
 
+      if (!res.ok) {
+        const errorData = await res.json().catch(() => ({}));
+        throw new Error(errorData.error || `HTTP ${res.status}: Failed to reach Gemma 4 endpoint`);
+      }
+
+      const data = await res.json();
+
+      const newTurn: ChatTurn = {
+        id: `turn-${Date.now()}`,
+        question: q,
+        answer: data.reply || 'No response returned from model.',
+        shortAnswer: data.reply.split('\n\n')[0].replace(/^#+\s*/, ''),
+        category: categoryOverride || 'AI Inquirer',
+        model: data.model || 'gemma-4-it',
+        provider: data.provider || 'Gemma 4 Gateway',
+        grounded: data.grounded ?? true,
+        isFallback: data.isFallback ?? false,
+        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+      };
+
+      setChatHistory((prev) => [...prev, newTurn]);
+      setInputQuery('');
+    } catch (err: any) {
+      console.warn('[AskMeAnything] Gemma 4 request error:', err.message);
+      setApiError(err.message || 'Unable to connect to Gemma 4 endpoint.');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Reset conversation session
+  const handleResetSession = () => {
+    setChatHistory([
+      {
+        id: 'initial',
+        question: curatedQA.question,
+        answer: curatedQA.detailedAnswer,
+        shortAnswer: curatedQA.shortAnswer,
+        category: curatedQA.category,
+        model: 'gemma-4-it',
+        provider: 'Portfolio Grounded Engine (Gemma 4)',
+        grounded: true,
+        isFallback: false,
+        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+      },
+    ]);
+    setActiveQAId('what-have-you-built');
+    setInputQuery('');
+    setApiError(null);
+  };
+
+  // Use Curated FAQ Fallback
+  const handleUseCuratedFallback = () => {
+    const fallbackQA =
+      RECRUITER_QA.find((q) => q.question.toLowerCase().includes(lastAskedQuestion.toLowerCase())) ||
+      curatedQA;
+
+    const fallbackTurn: ChatTurn = {
+      id: `fallback-${Date.now()}`,
+      question: lastAskedQuestion || fallbackQA.question,
+      answer: fallbackQA.detailedAnswer,
+      shortAnswer: fallbackQA.shortAnswer,
+      category: fallbackQA.category,
+      model: 'Curated FAQ Fallback',
+      provider: 'Verified Portfolio Records',
+      grounded: true,
+      isFallback: true,
+      timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+    };
+
+    setChatHistory((prev) => [...prev, fallbackTurn]);
+    setApiError(null);
+  };
+
+  // Speech Recognition simulator / API
   const handleVoiceSim = () => {
     if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
       const SpeechRecognition =
@@ -79,8 +202,9 @@ export const AskMeAnythingSection: React.FC = () => {
         recognition.onerror = () => setIsListening(false);
         recognition.onresult = (event: any) => {
           const transcript = event.results[0][0].transcript;
-          setSearchQuery(transcript);
+          setInputQuery(transcript);
           setIsListening(false);
+          handleAskGemma(transcript);
         };
         recognition.start();
       } catch (err) {
@@ -89,14 +213,16 @@ export const AskMeAnythingSection: React.FC = () => {
     } else {
       setIsListening(true);
       setTimeout(() => {
-        setSearchQuery('Wispr Flow');
+        const voicePrompt = 'Why are you interested in Wispr Flow?';
+        setInputQuery(voicePrompt);
         setIsListening(false);
+        handleAskGemma(voicePrompt, 'Wispr Flow');
       }, 900);
     }
   };
 
   // Get active follow-ups
-  const currentFollowUpIds = followUpMap[activeQA.id] || ['what-have-you-built', 'why-wispr-flow'];
+  const currentFollowUpIds = followUpMap[activeQAId] || ['what-have-you-built', 'why-wispr-flow'];
   const followUpItems = currentFollowUpIds
     .map((id) => RECRUITER_QA.find((q) => q.id === id))
     .filter((q): q is RecruiterQAItem => q !== undefined);
@@ -106,25 +232,32 @@ export const AskMeAnythingSection: React.FC = () => {
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         <SectionHeading
           number="05 // ASK ME"
-          tag="Recruiter Interaction Terminal"
+          tag="Gemma 4 AI Assistant & Recruiter Terminal"
           title="CURIOUS ABOUT HOW I THINK?"
-          subtitle="Explore candid, structured answers about my technical decisions, operational failures, product intuition, and why Wispr Flow represents the frontier I want to build on."
+          subtitle="Ask any question about my technical decisions, operational failures, product intuition, and why Wispr Flow represents the frontier I want to build on. Answers are grounded in verified portfolio facts."
         />
 
         {/* Command Bar: Search, Voice & Suggested Question Chips */}
         <div className="mb-8 p-5 sm:p-7 rounded-3xl bg-[#09090e] border border-white/10 shadow-2xl space-y-5">
-          {/* Top Row: Search Input + Voice Trigger */}
-          <div className="flex flex-col sm:flex-row gap-3 items-stretch">
+          {/* Top Row: AI Prompt Input + Voice Trigger + Technology Label */}
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              handleAskGemma(inputQuery);
+            }}
+            className="flex flex-col sm:flex-row gap-3 items-stretch"
+          >
             <div className="relative flex-1">
               <Search className="w-4 h-4 text-[#71717A] absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
               <input
                 type="text"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Ask any question or search keywords (e.g., 'GoDuet', 'state machine', 'failure', 'Wispr')..."
+                value={inputQuery}
+                onChange={(e) => setInputQuery(e.target.value)}
+                placeholder="Ask Gemma 4 anything (e.g., 'What is GoDuet?', 'Why Wispr Flow?', 'Biggest failure?')..."
                 className="w-full pl-10 pr-28 py-3.5 bg-[#101018] border border-white/10 rounded-2xl text-xs sm:text-sm font-mono text-white placeholder-[#71717A] focus:outline-none focus:border-acid transition shadow-inner"
               />
               <button
+                type="button"
                 onClick={handleVoiceSim}
                 title="Speak your question using microphone"
                 className={`absolute right-2 top-1/2 -translate-y-1/2 px-3 py-1.5 rounded-xl border text-xs font-mono flex items-center gap-1.5 transition ${
@@ -140,61 +273,54 @@ export const AskMeAnythingSection: React.FC = () => {
               </button>
             </div>
 
-            {searchQuery && (
-              <button
-                onClick={() => setSearchQuery('')}
-                className="px-4 py-3 rounded-2xl bg-[#141420] border border-white/10 text-xs font-mono text-[#8E8E98] hover:text-white transition shrink-0"
-              >
-                Clear Search
-              </button>
-            )}
+            <button
+              type="submit"
+              disabled={isLoading || !inputQuery.trim()}
+              className="px-5 py-3 rounded-2xl bg-acid text-black font-display font-black text-xs tracking-wider hover:bg-[#E5FF4D] transition disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 shrink-0 shadow-lg shadow-acid/15"
+            >
+              {isLoading ? (
+                <>
+                  <RefreshCw className="w-4 h-4 animate-spin" />
+                  <span>SYNTHESIZING...</span>
+                </>
+              ) : (
+                <>
+                  <Send className="w-4 h-4" />
+                  <span>ASK GEMMA 4</span>
+                </>
+              )}
+            </button>
+          </form>
+
+          {/* Technology Label & Privacy Notice */}
+          <div className="flex flex-wrap items-center justify-between gap-3 text-xs font-mono text-[#8E8E98] pt-1">
+            <div className="flex items-center gap-2">
+              <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#141422] border border-white/10 text-white font-bold">
+                <Cpu className="w-3.5 h-3.5 text-acid" />
+                <span>Powered by Gemma 4</span>
+              </span>
+              <span className="text-[11px] text-[#71717A] hidden md:inline">
+                • Grounded in verified portfolio knowledge base
+              </span>
+            </div>
+
+            <div className="flex items-center gap-2">
+              <ShieldCheck className="w-3.5 h-3.5 text-acid" />
+              <span className="text-[11px] text-[#71717A]">
+                Privacy Notice: Server-side API key • In-memory session only
+              </span>
+            </div>
           </div>
 
-          {/* Search Results Dropdown/Drawer (if user searched) */}
-          {searchQuery.trim() !== '' && (
-            <div className="p-4 rounded-2xl bg-[#12121e] border border-acid/30 space-y-2">
-              <div className="flex items-center justify-between text-xs font-mono text-acid font-bold">
-                <span>Search Matches ({searchMatches.length})</span>
-                <span className="text-[10px] text-[#71717A]">Click to inspect response</span>
-              </div>
-              {searchMatches.length === 0 ? (
-                <p className="text-xs font-mono text-[#71717A] py-2">
-                  No direct answers matched "{searchQuery}". Select one of the 6 core suggested questions below.
-                </p>
-              ) : (
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 max-h-48 overflow-y-auto">
-                  {searchMatches.map((m) => (
-                    <button
-                      key={m.id}
-                      onClick={() => {
-                        setActiveQAId(m.id);
-                        setSearchQuery('');
-                      }}
-                      className="p-3 rounded-xl bg-[#09090e] border border-white/10 hover:border-acid text-left transition flex items-center justify-between group"
-                    >
-                      <div className="truncate mr-2">
-                        <span className="text-[10px] font-mono text-acid block">[{m.category}]</span>
-                        <span className="text-xs font-display font-medium text-white group-hover:text-acid truncate block">
-                          {m.question}
-                        </span>
-                      </div>
-                      <ArrowRight className="w-3.5 h-3.5 text-[#71717A] group-hover:text-acid shrink-0" />
-                    </button>
-                  ))}
-                </div>
-              )}
-            </div>
-          )}
-
-          {/* Clean Horizontal Chip Bar: Exactly the 6 Core Recruiter Questions */}
-          <div className="space-y-2 pt-2 border-t border-white/5">
+          {/* 6 Core Recruiter Inquiries */}
+          <div className="space-y-2 pt-3 border-t border-white/5">
             <div className="flex items-center justify-between">
               <span className="font-mono text-xs uppercase tracking-wider text-acid font-bold flex items-center gap-1.5">
                 <Zap className="w-3.5 h-3.5" />
-                <span>6 Core Recruiter Inquiries</span>
+                <span>6 Core Recruiter Inquiries (Click to Ask Gemma 4)</span>
               </span>
               <span className="text-[10px] font-mono text-[#71717A]">
-                Click to switch active stance
+                Grounded Stance
               </span>
             </div>
 
@@ -206,7 +332,7 @@ export const AskMeAnythingSection: React.FC = () => {
                     key={q.id}
                     onClick={() => {
                       setActiveQAId(q.id);
-                      setSearchQuery('');
+                      handleAskGemma(q.label);
                     }}
                     className={`px-3.5 py-2.5 rounded-xl text-xs font-mono transition-all duration-200 flex items-center gap-2 ${
                       isActive
@@ -227,11 +353,45 @@ export const AskMeAnythingSection: React.FC = () => {
           </div>
         </div>
 
+        {/* Error Callout with Retry & Fallback Options */}
+        {apiError && (
+          <div className="mb-6 p-5 rounded-2xl bg-red-500/10 border border-red-500/30 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+            <div className="flex items-start gap-3">
+              <AlertTriangle className="w-5 h-5 text-red-400 shrink-0 mt-0.5" />
+              <div className="space-y-1">
+                <h4 className="font-mono text-xs font-bold text-red-400">
+                  Gemma 4 Gateway Notice
+                </h4>
+                <p className="text-xs font-mono text-[#A1A1AA]">
+                  {apiError} You can retry the request or switch to the verified offline portfolio FAQ.
+                </p>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-2 shrink-0">
+              <button
+                onClick={() => handleAskGemma(lastAskedQuestion)}
+                className="px-3 py-1.5 rounded-xl bg-red-500/20 hover:bg-red-500/30 text-red-300 text-xs font-mono flex items-center gap-1.5 transition"
+              >
+                <RefreshCw className="w-3.5 h-3.5" />
+                <span>Retry</span>
+              </button>
+
+              <button
+                onClick={handleUseCuratedFallback}
+                className="px-3 py-1.5 rounded-xl bg-[#161624] border border-white/10 hover:border-acid text-white text-xs font-mono transition"
+              >
+                <span>Use Curated FAQ</span>
+              </button>
+            </div>
+          </div>
+        )}
+
         {/* Primary Conversational Response Stage */}
         <div className="relative">
           <AnimatePresence mode="wait">
             <motion.div
-              key={activeQA.id}
+              key={currentTurn.id}
               initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -12 }}
@@ -247,63 +407,95 @@ export const AskMeAnythingSection: React.FC = () => {
                   <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-acid/15 border border-acid/30">
                     <span className="w-2 h-2 rounded-full bg-acid animate-pulse" />
                     <span className="text-xs font-mono text-acid font-bold uppercase">
-                      {activeQA.category}
+                      {currentTurn.category}
                     </span>
                   </div>
+
                   <span className="text-xs font-mono text-[#71717A] hidden sm:inline">
-                    // AUTHENTIC BUILDER ARCHIVE
+                    // MODEL: {currentTurn.model}
                   </span>
+
+                  {currentTurn.isFallback && (
+                    <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-amber-500/15 text-amber-300 border border-amber-500/30 font-bold">
+                      GROUNDED ARCHIVE
+                    </span>
+                  )}
                 </div>
 
-                <div className="flex items-center gap-2 text-xs font-mono text-[#8E8E98]">
-                  <UserCheck className="w-3.5 h-3.5 text-acid" />
-                  <span>Siddharth's Stance Grounded</span>
+                <div className="flex items-center gap-3">
+                  <div className="flex items-center gap-2 text-xs font-mono text-[#8E8E98]">
+                    <UserCheck className="w-3.5 h-3.5 text-acid" />
+                    <span>{currentTurn.provider}</span>
+                  </div>
+
+                  <button
+                    onClick={handleResetSession}
+                    title="Reset conversation to initial state"
+                    className="p-1.5 rounded-lg bg-[#141420] border border-white/10 hover:border-acid text-[#8E8E98] hover:text-white transition flex items-center gap-1 text-[11px] font-mono"
+                  >
+                    <RotateCcw className="w-3 h-3 text-acid" />
+                    <span className="hidden sm:inline">Reset</span>
+                  </button>
                 </div>
               </div>
 
               {/* Question Headline with Typewriter-style terminal cursor */}
               <div className="space-y-2">
                 <h3 className="text-2xl sm:text-3xl lg:text-4xl font-display font-black text-white leading-tight">
-                  {activeQA.question}
+                  {currentTurn.question}
                   <span className="inline-block w-2.5 h-6 bg-acid ml-2 align-middle animate-pulse" />
                 </h3>
               </div>
 
-              {/* Executive Summary Callout */}
-              <motion.div
-                initial={{ opacity: 0, x: -10 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.3, delay: 0.08 }}
-                className="p-5 sm:p-6 rounded-2xl bg-acid/10 border-l-4 border-acid space-y-1.5 shadow-lg"
-              >
-                <div className="flex items-center gap-2">
-                  <Zap className="w-3.5 h-3.5 text-acid" />
-                  <span className="text-[10px] sm:text-xs font-mono text-acid uppercase tracking-wider font-bold">
-                    EXECUTIVE TAKEAWAY (TL;DR)
+              {/* Loading Indicator */}
+              {isLoading && (
+                <div className="p-6 rounded-2xl bg-acid/5 border border-acid/20 flex items-center gap-3">
+                  <RefreshCw className="w-5 h-5 text-acid animate-spin" />
+                  <span className="text-xs sm:text-sm font-mono text-acid">
+                    Gemma 4 is synthesizing a grounded response from the VOICEPRINT knowledge base...
                   </span>
                 </div>
-                <p className="text-sm sm:text-base font-mono text-white leading-relaxed">
-                  "{activeQA.shortAnswer}"
-                </p>
-              </motion.div>
+              )}
 
-              {/* In-Depth Grounded Answer (Staggered Fade-in) */}
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ duration: 0.35, delay: 0.16 }}
-                className="space-y-4 text-sm sm:text-base text-[#D4D4D8] font-sans leading-relaxed"
-              >
-                <span className="text-xs font-mono text-[#71717A] uppercase tracking-wider block font-bold">
-                  In-Depth Builder Reflection & Rationale:
-                </span>
-                <p className="whitespace-pre-line leading-relaxed">
-                  {activeQA.detailedAnswer}
-                </p>
-              </motion.div>
+              {/* Executive Summary Callout (if available) */}
+              {!isLoading && currentTurn.shortAnswer && (
+                <motion.div
+                  initial={{ opacity: 0, x: -10 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ duration: 0.3, delay: 0.08 }}
+                  className="p-5 sm:p-6 rounded-2xl bg-acid/10 border-l-4 border-acid space-y-1.5 shadow-lg"
+                >
+                  <div className="flex items-center gap-2">
+                    <Zap className="w-3.5 h-3.5 text-acid" />
+                    <span className="text-[10px] sm:text-xs font-mono text-acid uppercase tracking-wider font-bold">
+                      EXECUTIVE TAKEAWAY (TL;DR)
+                    </span>
+                  </div>
+                  <p className="text-sm sm:text-base font-mono text-white leading-relaxed">
+                    "{currentTurn.shortAnswer}"
+                  </p>
+                </motion.div>
+              )}
 
-              {/* Core Principle / Takeaway Box */}
-              {activeQA.keyTakeaway && (
+              {/* In-Depth Grounded Answer */}
+              {!isLoading && (
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ duration: 0.35, delay: 0.16 }}
+                  className="space-y-4 text-sm sm:text-base text-[#D4D4D8] font-sans leading-relaxed"
+                >
+                  <span className="text-xs font-mono text-[#71717A] uppercase tracking-wider block font-bold">
+                    In-Depth Builder Reflection & Rationale:
+                  </span>
+                  <div className="whitespace-pre-line leading-relaxed space-y-3">
+                    {currentTurn.answer}
+                  </div>
+                </motion.div>
+              )}
+
+              {/* Core Principle / Takeaway Box (if present in curatedQA) */}
+              {!isLoading && curatedQA.keyTakeaway && (
                 <div className="p-4 rounded-xl bg-[#101018] border border-white/10 flex items-start gap-3">
                   <CheckCircle2 className="w-4 h-4 text-acid mt-0.5 shrink-0" />
                   <div className="space-y-0.5">
@@ -311,7 +503,7 @@ export const AskMeAnythingSection: React.FC = () => {
                       Guiding Principle
                     </span>
                     <p className="text-xs sm:text-sm font-mono text-[#F4F4F6]">
-                      {activeQA.keyTakeaway}
+                      {curatedQA.keyTakeaway}
                     </p>
                   </div>
                 </div>
@@ -322,7 +514,7 @@ export const AskMeAnythingSection: React.FC = () => {
                 {/* Related Tags */}
                 <div className="flex flex-wrap items-center gap-2 text-xs font-mono">
                   <span className="text-[#71717A]">TOPICS:</span>
-                  {activeQA.relatedTags.map((tag) => (
+                  {curatedQA.relatedTags.map((tag) => (
                     <span
                       key={tag}
                       className="px-2.5 py-1 rounded-lg bg-[#12121c] text-[#A1A1AA] border border-white/5 text-[11px]"
@@ -346,7 +538,7 @@ export const AskMeAnythingSection: React.FC = () => {
                           key={item.id}
                           onClick={() => {
                             setActiveQAId(item.id);
-                            setSearchQuery('');
+                            handleAskGemma(item.question);
                           }}
                           className="px-3 py-2 rounded-xl bg-[#161624] border border-white/10 hover:border-acid text-xs font-mono text-[#D4D4D8] hover:text-white transition flex items-center gap-2 group"
                         >
