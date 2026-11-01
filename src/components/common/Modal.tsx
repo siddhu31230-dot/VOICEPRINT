@@ -1,4 +1,5 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { X } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -19,52 +20,64 @@ export const Modal: React.FC<ModalProps> = ({
   children,
   maxWidth = 'max-w-4xl',
 }) => {
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
   useEffect(() => {
     if (isOpen) {
       document.body.style.overflow = 'hidden';
+      document.body.setAttribute('data-modal-open', 'true');
+
       const handleKeyDown = (e: KeyboardEvent) => {
         if (e.key === 'Escape') onClose();
       };
       window.addEventListener('keydown', handleKeyDown);
       return () => {
         document.body.style.overflow = 'unset';
+        document.body.removeAttribute('data-modal-open');
         window.removeEventListener('keydown', handleKeyDown);
       };
     } else {
       document.body.style.overflow = 'unset';
+      document.body.removeAttribute('data-modal-open');
     }
   }, [isOpen, onClose]);
 
-  return (
+  if (!mounted) return null;
+
+  return createPortal(
     <AnimatePresence>
       {isOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 md:p-8 overflow-y-auto">
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-3 sm:p-6 md:p-8 overflow-y-auto">
           {/* Backdrop */}
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={onClose}
-            className="fixed inset-0 bg-black/80 backdrop-blur-md"
+            className="fixed inset-0 bg-black/90 backdrop-blur-md"
           />
 
           {/* Modal Container */}
           <motion.div
-            initial={{ opacity: 0, scale: 0.96, y: 15 }}
+            initial={{ opacity: 0, scale: 0.95, y: 15 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.96, y: 15 }}
-            transition={{ duration: 0.2, ease: 'easeOut' }}
-            className={`relative w-full ${maxWidth} bg-[#0c0c11] border border-[#23232e] rounded-2xl shadow-2xl overflow-hidden my-auto z-10 flex flex-col max-h-[90vh]`}
+            exit={{ opacity: 0, scale: 0.95, y: 15 }}
+            transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
+            className={`relative w-full ${maxWidth} bg-[#0b0b12] border border-white/15 rounded-3xl shadow-2xl overflow-hidden my-auto z-10 flex flex-col max-h-[92vh]`}
           >
             {/* Header */}
-            <div className="flex items-center justify-between px-6 py-5 border-b border-[#1c1c24] bg-[#0f0f15]/80 backdrop-blur sticky top-0 z-20">
+            <div className="flex items-center justify-between px-6 py-4.5 border-b border-white/10 bg-[#0e0e18]/95 backdrop-blur-xl sticky top-0 z-20">
               <div className="flex items-center gap-3">
                 {tag && (
-                  <span className="font-mono text-xs uppercase px-2 py-0.5 rounded bg-acid/10 text-acid border border-acid/20">
+                  <span className="font-mono text-xs uppercase px-2.5 py-0.5 rounded-full bg-acid/15 text-acid border border-acid/30 font-bold">
                     {tag}
                   </span>
                 )}
-                <h3 className="font-display font-bold text-lg sm:text-xl text-text-primary">
+                <h3 className="font-display font-black text-lg sm:text-xl text-white truncate max-w-[280px] sm:max-w-md">
                   {title}
                 </h3>
               </div>
@@ -72,19 +85,20 @@ export const Modal: React.FC<ModalProps> = ({
               <button
                 onClick={onClose}
                 aria-label="Close modal"
-                className="p-2 rounded-lg text-text-muted hover:text-white hover:bg-white/5 transition border border-transparent hover:border-white/10"
+                className="p-2.5 rounded-xl bg-[#161622] text-[#8E8E98] hover:text-white hover:bg-white/10 transition border border-white/10 hover:border-white/20 focus:outline-none focus:ring-2 focus:ring-acid cursor-pointer"
               >
                 <X className="w-5 h-5" />
               </button>
             </div>
 
             {/* Content body */}
-            <div className="p-6 sm:p-8 overflow-y-auto text-text-secondary leading-relaxed space-y-6">
+            <div className="p-6 sm:p-8 md:p-10 overflow-y-auto text-[#A1A1AA] leading-relaxed space-y-6">
               {children}
             </div>
           </motion.div>
         </div>
       )}
-    </AnimatePresence>
+    </AnimatePresence>,
+    document.body
   );
 };

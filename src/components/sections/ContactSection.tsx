@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { SectionHeading } from '../common/SectionHeading';
 import { PERSONAL_INFO } from '../../data/portfolioData';
 import { SocialLinks } from '../../types';
+import { MagneticButton } from '../common/MagneticButton';
 import confetti from 'canvas-confetti';
 import {
   Mail,
@@ -61,7 +62,7 @@ export const ContactSection: React.FC<ContactSectionProps> = ({
   };
 
   return (
-    <section id="contact" className="py-28 border-t border-white/10 bg-[#070709] relative z-10">
+    <section id="contact" className="scroll-mt-28 py-24 sm:py-28 border-t border-white/10 bg-[#070709] relative z-10">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <SectionHeading
           number="07 // CONTACT"
@@ -105,7 +106,7 @@ export const ContactSection: React.FC<ContactSectionProps> = ({
                   </div>
                   <button
                     onClick={() => handleCopy(links.email, 'email')}
-                    className="text-[#71717A] hover:text-acid shrink-0"
+                    className="text-[#71717A] hover:text-acid shrink-0 p-1"
                     title="Copy email"
                   >
                     {copiedField === 'email' ? (
@@ -126,7 +127,7 @@ export const ContactSection: React.FC<ContactSectionProps> = ({
                     href={links.linkedin}
                     target="_blank"
                     rel="noreferrer"
-                    className="text-[#71717A] hover:text-acid shrink-0"
+                    className="text-[#71717A] hover:text-acid shrink-0 p-1"
                   >
                     <ArrowUpRight className="w-4 h-4" />
                   </a>
@@ -142,7 +143,7 @@ export const ContactSection: React.FC<ContactSectionProps> = ({
                     href={links.github}
                     target="_blank"
                     rel="noreferrer"
-                    className="text-[#71717A] hover:text-acid shrink-0"
+                    className="text-[#71717A] hover:text-acid shrink-0 p-1"
                   >
                     <ArrowUpRight className="w-4 h-4" />
                   </a>
@@ -158,7 +159,7 @@ export const ContactSection: React.FC<ContactSectionProps> = ({
                     href={links.instagram}
                     target="_blank"
                     rel="noreferrer"
-                    className="text-[#71717A] hover:text-acid shrink-0"
+                    className="text-[#71717A] hover:text-acid shrink-0 p-1"
                   >
                     <ArrowUpRight className="w-4 h-4" />
                   </a>
@@ -267,13 +268,15 @@ export const ContactSection: React.FC<ContactSectionProps> = ({
                     />
                   </div>
 
-                  <button
-                    type="submit"
-                    className="w-full py-4 rounded-2xl bg-acid text-black font-display font-black text-xs tracking-wider hover:bg-[#E5FF4D] transition flex items-center justify-center gap-2 shadow-xl shadow-acid/20"
-                  >
-                    <Send className="w-4 h-4" />
-                    <span>DISPATCH DIRECT MESSAGE</span>
-                  </button>
+                  <MagneticButton strength={0.2} className="w-full block">
+                    <button
+                      type="submit"
+                      className="w-full py-4 rounded-2xl bg-acid text-black font-display font-black text-xs tracking-wider hover:bg-[#E5FF4D] transition flex items-center justify-center gap-2 shadow-xl shadow-acid/20"
+                    >
+                      <Send className="w-4 h-4" />
+                      <span>DISPATCH DIRECT MESSAGE</span>
+                    </button>
+                  </MagneticButton>
                 </form>
               )}
             </div>

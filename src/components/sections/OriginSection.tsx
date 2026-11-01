@@ -16,7 +16,7 @@ export const OriginSection: React.FC<OriginSectionProps> = ({ onOpenConfigLinks 
   const activeTimeline = TIMELINE_EVENTS[selectedTimelineIndex];
 
   return (
-    <section id="origin" className="py-28 border-t border-white/10 bg-[#070709] relative z-10">
+    <section id="origin" className="scroll-mt-28 py-24 sm:py-28 border-t border-white/10 bg-[#070709] relative z-10">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <SectionHeading
           number="01 // ORIGIN"
@@ -26,13 +26,13 @@ export const OriginSection: React.FC<OriginSectionProps> = ({ onOpenConfigLinks 
         />
 
         {/* Large Editorial Pull Quote Header */}
-        <div className="mb-14 p-8 sm:p-10 rounded-3xl bg-[#09090e] border border-white/10 relative overflow-hidden shadow-2xl">
-          <Quote className="w-16 h-16 text-acid/20 absolute -top-2 -left-2 pointer-events-none" />
-          <div className="relative z-10 max-w-4xl space-y-3">
+        <div className="mb-12 p-6 sm:p-9 rounded-3xl bg-[#09090e] border border-white/10 relative overflow-hidden shadow-2xl">
+          <Quote className="w-14 h-14 text-acid/15 absolute -top-1 -left-1 pointer-events-none" />
+          <div className="relative z-10 max-w-4xl space-y-2.5">
             <span className="font-mono text-xs uppercase tracking-widest text-acid font-bold">
               THE CORE PHILOSOPHY
             </span>
-            <blockquote className="font-display font-extrabold text-2xl sm:text-3xl lg:text-4xl text-white leading-tight">
+            <blockquote className="font-display font-black text-xl sm:text-2xl lg:text-3xl text-white leading-snug">
               "{activeStory.quote || activeStory.summary}"
             </blockquote>
           </div>
@@ -42,7 +42,7 @@ export const OriginSection: React.FC<OriginSectionProps> = ({ onOpenConfigLinks 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
           {/* Navigation Chapters (Left 4 cols) */}
           <div className="lg:col-span-4 space-y-2">
-            <div className="p-4 bg-[#0a0a10] rounded-2xl border border-white/10 mb-4">
+            <div className="p-4 bg-[#0a0a10] rounded-2xl border border-white/10 mb-3.5">
               <span className="font-mono text-xs text-acid uppercase tracking-wider block font-bold mb-1">
                 Story Exploration
               </span>
@@ -57,7 +57,7 @@ export const OriginSection: React.FC<OriginSectionProps> = ({ onOpenConfigLinks 
                 <button
                   key={section.id}
                   onClick={() => setActiveStoryTab(section.id)}
-                  className={`w-full text-left p-4 rounded-2xl border transition-all duration-200 flex items-center justify-between group ${
+                  className={`w-full text-left p-3.5 sm:p-4 rounded-2xl border transition-all duration-200 flex items-center justify-between group ${
                     isSelected
                       ? 'bg-[#12121e] border-acid/60 shadow-xl'
                       : 'bg-[#09090e] border-white/5 hover:border-white/20 hover:bg-[#0e0e16]'
@@ -72,7 +72,7 @@ export const OriginSection: React.FC<OriginSectionProps> = ({ onOpenConfigLinks 
                       {section.badge}
                     </span>
                     <h3
-                      className={`font-display font-bold text-sm block ${
+                      className={`font-display font-bold text-xs sm:text-sm block ${
                         isSelected ? 'text-acid' : 'text-[#E4E4E7] group-hover:text-white'
                       }`}
                     >
@@ -95,11 +95,11 @@ export const OriginSection: React.FC<OriginSectionProps> = ({ onOpenConfigLinks 
             <AnimatePresence mode="wait">
               <motion.div
                 key={activeStory.id}
-                initial={{ opacity: 0, y: 15 }}
+                initial={{ opacity: 0, y: 12 }}
                 animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -15 }}
-                transition={{ duration: 0.25 }}
-                className="p-6 sm:p-10 rounded-3xl bg-[#0a0a10] border border-white/10 shadow-2xl relative"
+                exit={{ opacity: 0, y: -12 }}
+                transition={{ duration: 0.22 }}
+                className="p-6 sm:p-9 rounded-3xl bg-[#0a0a10] border border-white/10 shadow-2xl relative"
               >
                 <div className="flex flex-wrap items-center justify-between gap-3 mb-6 pb-4 border-b border-white/10">
                   <div className="flex items-center gap-2.5">
@@ -139,8 +139,8 @@ export const OriginSection: React.FC<OriginSectionProps> = ({ onOpenConfigLinks 
         </div>
 
         {/* Interactive Timeline Visualization */}
-        <div className="mt-24">
-          <div className="flex flex-wrap items-center justify-between gap-4 mb-8">
+        <div className="mt-20">
+          <div className="flex flex-wrap items-center justify-between gap-4 mb-7">
             <div>
               <span className="font-mono text-xs text-acid uppercase tracking-widest block mb-1 font-bold">
                 EXPERIMENT CHRONOLOGY
@@ -155,20 +155,20 @@ export const OriginSection: React.FC<OriginSectionProps> = ({ onOpenConfigLinks 
           </div>
 
           {/* Timeline Milestones Navigation */}
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3 mb-6">
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3 mb-5">
             {TIMELINE_EVENTS.map((event, idx) => {
               const isSelected = selectedTimelineIndex === idx;
               return (
                 <button
                   key={event.year}
                   onClick={() => setSelectedTimelineIndex(idx)}
-                  className={`p-4 rounded-2xl border text-left transition-all duration-200 relative ${
+                  className={`p-3.5 sm:p-4 rounded-2xl border text-left transition-all duration-200 relative ${
                     isSelected
                       ? 'bg-[#141420] border-acid shadow-lg shadow-acid/15'
                       : 'bg-[#09090e] border-white/10 hover:border-white/20 hover:bg-[#0e0e16]'
                   }`}
                 >
-                  <div className="flex items-center justify-between mb-2">
+                  <div className="flex items-center justify-between mb-1.5">
                     <span className="font-mono text-xs text-acid font-bold">
                       {event.year}
                     </span>

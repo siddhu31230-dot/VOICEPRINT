@@ -25,6 +25,7 @@ export const App: React.FC = () => {
   });
 
   const [isConfigModalOpen, setIsConfigModalOpen] = useState(false);
+  const [isCaseStudyModalOpen, setIsCaseStudyModalOpen] = useState(false);
   const [activeAudio, setActiveAudio] = useState(false);
 
   // Web Audio Context for subtle ambient resonance
@@ -82,13 +83,16 @@ export const App: React.FC = () => {
     } catch (e) {}
   };
 
+  const isAnyModalOpen = isConfigModalOpen || isCaseStudyModalOpen;
+
   return (
     <div className="min-h-screen bg-[#08080a] text-[#F4F4F6] relative selection:bg-acid selection:text-black">
-      {/* Navbar */}
+      {/* Navbar with auto-concealment when any modal is open */}
       <Navbar
         activeAudio={activeAudio}
         onToggleAudio={handleToggleAudio}
         onOpenConfigLinks={() => setIsConfigModalOpen(true)}
+        isModalOpen={isAnyModalOpen}
       />
 
       {/* Main Content Sections */}
@@ -100,7 +104,9 @@ export const App: React.FC = () => {
         <OriginSection
           onOpenConfigLinks={() => setIsConfigModalOpen(true)}
         />
-        <ExperimentsSection />
+        <ExperimentsSection
+          onModalStateChange={setIsCaseStudyModalOpen}
+        />
         <VoiceLabSection />
         <GrowthArenaSection />
         <AskMeAnythingSection />

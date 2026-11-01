@@ -19,7 +19,11 @@ import {
   Zap,
   Info,
   Copy,
-  Check
+  Check,
+  Bug,
+  Layout,
+  Cpu,
+  Share2
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -64,6 +68,14 @@ export const VoiceLabSection: React.FC = () => {
     { num: 4, label: 'WORKING RESULT', subtitle: 'Execution & Production Artifact' },
   ];
 
+  const workflowIcons: Record<string, React.ReactNode> = {
+    'react-component': <Code2 className="w-4 h-4 text-acid" />,
+    'bug-fix': <Bug className="w-4 h-4 text-acid" />,
+    'prd-writing': <FileText className="w-4 h-4 text-acid" />,
+    'growth-campaign': <Share2 className="w-4 h-4 text-acid" />,
+    'project-doc': <Cpu className="w-4 h-4 text-acid" />,
+  };
+
   const handleCopyCode = (text: string) => {
     navigator.clipboard.writeText(text);
     setCopiedCode(true);
@@ -71,7 +83,7 @@ export const VoiceLabSection: React.FC = () => {
   };
 
   return (
-    <section id="voice-lab" className="py-28 border-t border-white/10 bg-[#070709] relative z-10">
+    <section id="voice-lab" className="scroll-mt-28 py-24 sm:py-28 border-t border-white/10 bg-[#070709] relative z-10">
       <div className="absolute top-1/4 right-0 w-[550px] h-[350px] bg-acid/5 blur-[160px] pointer-events-none rounded-full" />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -83,7 +95,7 @@ export const VoiceLabSection: React.FC = () => {
         />
 
         {/* Notice & Disclaimer */}
-        <div className="mb-10 p-4 rounded-2xl bg-[#0d0d16] border border-acid/25 flex flex-wrap items-center justify-between gap-3 text-xs font-mono">
+        <div className="mb-9 p-4 rounded-2xl bg-[#0d0d16] border border-acid/25 flex flex-wrap items-center justify-between gap-3 text-xs font-mono">
           <div className="flex items-center gap-2.5 text-[#A1A1AA]">
             <Info className="w-4 h-4 text-acid shrink-0" />
             <span>
@@ -95,9 +107,38 @@ export const VoiceLabSection: React.FC = () => {
           </span>
         </div>
 
-        {/* Workflow Domain Selector */}
-        <div className="mb-8 flex flex-wrap items-center justify-between gap-4">
-          <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none w-full lg:w-auto">
+        {/* Responsive 5-Workflow Grid (Visible on Desktop & Mobile without Cutoff) */}
+        <div className="mb-9">
+          <div className="flex items-center justify-between mb-3">
+            <span className="font-mono text-xs uppercase tracking-wider text-[#71717A] font-bold">
+              Select Developer Workflow (5 Scenarios)
+            </span>
+            {/* Mode Switcher */}
+            <div className="flex items-center gap-1.5 p-1 rounded-xl bg-[#0e0e16] border border-white/10">
+              <button
+                onClick={() => setComparisonMode('pipeline')}
+                className={`px-3 py-1 text-xs font-mono rounded-lg transition ${
+                  comparisonMode === 'pipeline'
+                    ? 'bg-acid text-black font-bold'
+                    : 'text-[#8E8E98] hover:text-white'
+                }`}
+              >
+                4-Stage Pipeline
+              </button>
+              <button
+                onClick={() => setComparisonMode('diff')}
+                className={`px-3 py-1 text-xs font-mono rounded-lg transition ${
+                  comparisonMode === 'diff'
+                    ? 'bg-acid text-black font-bold'
+                    : 'text-[#8E8E98] hover:text-white'
+                }`}
+              >
+                Before / After Diff
+              </button>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-2.5 sm:gap-3">
             {VOICE_LAB_WORKFLOWS.map((wf) => {
               const isSelected = wf.id === selectedWorkflowId;
               return (
@@ -108,55 +149,54 @@ export const VoiceLabSection: React.FC = () => {
                     setActiveStage(0);
                     setIsSimulatingAudio(false);
                   }}
-                  className={`px-4 py-2.5 rounded-2xl font-mono text-xs tracking-wider transition whitespace-nowrap flex items-center gap-2 ${
+                  className={`p-3.5 rounded-2xl border text-left transition-all duration-200 flex flex-col justify-between ${
                     isSelected
-                      ? 'bg-acid text-black font-extrabold shadow-lg shadow-acid/20'
-                      : 'bg-[#0e0e16] border border-white/10 text-[#8E8E98] hover:text-white hover:border-white/20'
+                      ? 'bg-[#141424] border-acid shadow-lg shadow-acid/15 ring-1 ring-acid/50'
+                      : 'bg-[#09090e] border-white/10 hover:border-white/20 text-[#8E8E98]'
                   }`}
                 >
-                  <Terminal className="w-3.5 h-3.5" />
-                  <span>{wf.title}</span>
+                  <div className="space-y-1.5">
+                    <div className="flex items-center justify-between">
+                      <span className="p-1 rounded-lg bg-black border border-white/10">
+                        {workflowIcons[wf.id] || <Terminal className="w-3.5 h-3.5 text-acid" />}
+                      </span>
+                      <span className="text-[10px] font-mono text-[#71717A] uppercase">
+                        {wf.stages.workingResult.type}
+                      </span>
+                    </div>
+                    <h4
+                      className={`font-display font-bold text-xs sm:text-sm line-clamp-2 leading-snug ${
+                        isSelected ? 'text-white' : 'text-[#A1A1AA]'
+                      }`}
+                    >
+                      {wf.title}
+                    </h4>
+                  </div>
+
+                  <span
+                    className={`text-[10px] font-mono block mt-2 ${
+                      isSelected ? 'text-acid font-bold' : 'text-[#71717A]'
+                    }`}
+                  >
+                    {wf.category}
+                  </span>
                 </button>
               );
             })}
           </div>
-
-          {/* Mode Switcher */}
-          <div className="flex items-center gap-1.5 p-1 rounded-xl bg-[#0e0e16] border border-white/10">
-            <button
-              onClick={() => setComparisonMode('pipeline')}
-              className={`px-3.5 py-1.5 text-xs font-mono rounded-lg transition ${
-                comparisonMode === 'pipeline'
-                  ? 'bg-acid text-black font-bold'
-                  : 'text-[#8E8E98] hover:text-white'
-              }`}
-            >
-              4-Stage Pipeline
-            </button>
-            <button
-              onClick={() => setComparisonMode('diff')}
-              className={`px-3.5 py-1.5 text-xs font-mono rounded-lg transition ${
-                comparisonMode === 'diff'
-                  ? 'bg-acid text-black font-bold'
-                  : 'text-[#8E8E98] hover:text-white'
-              }`}
-            >
-              Raw vs Structured (Diff)
-            </button>
-          </div>
         </div>
 
         {/* Workflow Info Bar */}
-        <div className="p-4 rounded-2xl bg-[#09090e] border border-white/10 mb-8 flex flex-wrap items-center justify-between gap-4 font-mono text-xs">
+        <div className="p-4 rounded-2xl bg-[#09090e] border border-white/10 mb-7 flex flex-wrap items-center justify-between gap-4 font-mono text-xs">
           <div className="flex items-center gap-3">
-            <span className="text-[#71717A]">DOMAIN:</span>
+            <span className="text-[#71717A]">ACTIVE DOMAIN:</span>
             <span className="text-acid font-bold uppercase">{activeWorkflow.category}</span>
           </div>
 
           <div className="flex items-center gap-4 text-[#A1A1AA]">
             <span className="flex items-center gap-1.5">
               <Clock className="w-3.5 h-3.5 text-[#71717A]" />
-              <span>Voice Spoken: {activeWorkflow.durationEstimate}</span>
+              <span>Voice Duration: {activeWorkflow.durationEstimate}</span>
             </span>
             <span className="h-3 w-px bg-white/10" />
             <span className="text-emerald-400 font-bold">
@@ -169,9 +209,9 @@ export const VoiceLabSection: React.FC = () => {
         {/* VIEW 1: 4-STAGE PIPELINE STEPPER */}
         {/* ======================================================== */}
         {comparisonMode === 'pipeline' && (
-          <div className="space-y-8">
+          <div className="space-y-6 sm:space-y-7">
             {/* 4 Pipeline Stages Navigation */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-2.5 sm:gap-3">
               {stagesList.map((stage, idx) => {
                 const isActive = activeStage === idx;
                 const isPast = activeStage > idx;
@@ -180,7 +220,7 @@ export const VoiceLabSection: React.FC = () => {
                   <button
                     key={stage.num}
                     onClick={() => setActiveStage(idx)}
-                    className={`p-4 rounded-2xl border text-left transition-all duration-200 relative overflow-hidden ${
+                    className={`p-3.5 sm:p-4 rounded-2xl border text-left transition-all duration-200 relative overflow-hidden ${
                       isActive
                         ? 'bg-[#141422] border-acid shadow-xl shadow-acid/15'
                         : isPast
@@ -188,7 +228,7 @@ export const VoiceLabSection: React.FC = () => {
                         : 'bg-[#09090e] border-white/5 text-[#71717A] hover:border-white/20'
                     }`}
                   >
-                    <div className="flex items-center justify-between mb-2">
+                    <div className="flex items-center justify-between mb-1.5">
                       <span
                         className={`font-mono text-xs font-bold px-2 py-0.5 rounded ${
                           isActive
@@ -203,7 +243,7 @@ export const VoiceLabSection: React.FC = () => {
                       {isPast && <CheckCircle className="w-3.5 h-3.5 text-emerald-400" />}
                     </div>
                     <span
-                      className={`block font-display font-bold text-sm ${
+                      className={`block font-display font-bold text-xs sm:text-sm ${
                         isActive ? 'text-acid' : 'text-white'
                       }`}
                     >
@@ -218,14 +258,14 @@ export const VoiceLabSection: React.FC = () => {
             </div>
 
             {/* Stage Detail Card */}
-            <div className="p-7 sm:p-10 rounded-3xl bg-[#09090e] border border-white/10 shadow-2xl relative min-h-[420px]">
+            <div className="p-6 sm:p-8 rounded-3xl bg-[#09090e] border border-white/10 shadow-2xl relative">
               {/* STAGE 1: RAW THOUGHT */}
               {activeStage === 0 && (
-                <div className="space-y-6">
-                  <div className="flex flex-wrap items-center justify-between gap-3 pb-4 border-b border-white/10">
+                <div className="space-y-5">
+                  <div className="flex flex-wrap items-center justify-between gap-3 pb-3 border-b border-white/10">
                     <div className="flex items-center gap-2.5">
                       <span className="w-2.5 h-2.5 rounded-full bg-amber-400" />
-                      <h4 className="font-display font-bold text-xl text-white">
+                      <h4 className="font-display font-bold text-lg sm:text-xl text-white">
                         Stage 1: Raw Cognitive Stream (Unstructured Speech)
                       </h4>
                     </div>
@@ -252,20 +292,20 @@ export const VoiceLabSection: React.FC = () => {
                     </div>
                   )}
 
-                  <div className="p-6 sm:p-8 rounded-2xl bg-[#101018] border border-white/10 relative">
+                  <div className="p-5 sm:p-7 rounded-2xl bg-[#101018] border border-white/10 relative">
                     <span className="text-[10px] font-mono text-amber-400 uppercase tracking-widest block mb-2 font-bold">
                       // STREAM OF CONSCIOUSNESS SPOKEN VOICE:
                     </span>
-                    <p className="text-base sm:text-lg text-white font-mono italic leading-relaxed">
+                    <p className="text-sm sm:text-base text-white font-mono italic leading-relaxed">
                       {activeWorkflow.stages.rawThought}
                     </p>
                   </div>
 
                   <p className="text-xs text-[#8E8E98] font-sans leading-relaxed">
-                    Notice how natural human speech is messy: pauses, filler words, and meandering thought tangents. Trying to type this in an IDE or Slack causes friction and hesitation. Speaking it takes mere seconds.
+                    Notice how natural human speech is messy: pauses, filler words, and meandering thought tangents. Speaking it takes mere seconds, bypassing keyboard friction.
                   </p>
 
-                  <div className="flex justify-end pt-4">
+                  <div className="flex justify-end pt-2">
                     <button
                       onClick={() => setActiveStage(1)}
                       className="px-6 py-3 rounded-2xl bg-acid text-black font-display font-bold text-xs tracking-wider flex items-center gap-2 hover:bg-[#E5FF4D] transition shadow-lg shadow-acid/15"
@@ -279,40 +319,40 @@ export const VoiceLabSection: React.FC = () => {
 
               {/* STAGE 2: VOICE CAPTURE */}
               {activeStage === 1 && (
-                <div className="space-y-6">
-                  <div className="flex items-center gap-2.5 pb-4 border-b border-white/10">
+                <div className="space-y-5">
+                  <div className="flex items-center gap-2.5 pb-3 border-b border-white/10">
                     <span className="w-2.5 h-2.5 rounded-full bg-sky-400" />
-                    <h4 className="font-display font-bold text-xl text-white">
+                    <h4 className="font-display font-bold text-lg sm:text-xl text-white">
                       Stage 2: Wispr Flow Acoustic Parsing & Text Normalization
                     </h4>
                   </div>
 
-                  <div className="p-6 sm:p-8 rounded-2xl bg-[#09121a] border border-sky-900/40 space-y-3">
+                  <div className="p-5 sm:p-7 rounded-2xl bg-[#09121a] border border-sky-900/40 space-y-2.5">
                     <div className="flex items-center justify-between text-xs font-mono text-sky-400 font-bold">
                       <span>ACOUSTIC INGESTION & FORMATTING</span>
                       <span>220ms INFERENCE LATENCY</span>
                     </div>
-                    <p className="text-sm sm:text-base text-white font-mono leading-relaxed">
+                    <p className="text-xs sm:text-sm text-white font-mono leading-relaxed">
                       {activeWorkflow.stages.voiceCaptureTranscript}
                     </p>
                   </div>
 
-                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 font-mono text-xs">
-                    <div className="p-4 rounded-xl bg-[#101018] border border-white/10">
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 font-mono text-xs">
+                    <div className="p-3.5 rounded-xl bg-[#101018] border border-white/10">
                       <span className="text-[#71717A] block text-[10px]">FILLER REMOVAL</span>
                       <span className="text-acid font-bold">100% Cleared ("um", "like")</span>
                     </div>
-                    <div className="p-4 rounded-xl bg-[#101018] border border-white/10">
+                    <div className="p-3.5 rounded-xl bg-[#101018] border border-white/10">
                       <span className="text-[#71717A] block text-[10px]">PUNCTUATION SYNC</span>
                       <span className="text-acid font-bold">Semantic Auto-Punctuation</span>
                     </div>
-                    <div className="p-4 rounded-xl bg-[#101018] border border-white/10">
+                    <div className="p-3.5 rounded-xl bg-[#101018] border border-white/10">
                       <span className="text-[#71717A] block text-[10px]">INTENT ACCURACY</span>
                       <span className="text-acid font-bold">Preserved Core Entities</span>
                     </div>
                   </div>
 
-                  <div className="flex justify-between pt-4">
+                  <div className="flex justify-between pt-2">
                     <button
                       onClick={() => setActiveStage(0)}
                       className="px-4 py-2 text-xs font-mono text-[#8E8E98] hover:text-white"
@@ -332,15 +372,15 @@ export const VoiceLabSection: React.FC = () => {
 
               {/* STAGE 3: STRUCTURED PROMPT */}
               {activeStage === 2 && (
-                <div className="space-y-6">
-                  <div className="flex items-center gap-2.5 pb-4 border-b border-white/10">
+                <div className="space-y-5">
+                  <div className="flex items-center gap-2.5 pb-3 border-b border-white/10">
                     <span className="w-2.5 h-2.5 rounded-full bg-purple-400" />
-                    <h4 className="font-display font-bold text-xl text-white">
+                    <h4 className="font-display font-bold text-lg sm:text-xl text-white">
                       Stage 3: High-Signal Engineering Prompt
                     </h4>
                   </div>
 
-                  <div className="p-6 rounded-2xl bg-[#120d1c] border border-purple-900/40 relative font-mono text-xs sm:text-sm">
+                  <div className="p-5 sm:p-7 rounded-2xl bg-[#120d1c] border border-purple-900/40 relative font-mono text-xs sm:text-sm">
                     <pre className="text-[#E4E4E7] whitespace-pre-wrap leading-relaxed overflow-x-auto">
                       {activeWorkflow.stages.structuredPrompt}
                     </pre>
@@ -350,7 +390,7 @@ export const VoiceLabSection: React.FC = () => {
                     The prompt is now structured for immediate agentic execution or team peer review: explicit requirements, scoped constraints, and unambiguous acceptance criteria.
                   </p>
 
-                  <div className="flex justify-between pt-4">
+                  <div className="flex justify-between pt-2">
                     <button
                       onClick={() => setActiveStage(1)}
                       className="px-4 py-2 text-xs font-mono text-[#8E8E98] hover:text-white"
@@ -370,11 +410,11 @@ export const VoiceLabSection: React.FC = () => {
 
               {/* STAGE 4: WORKING RESULT */}
               {activeStage === 3 && (
-                <div className="space-y-6">
-                  <div className="flex flex-wrap items-center justify-between gap-3 pb-4 border-b border-white/10">
+                <div className="space-y-5">
+                  <div className="flex flex-wrap items-center justify-between gap-3 pb-3 border-b border-white/10">
                     <div className="flex items-center gap-2.5">
                       <span className="w-2.5 h-2.5 rounded-full bg-acid animate-ping" />
-                      <h4 className="font-display font-bold text-xl text-white">
+                      <h4 className="font-display font-bold text-lg sm:text-xl text-white">
                         Stage 4: Working Implementation ({activeWorkflow.stages.workingResult.title})
                       </h4>
                     </div>
@@ -385,7 +425,7 @@ export const VoiceLabSection: React.FC = () => {
 
                   {/* Special Live Interactive Widget for Workflow 1 (React Component) */}
                   {activeWorkflow.id === 'react-component' && (
-                    <div className="p-6 rounded-2xl bg-[#0e0e16] border border-white/10 space-y-4 shadow-xl">
+                    <div className="p-5 sm:p-6 rounded-2xl bg-[#0e0e16] border border-white/10 space-y-4 shadow-xl">
                       <div className="flex items-center justify-between text-xs font-mono text-[#8E8E98]">
                         <span className="text-acid font-bold">
                           LIVE COMPILED REACT COMPONENT
@@ -393,7 +433,7 @@ export const VoiceLabSection: React.FC = () => {
                         <span>Interactive Sandbox Controls</span>
                       </div>
 
-                      <div className="h-32 flex items-end justify-between gap-1.5 p-4 bg-black/70 rounded-xl border border-white/10">
+                      <div className="h-28 flex items-end justify-between gap-1.5 p-3.5 bg-black/70 rounded-xl border border-white/10">
                         {Array.from({ length: demoBarCount }).map((_, i) => (
                           <div
                             key={i}
@@ -436,7 +476,7 @@ export const VoiceLabSection: React.FC = () => {
                   )}
 
                   {/* Source Code View */}
-                  <div className="p-5 rounded-2xl bg-black/80 border border-white/10 max-h-[340px] overflow-y-auto font-mono text-xs relative">
+                  <div className="p-5 rounded-2xl bg-black/80 border border-white/10 max-h-[320px] overflow-y-auto font-mono text-xs relative">
                     <div className="flex items-center justify-between pb-2 mb-3 border-b border-white/10 text-[#71717A] text-[11px]">
                       <span>{activeWorkflow.stages.workingResult.title}</span>
                       <button
@@ -454,7 +494,7 @@ export const VoiceLabSection: React.FC = () => {
                     </pre>
                   </div>
 
-                  <div className="flex justify-between pt-4">
+                  <div className="flex justify-between pt-2">
                     <button
                       onClick={() => setActiveStage(2)}
                       className="px-4 py-2 text-xs font-mono text-[#8E8E98] hover:text-white"
@@ -479,32 +519,32 @@ export const VoiceLabSection: React.FC = () => {
         {/* ======================================================== */}
         {comparisonMode === 'diff' && (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="p-7 sm:p-10 rounded-3xl bg-[#0e0e16] border border-amber-900/30 space-y-4">
+            <div className="p-6 sm:p-8 rounded-3xl bg-[#0e0e16] border border-amber-900/30 space-y-4">
               <div className="flex items-center justify-between">
                 <span className="font-mono text-xs uppercase px-3 py-1 rounded-full bg-amber-500/15 text-amber-400 border border-amber-500/30 font-bold">
                   BEFORE: RAW HUMAN THOUGHT
                 </span>
                 <span className="font-mono text-xs text-[#71717A]">Spoken Ingestion</span>
               </div>
-              <p className="font-mono text-sm sm:text-base text-white italic leading-relaxed">
+              <p className="font-mono text-xs sm:text-sm text-white italic leading-relaxed">
                 {activeWorkflow.stages.rawThought}
               </p>
-              <div className="p-4 rounded-xl bg-black/50 border border-white/5 text-xs font-mono text-[#8E8E98]">
+              <div className="p-3.5 rounded-xl bg-black/50 border border-white/5 text-xs font-mono text-[#8E8E98]">
                 Friction: Pauses, syntax hesitation, high resistance if forced to manually type into an IDE.
               </div>
             </div>
 
-            <div className="p-7 sm:p-10 rounded-3xl bg-[#0c140c] border border-acid/40 space-y-4 shadow-2xl">
+            <div className="p-6 sm:p-8 rounded-3xl bg-[#0c140c] border border-acid/40 space-y-4 shadow-2xl">
               <div className="flex items-center justify-between">
                 <span className="font-mono text-xs uppercase px-3 py-1 rounded-full bg-acid text-black font-bold">
                   AFTER: WISPR FLOW STRUCTURE
                 </span>
                 <span className="font-mono text-xs text-acid font-bold">Structured Prompt</span>
               </div>
-              <pre className="font-mono text-xs sm:text-sm text-[#E4E4E7] whitespace-pre-wrap leading-relaxed max-h-[300px] overflow-y-auto">
+              <pre className="font-mono text-xs sm:text-sm text-[#E4E4E7] whitespace-pre-wrap leading-relaxed max-h-[280px] overflow-y-auto">
                 {activeWorkflow.stages.structuredPrompt}
               </pre>
-              <div className="p-4 rounded-xl bg-black/60 border border-acid/20 text-xs font-mono text-acid">
+              <div className="p-3.5 rounded-xl bg-black/60 border border-acid/20 text-xs font-mono text-acid">
                 Result: Unambiguous technical instruction ready for immediate execution in under 60 seconds.
               </div>
             </div>

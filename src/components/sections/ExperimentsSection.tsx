@@ -3,6 +3,8 @@ import { SectionHeading } from '../common/SectionHeading';
 import { PROJECTS } from '../../data/portfolioData';
 import { ProjectCaseStudy } from '../../types';
 import { Modal } from '../common/Modal';
+import { AnimatedCounter } from '../common/AnimatedCounter';
+import { MagneticButton } from '../common/MagneticButton';
 import {
   ExternalLink,
   Layers,
@@ -25,7 +27,13 @@ import {
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 
-export const ExperimentsSection: React.FC = () => {
+interface ExperimentsSectionProps {
+  onModalStateChange?: (isOpen: boolean) => void;
+}
+
+export const ExperimentsSection: React.FC<ExperimentsSectionProps> = ({
+  onModalStateChange,
+}) => {
   const [selectedProject, setSelectedProject] = useState<ProjectCaseStudy | null>(null);
 
   // 1. GoDuet Interactive State
@@ -53,12 +61,41 @@ export const ExperimentsSection: React.FC = () => {
   const [floorPlanRotation, setFloorPlanRotation] = useState<number>(30);
   const [floorPlanLighting, setFloorPlanLighting] = useState<'day' | 'golden' | 'night'>('day');
 
+  const openModal = (proj: ProjectCaseStudy) => {
+    setSelectedProject(proj);
+    if (onModalStateChange) onModalStateChange(true);
+  };
+
+  const closeModal = () => {
+    setSelectedProject(null);
+    if (onModalStateChange) onModalStateChange(false);
+  };
+
   const goduet = PROJECTS[0];
   const wellness = PROJECTS[1];
   const floorplan = PROJECTS[2];
 
+  // Verified & explicit illustrative metrics with full labels
+  const goduetHighlights = [
+    { label: 'Basket Architecture', value: 'Multi-Restaurant Dual Basket' },
+    { label: 'Implementation Stage', value: 'Functional Frontend Architecture' },
+    { label: 'Illustrative Delivery Saving', value: '-35% vs Disjoint Orders' },
+  ];
+
+  const wellnessHighlights = [
+    { label: 'Security Architecture', value: 'Zero-Knowledge Client-Side Security' },
+    { label: 'Daily Session Time', value: '< 30 Seconds / Day' },
+    { label: 'Implementation Status', value: 'Prototype & UI Architecture' },
+  ];
+
+  const floorplanHighlights = [
+    { label: 'Rendering Technology', value: 'Three.js / WebGL Rendering' },
+    { label: 'Target Viewport Latency', value: '60 FPS Smooth Orbit' },
+    { label: 'Core Mechanism', value: '2D Vector Path Extrusion' },
+  ];
+
   return (
-    <section id="experiments" className="py-28 border-t border-white/10 bg-[#070709] relative z-10">
+    <section id="experiments" className="scroll-mt-28 py-24 sm:py-28 border-t border-white/10 bg-[#070709] relative z-10">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <SectionHeading
           number="02 // EXPERIMENTS"
@@ -68,15 +105,15 @@ export const ExperimentsSection: React.FC = () => {
         />
 
         {/* CURATED EXHIBITION: 3 BESPOKE COMPOSITIONS */}
-        <div className="space-y-20">
+        <div className="space-y-16 sm:space-y-20">
           {/* ======================================================== */}
           {/* COMPOSITION 1: GoDuet (Multi-Restaurant Marketplace Grid) */}
           {/* ======================================================== */}
-          <div className="p-7 sm:p-10 lg:p-12 rounded-3xl bg-[#09090e] border border-white/10 shadow-2xl relative overflow-hidden group hover:border-acid/40 transition-all duration-300">
+          <div className="p-6 sm:p-9 lg:p-11 rounded-3xl bg-[#09090e] border border-white/10 shadow-2xl relative overflow-hidden group hover:border-acid/40 transition-all duration-300">
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
               {/* Left Column: Context & Philosophy */}
-              <div className="lg:col-span-7 space-y-5">
-                <div className="flex flex-wrap items-center gap-2.5">
+              <div className="lg:col-span-7 space-y-4 sm:space-y-5">
+                <div className="flex flex-wrap items-center gap-2">
                   <span className="font-mono text-xs uppercase px-3 py-1 rounded-full bg-acid/15 text-acid border border-acid/30 font-bold">
                     {goduet.category}
                   </span>
@@ -89,18 +126,18 @@ export const ExperimentsSection: React.FC = () => {
                   {goduet.title}
                 </h3>
 
-                <p className="text-base sm:text-lg text-[#A1A1AA] leading-relaxed font-sans max-w-xl">
+                <p className="text-sm sm:text-base text-[#A1A1AA] leading-relaxed font-sans max-w-xl">
                   {goduet.summary}
                 </p>
 
-                {/* Highlight Badges */}
-                <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 pt-2">
-                  {goduet.demoHighlights.map((hl, idx) => (
-                    <div key={idx} className="p-3 rounded-xl bg-[#101018] border border-white/10">
+                {/* Full Highlight Badges without Truncation */}
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 pt-1">
+                  {goduetHighlights.map((hl, idx) => (
+                    <div key={idx} className="p-3 rounded-2xl bg-[#101018] border border-white/10 flex flex-col justify-between">
                       <span className="text-[10px] font-mono text-[#71717A] uppercase block">
                         {hl.label}
                       </span>
-                      <span className="text-xs sm:text-sm font-mono font-bold text-acid truncate block mt-0.5">
+                      <span className="text-xs font-mono font-bold text-acid block mt-1 leading-snug">
                         {hl.value}
                       </span>
                     </div>
@@ -108,7 +145,7 @@ export const ExperimentsSection: React.FC = () => {
                 </div>
 
                 {/* Tech Stack Pills */}
-                <div className="flex flex-wrap gap-1.5 pt-2">
+                <div className="flex flex-wrap gap-1.5 pt-1">
                   {goduet.techStack.map((tech) => (
                     <span
                       key={tech}
@@ -119,14 +156,16 @@ export const ExperimentsSection: React.FC = () => {
                   ))}
                 </div>
 
-                <div className="pt-4 flex flex-wrap items-center gap-4">
-                  <button
-                    onClick={() => setSelectedProject(goduet)}
-                    className="px-6 py-3.5 rounded-2xl bg-acid text-black font-display font-black text-xs tracking-wider hover:bg-[#E5FF4D] transition shadow-lg shadow-acid/15 flex items-center gap-2 group/btn"
-                  >
-                    <span>VIEW FULL CASE STUDY & TRADE-OFFS</span>
-                    <ArrowRight className="w-4 h-4 transition-transform group-hover/btn:translate-x-1" />
-                  </button>
+                <div className="pt-3 flex flex-wrap items-center gap-4">
+                  <MagneticButton strength={15}>
+                    <button
+                      onClick={() => openModal(goduet)}
+                      className="px-6 py-3.5 rounded-2xl bg-acid text-black font-display font-black text-xs tracking-wider hover:bg-[#E5FF4D] transition shadow-lg shadow-acid/15 flex items-center gap-2 group/btn"
+                    >
+                      <span>VIEW FULL CASE STUDY & TRADE-OFFS</span>
+                      <ArrowRight className="w-4 h-4 transition-transform group-hover/btn:translate-x-1" />
+                    </button>
+                  </MagneticButton>
                   <span className="text-xs font-mono text-[#71717A]">
                     Prototype Verification Active
                   </span>
@@ -135,8 +174,8 @@ export const ExperimentsSection: React.FC = () => {
 
               {/* Right Column: Interactive Dual-Restaurant Basket Sandbox */}
               <div className="lg:col-span-5">
-                <div className="p-6 rounded-2xl bg-[#0e0e16] border border-white/10 shadow-2xl relative space-y-4">
-                  <div className="flex items-center justify-between pb-3 border-b border-white/10">
+                <div className="p-5 sm:p-6 rounded-2xl bg-[#0e0e16] border border-white/10 shadow-2xl relative space-y-3.5">
+                  <div className="flex items-center justify-between pb-2.5 border-b border-white/10">
                     <div className="flex items-center gap-2">
                       <span className="w-2.5 h-2.5 rounded-full bg-acid animate-ping" />
                       <span className="font-mono text-xs font-bold text-white uppercase">
@@ -152,17 +191,17 @@ export const ExperimentsSection: React.FC = () => {
                     Test multi-restaurant menu bundling with synchronized courier consolidation:
                   </p>
 
-                  <div className="space-y-2.5">
+                  <div className="space-y-2">
                     {/* Restaurant A */}
-                    <label className="flex items-center justify-between p-3.5 rounded-xl bg-[#141420] border border-white/10 cursor-pointer hover:border-acid/40 transition">
-                      <div className="flex items-center gap-3">
+                    <label className="flex items-center justify-between p-3 rounded-xl bg-[#141420] border border-white/10 cursor-pointer hover:border-acid/40 transition">
+                      <div className="flex items-center gap-2.5">
                         <input
                           type="checkbox"
                           checked={goDuetBasket.restaurantA}
                           onChange={(e) =>
                             setGoDuetBasket((p) => ({ ...p, restaurantA: e.target.checked }))
                           }
-                          className="accent-acid w-4 h-4 rounded"
+                          className="accent-acid w-4 h-4 rounded cursor-pointer"
                         />
                         <div>
                           <span className="font-mono text-xs font-bold text-white block">
@@ -177,15 +216,15 @@ export const ExperimentsSection: React.FC = () => {
                     </label>
 
                     {/* Restaurant B */}
-                    <label className="flex items-center justify-between p-3.5 rounded-xl bg-[#141420] border border-white/10 cursor-pointer hover:border-acid/40 transition">
-                      <div className="flex items-center gap-3">
+                    <label className="flex items-center justify-between p-3 rounded-xl bg-[#141420] border border-white/10 cursor-pointer hover:border-acid/40 transition">
+                      <div className="flex items-center gap-2.5">
                         <input
                           type="checkbox"
                           checked={goDuetBasket.restaurantB}
                           onChange={(e) =>
                             setGoDuetBasket((p) => ({ ...p, restaurantB: e.target.checked }))
                           }
-                          className="accent-acid w-4 h-4 rounded"
+                          className="accent-acid w-4 h-4 rounded cursor-pointer"
                         />
                         <div>
                           <span className="font-mono text-xs font-bold text-white block">
@@ -200,8 +239,8 @@ export const ExperimentsSection: React.FC = () => {
                     </label>
                   </div>
 
-                  {/* Calculations */}
-                  <div className="p-4 rounded-xl bg-black/60 border border-white/10 font-mono text-xs space-y-1.5">
+                  {/* Calculations with Animated Counter */}
+                  <div className="p-3.5 rounded-xl bg-black/60 border border-white/10 font-mono text-xs space-y-1.5">
                     <div className="flex justify-between text-[#8E8E98] text-[11px]">
                       <span>Items Subtotal:</span>
                       <span className="text-white">
@@ -213,18 +252,26 @@ export const ExperimentsSection: React.FC = () => {
                     <div className="flex justify-between text-[#8E8E98] text-[11px]">
                       <span>Unified Courier Delivery:</span>
                       <span className="text-acid font-bold">
-                        {goDuetBasket.restaurantA && goDuetBasket.restaurantB
-                          ? '₹35 (Saved ₹35 vs 2 couriers)'
-                          : '₹35'}
+                        {goDuetBasket.restaurantA && goDuetBasket.restaurantB ? (
+                          <span>
+                            ₹35 (Saved <AnimatedCounter value={35} prefix="₹" /> vs 2 couriers)
+                          </span>
+                        ) : (
+                          '₹35'
+                        )}
                       </span>
                     </div>
                     <div className="pt-2 border-t border-white/10 flex justify-between font-bold text-white text-sm">
                       <span>Total Checkout:</span>
                       <span className="text-acid">
-                        ₹
-                        {(goDuetBasket.restaurantA ? 240 : 0) +
-                          (goDuetBasket.restaurantB ? 280 : 0) +
-                          35}
+                        <AnimatedCounter
+                          value={
+                            (goDuetBasket.restaurantA ? 240 : 0) +
+                            (goDuetBasket.restaurantB ? 280 : 0) +
+                            35
+                          }
+                          prefix="₹"
+                        />
                       </span>
                     </div>
                   </div>
@@ -236,12 +283,12 @@ export const ExperimentsSection: React.FC = () => {
           {/* ======================================================== */}
           {/* COMPOSITION 2: Private Wellness Check-in (Cyber Privacy Deck) */}
           {/* ======================================================== */}
-          <div className="p-7 sm:p-10 lg:p-12 rounded-3xl bg-[#09090e] border border-white/10 shadow-2xl relative overflow-hidden group hover:border-acid/40 transition-all duration-300">
+          <div className="p-6 sm:p-9 lg:p-11 rounded-3xl bg-[#09090e] border border-white/10 shadow-2xl relative overflow-hidden group hover:border-acid/40 transition-all duration-300">
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
               {/* Left Column: Interactive Security Vault & Mood Radar */}
               <div className="lg:col-span-5 order-2 lg:order-1">
-                <div className="p-6 rounded-2xl bg-[#0e0e16] border border-white/10 shadow-2xl relative space-y-4">
-                  <div className="flex items-center justify-between pb-3 border-b border-white/10">
+                <div className="p-5 sm:p-6 rounded-2xl bg-[#0e0e16] border border-white/10 shadow-2xl relative space-y-3.5">
+                  <div className="flex items-center justify-between pb-2.5 border-b border-white/10">
                     <div className="flex items-center gap-2">
                       <Lock className="w-3.5 h-3.5 text-acid" />
                       <span className="font-mono text-xs font-bold text-white uppercase">
@@ -346,8 +393,8 @@ export const ExperimentsSection: React.FC = () => {
               </div>
 
               {/* Right Column: Context & Philosophy */}
-              <div className="lg:col-span-7 space-y-5 order-1 lg:order-2">
-                <div className="flex flex-wrap items-center gap-2.5">
+              <div className="lg:col-span-7 space-y-4 sm:space-y-5 order-1 lg:order-2">
+                <div className="flex flex-wrap items-center gap-2">
                   <span className="font-mono text-xs uppercase px-3 py-1 rounded-full bg-acid/15 text-acid border border-acid/30 font-bold">
                     {wellness.category}
                   </span>
@@ -360,24 +407,25 @@ export const ExperimentsSection: React.FC = () => {
                   {wellness.title}
                 </h3>
 
-                <p className="text-base sm:text-lg text-[#A1A1AA] leading-relaxed font-sans max-w-xl">
+                <p className="text-sm sm:text-base text-[#A1A1AA] leading-relaxed font-sans max-w-xl">
                   {wellness.summary}
                 </p>
 
-                <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 pt-2">
-                  {wellness.demoHighlights.map((hl, idx) => (
-                    <div key={idx} className="p-3 rounded-xl bg-[#101018] border border-white/10">
+                {/* Highlight Badges without Truncation */}
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 pt-1">
+                  {wellnessHighlights.map((hl, idx) => (
+                    <div key={idx} className="p-3 rounded-2xl bg-[#101018] border border-white/10 flex flex-col justify-between">
                       <span className="text-[10px] font-mono text-[#71717A] uppercase block">
                         {hl.label}
                       </span>
-                      <span className="text-xs sm:text-sm font-mono font-bold text-acid truncate block mt-0.5">
+                      <span className="text-xs font-mono font-bold text-acid block mt-1 leading-snug">
                         {hl.value}
                       </span>
                     </div>
                   ))}
                 </div>
 
-                <div className="flex flex-wrap gap-1.5 pt-2">
+                <div className="flex flex-wrap gap-1.5 pt-1">
                   {wellness.techStack.map((tech) => (
                     <span
                       key={tech}
@@ -388,16 +436,18 @@ export const ExperimentsSection: React.FC = () => {
                   ))}
                 </div>
 
-                <div className="pt-4 flex flex-wrap items-center gap-4">
-                  <button
-                    onClick={() => setSelectedProject(wellness)}
-                    className="px-6 py-3.5 rounded-2xl bg-acid text-black font-display font-black text-xs tracking-wider hover:bg-[#E5FF4D] transition shadow-lg shadow-acid/15 flex items-center gap-2 group/btn"
-                  >
-                    <span>VIEW PRIVACY ARCHITECTURE & LESSONS</span>
-                    <ArrowRight className="w-4 h-4 transition-transform group-hover/btn:translate-x-1" />
-                  </button>
+                <div className="pt-3 flex flex-wrap items-center gap-4">
+                  <MagneticButton strength={15}>
+                    <button
+                      onClick={() => openModal(wellness)}
+                      className="px-6 py-3.5 rounded-2xl bg-acid text-black font-display font-black text-xs tracking-wider hover:bg-[#E5FF4D] transition shadow-lg shadow-acid/15 flex items-center gap-2 group/btn"
+                    >
+                      <span>VIEW PRIVACY ARCHITECTURE & LESSONS</span>
+                      <ArrowRight className="w-4 h-4 transition-transform group-hover/btn:translate-x-1" />
+                    </button>
+                  </MagneticButton>
                   <span className="text-xs font-mono text-[#71717A]">
-                    Zero Plaintext Logs
+                    Zero Plaintext Server Logs
                   </span>
                 </div>
               </div>
@@ -407,11 +457,11 @@ export const ExperimentsSection: React.FC = () => {
           {/* ======================================================== */}
           {/* COMPOSITION 3: Floor Plan to 3D Viewer (Spatial Deck) */}
           {/* ======================================================== */}
-          <div className="p-7 sm:p-10 lg:p-12 rounded-3xl bg-[#09090e] border border-white/10 shadow-2xl relative overflow-hidden group hover:border-acid/40 transition-all duration-300">
+          <div className="p-6 sm:p-9 lg:p-11 rounded-3xl bg-[#09090e] border border-white/10 shadow-2xl relative overflow-hidden group hover:border-acid/40 transition-all duration-300">
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
               {/* Left Column: Context & Philosophy */}
-              <div className="lg:col-span-7 space-y-5">
-                <div className="flex flex-wrap items-center gap-2.5">
+              <div className="lg:col-span-7 space-y-4 sm:space-y-5">
+                <div className="flex flex-wrap items-center gap-2">
                   <span className="font-mono text-xs uppercase px-3 py-1 rounded-full bg-acid/15 text-acid border border-acid/30 font-bold">
                     {floorplan.category}
                   </span>
@@ -424,24 +474,25 @@ export const ExperimentsSection: React.FC = () => {
                   {floorplan.title}
                 </h3>
 
-                <p className="text-base sm:text-lg text-[#A1A1AA] leading-relaxed font-sans max-w-xl">
+                <p className="text-sm sm:text-base text-[#A1A1AA] leading-relaxed font-sans max-w-xl">
                   {floorplan.summary}
                 </p>
 
-                <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 pt-2">
-                  {floorplan.demoHighlights.map((hl, idx) => (
-                    <div key={idx} className="p-3 rounded-xl bg-[#101018] border border-white/10">
+                {/* Highlight Badges without Truncation */}
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 pt-1">
+                  {floorplanHighlights.map((hl, idx) => (
+                    <div key={idx} className="p-3 rounded-2xl bg-[#101018] border border-white/10 flex flex-col justify-between">
                       <span className="text-[10px] font-mono text-[#71717A] uppercase block">
                         {hl.label}
                       </span>
-                      <span className="text-xs sm:text-sm font-mono font-bold text-acid truncate block mt-0.5">
+                      <span className="text-xs font-mono font-bold text-acid block mt-1 leading-snug">
                         {hl.value}
                       </span>
                     </div>
                   ))}
                 </div>
 
-                <div className="flex flex-wrap gap-1.5 pt-2">
+                <div className="flex flex-wrap gap-1.5 pt-1">
                   {floorplan.techStack.map((tech) => (
                     <span
                       key={tech}
@@ -452,14 +503,16 @@ export const ExperimentsSection: React.FC = () => {
                   ))}
                 </div>
 
-                <div className="pt-4 flex flex-wrap items-center gap-4">
-                  <button
-                    onClick={() => setSelectedProject(floorplan)}
-                    className="px-6 py-3.5 rounded-2xl bg-acid text-black font-display font-black text-xs tracking-wider hover:bg-[#E5FF4D] transition shadow-lg shadow-acid/15 flex items-center gap-2 group/btn"
-                  >
-                    <span>VIEW 3D EXTRUSION PIPELINE RFC</span>
-                    <ArrowRight className="w-4 h-4 transition-transform group-hover/btn:translate-x-1" />
-                  </button>
+                <div className="pt-3 flex flex-wrap items-center gap-4">
+                  <MagneticButton strength={15}>
+                    <button
+                      onClick={() => openModal(floorplan)}
+                      className="px-6 py-3.5 rounded-2xl bg-acid text-black font-display font-black text-xs tracking-wider hover:bg-[#E5FF4D] transition shadow-lg shadow-acid/15 flex items-center gap-2 group/btn"
+                    >
+                      <span>VIEW 3D EXTRUSION PIPELINE RFC</span>
+                      <ArrowRight className="w-4 h-4 transition-transform group-hover/btn:translate-x-1" />
+                    </button>
+                  </MagneticButton>
                   <span className="text-xs font-mono text-[#71717A]">
                     60 FPS WebGL
                   </span>
@@ -468,8 +521,8 @@ export const ExperimentsSection: React.FC = () => {
 
               {/* Right Column: Interactive 3D Spatial Orbital Viewport */}
               <div className="lg:col-span-5">
-                <div className="p-6 rounded-2xl bg-[#0e0e16] border border-white/10 shadow-2xl relative space-y-4">
-                  <div className="flex items-center justify-between pb-3 border-b border-white/10">
+                <div className="p-5 sm:p-6 rounded-2xl bg-[#0e0e16] border border-white/10 shadow-2xl relative space-y-3.5">
+                  <div className="flex items-center justify-between pb-2.5 border-b border-white/10">
                     <div className="flex items-center gap-2">
                       <Box className="w-3.5 h-3.5 text-acid" />
                       <span className="font-mono text-xs font-bold text-white uppercase">
@@ -553,12 +606,12 @@ export const ExperimentsSection: React.FC = () => {
       {selectedProject && (
         <Modal
           isOpen={!!selectedProject}
-          onClose={() => setSelectedProject(null)}
+          onClose={closeModal}
           title={selectedProject.title}
           tag={selectedProject.category}
           maxWidth="max-w-4xl"
         >
-          <div className="space-y-8 font-sans">
+          <div className="space-y-7 font-sans">
             {/* Header summary */}
             <div className="p-5 rounded-2xl bg-[#12121e] border border-white/10 space-y-2">
               <span className="font-mono text-xs text-acid uppercase font-bold tracking-wider">
@@ -570,8 +623,8 @@ export const ExperimentsSection: React.FC = () => {
             </div>
 
             {/* Problem & Business Hypothesis Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="p-6 rounded-2xl bg-[#0e0e16] border border-white/10 space-y-2.5">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+              <div className="p-5 sm:p-6 rounded-2xl bg-[#0e0e16] border border-white/10 space-y-2.5">
                 <div className="flex items-center gap-2 text-white font-display font-bold">
                   <span className="w-2 h-2 rounded-full bg-red-400" />
                   <h4>The Problem Unpacked</h4>
@@ -581,7 +634,7 @@ export const ExperimentsSection: React.FC = () => {
                 </p>
               </div>
 
-              <div className="p-6 rounded-2xl bg-[#0e0e16] border border-white/10 space-y-2.5">
+              <div className="p-5 sm:p-6 rounded-2xl bg-[#0e0e16] border border-white/10 space-y-2.5">
                 <div className="flex items-center gap-2 text-white font-display font-bold">
                   <span className="w-2 h-2 rounded-full bg-acid" />
                   <h4>Business / Product Solution</h4>
@@ -593,7 +646,7 @@ export const ExperimentsSection: React.FC = () => {
             </div>
 
             {/* Architecture / Technical Approach */}
-            <div className="p-6 rounded-2xl bg-[#0e0e16] border border-white/10 space-y-3">
+            <div className="p-5 sm:p-6 rounded-2xl bg-[#0e0e16] border border-white/10 space-y-3">
               <div className="flex items-center gap-2 text-white font-display font-bold">
                 <Layers className="w-4 h-4 text-acid" />
                 <h4>Technical Architecture & State Model</h4>
@@ -604,9 +657,9 @@ export const ExperimentsSection: React.FC = () => {
             </div>
 
             {/* What Worked vs What Failed */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
               {/* What Worked */}
-              <div className="p-6 rounded-2xl bg-[#0d1611] border border-emerald-900/40 space-y-3">
+              <div className="p-5 sm:p-6 rounded-2xl bg-[#0d1611] border border-emerald-900/40 space-y-3">
                 <div className="flex items-center gap-2 text-emerald-400 font-display font-bold">
                   <CheckCircle2 className="w-4 h-4" />
                   <h4>What Worked</h4>
@@ -622,7 +675,7 @@ export const ExperimentsSection: React.FC = () => {
               </div>
 
               {/* What Failed */}
-              <div className="p-6 rounded-2xl bg-[#170e10] border border-red-900/40 space-y-3">
+              <div className="p-5 sm:p-6 rounded-2xl bg-[#170e10] border border-red-900/40 space-y-3">
                 <div className="flex items-center gap-2 text-red-400 font-display font-bold">
                   <XCircle className="w-4 h-4" />
                   <h4>What Failed & Hard Truths</h4>
@@ -639,7 +692,7 @@ export const ExperimentsSection: React.FC = () => {
             </div>
 
             {/* What I Learned */}
-            <div className="p-6 rounded-2xl bg-acid/10 border border-acid/30 space-y-2">
+            <div className="p-5 sm:p-6 rounded-2xl bg-acid/10 border border-acid/30 space-y-2">
               <div className="flex items-center gap-2 text-acid font-display font-bold">
                 <Lightbulb className="w-4 h-4" />
                 <h4>Builder Reflection: What I Learned</h4>

@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { SectionHeading } from '../common/SectionHeading';
 import { PRODUCTIVITY_ITEMS } from '../../data/portfolioData';
 import { ProductivityItem } from '../../types';
+import { AnimatedCounter } from '../common/AnimatedCounter';
 import {
   Sparkles,
   Calculator,
@@ -59,7 +60,7 @@ export const NextChapterSection: React.FC = () => {
   };
 
   return (
-    <section id="next-chapter" className="py-28 border-t border-white/10 bg-[#070709] relative z-10">
+    <section id="next-chapter" className="scroll-mt-28 py-24 sm:py-28 border-t border-white/10 bg-[#070709] relative z-10">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <SectionHeading
           number="06 // THE NEXT CHAPTER"
@@ -71,7 +72,7 @@ export const NextChapterSection: React.FC = () => {
         {/* Future Ambition Quadrants */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5 mb-16">
           {/* Card 1: Future Ambitions */}
-          <div className="p-7 rounded-3xl bg-[#09090e] border border-white/10 space-y-3 shadow-xl">
+          <div className="p-7 rounded-3xl bg-[#09090e] border border-white/10 space-y-3 shadow-xl hover:border-acid/30 transition-all duration-200">
             <div className="flex items-center gap-2 text-acid font-mono text-xs font-bold uppercase">
               <Compass className="w-4 h-4" />
               <span>Future Ambitions</span>
@@ -82,7 +83,7 @@ export const NextChapterSection: React.FC = () => {
           </div>
 
           {/* Card 2: Skills to Develop */}
-          <div className="p-7 rounded-3xl bg-[#09090e] border border-white/10 space-y-3 shadow-xl">
+          <div className="p-7 rounded-3xl bg-[#09090e] border border-white/10 space-y-3 shadow-xl hover:border-acid/30 transition-all duration-200">
             <div className="flex items-center gap-2 text-acid font-mono text-xs font-bold uppercase">
               <Target className="w-4 h-4" />
               <span>Skills to Develop</span>
@@ -93,7 +94,7 @@ export const NextChapterSection: React.FC = () => {
           </div>
 
           {/* Card 3: What I Can Contribute */}
-          <div className="p-7 rounded-3xl bg-acid/10 border border-acid/30 space-y-3 shadow-xl">
+          <div className="p-7 rounded-3xl bg-acid/10 border border-acid/30 space-y-3 shadow-xl hover:border-acid/60 transition-all duration-200">
             <div className="flex items-center gap-2 text-acid font-mono text-xs font-bold uppercase">
               <Zap className="w-4 h-4" />
               <span>What I Can Contribute</span>
@@ -104,7 +105,7 @@ export const NextChapterSection: React.FC = () => {
           </div>
 
           {/* Card 4: WhisperCode Experiment */}
-          <div className="p-7 rounded-3xl bg-[#09090e] border border-white/10 space-y-3 shadow-xl">
+          <div className="p-7 rounded-3xl bg-[#09090e] border border-white/10 space-y-3 shadow-xl hover:border-acid/30 transition-all duration-200">
             <div className="flex items-center gap-2 text-acid font-mono text-xs font-bold uppercase">
               <Sparkles className="w-4 h-4" />
               <span>Upcoming Experiment</span>
@@ -145,15 +146,15 @@ export const NextChapterSection: React.FC = () => {
             </button>
           </div>
 
-          {/* Real-time Budget Counter Bar */}
+          {/* Real-time Budget Counter Bar with AnimatedCounter */}
           <div className="p-6 rounded-2xl bg-[#101018] border border-white/10 flex flex-wrap items-center justify-between gap-4">
             <div className="space-y-1">
               <span className="font-mono text-xs text-[#71717A] uppercase">
                 TOTAL PROPOSED ALLOCATION
               </span>
               <div className="flex items-baseline gap-2">
-                <span className="text-3xl sm:text-4xl font-display font-black text-acid">
-                  ${totalBudget.toLocaleString()}
+                <span className="text-3xl sm:text-4xl font-display font-black text-acid flex items-baseline">
+                  $<AnimatedCounter value={totalBudget} duration={350} />
                 </span>
                 <span className="text-sm font-mono text-[#71717A]">
                   / ${budgetLimit.toLocaleString()} TARGET
@@ -163,16 +164,24 @@ export const NextChapterSection: React.FC = () => {
 
             <div className="flex items-center gap-3 font-mono text-xs">
               <div
-                className={`px-4 py-2 rounded-xl border ${
+                className={`px-4 py-2 rounded-xl border flex items-center gap-1.5 ${
                   remainingBudget >= 0
                     ? 'bg-emerald-500/15 border-emerald-500/30 text-emerald-400 font-bold'
                     : 'bg-red-500/15 border-red-500/30 text-red-400 font-bold'
                 }`}
               >
                 {remainingBudget >= 0 ? (
-                  <span>Within Budget (${remainingBudget} remaining)</span>
+                  <>
+                    <span>Within Budget ($</span>
+                    <AnimatedCounter value={remainingBudget} duration={350} />
+                    <span> remaining)</span>
+                  </>
                 ) : (
-                  <span>Over Target (${Math.abs(remainingBudget)})</span>
+                  <>
+                    <span>Over Target ($</span>
+                    <AnimatedCounter value={Math.abs(remainingBudget)} duration={350} />
+                    <span>)</span>
+                  </>
                 )}
               </div>
             </div>
