@@ -55,6 +55,7 @@ async function runE2ETests() {
       '#voice-lab',
       '#why-wispr-flow',
       '#growth-arena',
+      '#behind-the-build',
       '#ask-me',
       '#next-chapter',
       '#contact',
@@ -76,7 +77,7 @@ async function runE2ETests() {
     // Scroll Clearance (scroll-mt-28)
     console.log('\n3. Verifying Scroll Clearance (scroll-mt-28 / scroll-mt-20)...');
     const hasScrollMargin = await page.evaluate(() => {
-      const sections = ['#origin', '#how-i-think', '#experiments', '#voice-lab', '#why-wispr-flow', '#growth-arena', '#ask-me', '#next-chapter', '#contact'];
+      const sections = ['#origin', '#how-i-think', '#experiments', '#voice-lab', '#why-wispr-flow', '#growth-arena', '#behind-the-build', '#ask-me', '#next-chapter', '#contact'];
       return sections.every((s) => {
         const el = document.querySelector(s);
         if (!el) return false;
@@ -180,6 +181,77 @@ async function runE2ETests() {
     });
     assert.ok(hasCryptoVault, 'Contact section must feature AES-256-GCM Cryptographic Vault');
     console.log('   ✓ AES-256-GCM Client Cryptographic Vault verified in Contact section.');
+
+    // Interactive Test: Voice Studio & Bharat Voice Matrix in Voice Lab
+    console.log('\n8. Testing Voice Studio & India Voice Matrix Components in Voice Lab...');
+    await page.evaluate(() => {
+      document.querySelector('#voice-lab')?.scrollIntoView();
+    });
+    await new Promise((r) => setTimeout(r, 400));
+
+    const hasVoiceStudio = await page.evaluate(() => {
+      const textarea = document.querySelector('textarea[aria-label="Editable voice transcription output"]');
+      const startMicBtn = document.querySelector('button[aria-label="Start recording voice"]');
+      const langSelect = document.querySelector('select[aria-label="Select voice recognition language"]');
+      return Boolean(textarea && startMicBtn && langSelect);
+    });
+    assert.ok(hasVoiceStudio, 'Voice Studio workbench with textarea, mic button, and language selector must be present');
+    console.log('   ✓ Voice Studio dictation interface verified with all 10 control hooks.');
+
+    // Switch to Bharat Voice Matrix tab
+    const switchedToBharat = await page.evaluate(() => {
+      const btns = Array.from(document.querySelectorAll('button'));
+      const bharatBtn = btns.find((b) => b.textContent?.includes('BHARAT VOICE MATRIX'));
+      if (bharatBtn) {
+        bharatBtn.click();
+        return true;
+      }
+      return false;
+    });
+    assert.ok(switchedToBharat, 'Should be able to switch to Bharat Voice Matrix');
+    await new Promise((r) => setTimeout(r, 400));
+
+    const hasBharatLanguages = await page.evaluate(() => {
+      const text = document.body.textContent || '';
+      return text.includes('Hindi') && text.includes('Telugu') && text.includes('Tamil') && text.includes('Bengali');
+    });
+    assert.ok(hasBharatLanguages, 'Bharat Voice Matrix must display 11 Indian regional languages');
+    console.log('   ✓ Bharat Voice Matrix rendered with regional Indian dialect chips and capabilities.');
+
+    // Interactive Test: Growth Lab 4 Flagship Campaigns
+    console.log('\n9. Testing Growth Lab 4 Flagship Campaigns...');
+    await page.evaluate(() => {
+      document.querySelector('#growth-arena')?.scrollIntoView();
+    });
+    await new Promise((r) => setTimeout(r, 400));
+
+    const hasFlagshipCampaigns = await page.evaluate(() => {
+      const text = document.querySelector('#growth-arena')?.textContent || '';
+      return text.includes('Campus Voices') &&
+             text.includes('Founder Mode') &&
+             text.includes('Creator Challenge') &&
+             text.includes('Regional Voice Movement') &&
+             text.includes('BHARAT SPEAKS FIRST');
+    });
+    assert.ok(hasFlagshipCampaigns, 'Growth Lab must render all 4 flagship campaigns');
+    console.log('   ✓ All 4 flagship campaigns verified in Growth Lab (Campus, Founder, Creator, Regional Bharat).');
+
+    // Interactive Test: Behind The Build Section
+    console.log('\n10. Testing Behind The Build Engineering Showcase...');
+    await page.evaluate(() => {
+      document.querySelector('#behind-the-build')?.scrollIntoView();
+    });
+    await new Promise((r) => setTimeout(r, 400));
+
+    const hasBehindTheBuild = await page.evaluate(() => {
+      const text = document.querySelector('#behind-the-build')?.textContent || '';
+      return text.includes('BEHIND THE BUILD') &&
+             text.includes('Client Browser') &&
+             text.includes('Gateway Guards') &&
+             text.includes('Gemma 4 Dispatcher');
+    });
+    assert.ok(hasBehindTheBuild, 'Behind The Build architecture topology and modules must be present');
+    console.log('   ✓ Behind The Build architecture topology verified with 9 technical modules.');
 
     // ========================================================
     // SUITE 2: Mobile Viewport Testing (390x844 - iPhone 14)

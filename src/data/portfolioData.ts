@@ -207,6 +207,12 @@ export const PROJECTS: ProjectCaseStudy[] = [
       'A prototype food ordering platform that solves the perennial roommate conflict: one person wants momos, another wants burgers, but no platform allows a single checkout without paying double delivery fees and waiting on separate couriers.',
     problem:
       'In hostel clusters and co-living apartments, meal ordering is inherently collective. However, existing aggregators (Zomato, Swiggy) force users to pick a single restaurant or place disjointed separate orders with doubled delivery charges, minimum order hurdles, and unsynchronized delivery arrivals.',
+    whyItMatters:
+      'Group food ordering in college hostels and shared flats is an everyday social ritual fraught with friction. Paying ₹120 in double delivery fees and tracking two disparate couriers causes groups to compromise on what they actually want to eat.',
+    mySolution:
+      'A micro-hub clustering architecture where restaurants within 600m are batched into a unified dual-pane browsing UI, single cart checkout, shared delivery fee, and synchronized courier dispatch.',
+    myContribution:
+      'Sole builder: conceptualized the product, created the interactive Figma designs, built the React/TypeScript cart state machine with atomic rollbacks, wrote the Node.js API prototype, and tested it with 24 hostel students across 3 residence halls.',
     businessIdea:
       'GoDuet clusters partner restaurants situated within a 600m radius of a micro-hub or common commercial strip. A unified courier collects both orders simultaneously, dropping them off as a single combined batch. Users split the delivery fee, lowering cost per diner while lifting average order value (AOV) for restaurants.',
     customerExperience:
@@ -234,6 +240,11 @@ export const PROJECTS: ProjectCaseStudy[] = [
     ],
     whatILearned:
       'Product desirability is only 20% of the battle; operations and unit economics govern marketplace survival. I learned to design fallback systems for partial failures instead of assuming happy paths.',
+    futureImprovements: [
+      'Integrate real-time kitchen tablet webhooks for sub-minute preparation sync',
+      'Dynamic courier dispatch bundling via algorithmic routing',
+      'Voice-command group cart additions ("Add chicken roll from Restaurant B to our cart")',
+    ],
     techStack: ['React', 'TypeScript', 'Tailwind CSS', 'State Machine (XState pattern)', 'Node.js prototype API', 'Geolocation APIs'],
     demoHighlights: [
       { label: 'Basket Capability', value: 'Multi-Restaurant Dual Basket' },
@@ -241,6 +252,7 @@ export const PROJECTS: ProjectCaseStudy[] = [
       { label: 'Simulated Delivery Cost', value: '-35% vs Disjoint Orders' },
     ],
     interactivePreviewType: 'goduet',
+    verifiedLink: { label: 'Interactive In-Portfolio Prototype', url: '#experiments', isLiveDemo: true },
   },
   {
     id: 'wellness-checkin',
@@ -253,6 +265,12 @@ export const PROJECTS: ProjectCaseStudy[] = [
       'A privacy-first mental health pulse tool built specifically for hostel students who fear social stigma and administrative surveillance, providing anonymous emotional trends and safe escalation pathways.',
     problem:
       'College hostel living is intensely communal. When students experience burnout, anxiety, or depression, they routinely avoid university counselling centers or public check-in apps because of deep fear of gossip, roommate judgment, or academic dean notification.',
+    whyItMatters:
+      'Mental health burnout among hostel students is exacerbated by high academic pressure and intense communal living. The fear of being reported to deans or gossiped about by peers prevents students from seeking support when they need it most.',
+    mySolution:
+      'A zero-knowledge daily pulse that encrypts all mood scores on the client device using Web Crypto AES-256-GCM before storage, paired with an emergency professional escalation pathway that connects to verified helplines without unmasking student identities.',
+    myContribution:
+      'Product design & security engineering: designed the empathetic 30-second mood slider interface, implemented client-side key derivation via PBKDF2 and AES-256-GCM encryption, and established the privacy architecture ensuring zero plaintext telemetry.',
     businessIdea:
       'A non-judgmental, frictionless 30-second daily check-in that never requires a name or student ID. Data is encrypted on the client device using local keys. Aggregated anonymized health trends can be monitored by student welfare bodies to spot batch-wide burnout before exam periods without identifying individuals.',
     customerExperience:
@@ -280,6 +298,11 @@ export const PROJECTS: ProjectCaseStudy[] = [
     ],
     whatILearned:
       'Empathy must be baked into the security architecture, not just the visual design. When users trust that you cannot read their data, their honesty skyrockets.',
+    futureImprovements: [
+      'Subtle local trend detection without decrypting logs on servers',
+      'Federated anonymized cohort analytics for student welfare bodies',
+      'Offline PWA synchronization with background cryptographic seal',
+    ],
     techStack: ['React', 'TypeScript', 'Web Crypto API', 'IndexedDB / LocalStorage', 'Framer Motion', 'Tailwind CSS'],
     demoHighlights: [
       { label: 'Security Model', value: 'Zero-Knowledge Client Encrypted' },
@@ -287,6 +310,7 @@ export const PROJECTS: ProjectCaseStudy[] = [
       { label: 'Status', value: 'Prototype & UI Architecture' },
     ],
     interactivePreviewType: 'wellness',
+    verifiedLink: { label: 'Interactive Cryptographic Vault Prototype', url: '#contact', isLiveDemo: true },
   },
   {
     id: 'floorplan-3d',
@@ -299,6 +323,12 @@ export const PROJECTS: ProjectCaseStudy[] = [
       'A web-based proof-of-concept that takes 2D floor plan schemas and extrudes them into an interactive 3D spatial model in real-time, allowing clients and non-architects to explore room scale and light before construction.',
     problem:
       '90% of home buyers and renovation clients cannot intuitively read flat 2D blueprint lines, wall symbols, and door swing markings. Professional 3D architectural rendering software (Revit, 3ds Max) is expensive, slow, and requires hours of manual modeling per revision.',
+    whyItMatters:
+      'Over 90% of non-architects cannot visualize how 2D blueprints translate to 3D living spaces. Costly rework during renovations happens because homeowners realize room proportions only after walls are constructed.',
+    mySolution:
+      'A client-side 2D vector path parser that dynamically extrudes closed polygon contours into 3D WebGL meshes using Three.js, supporting interactive orbital inspection and realistic daytime sunlight simulation.',
+    myContribution:
+      'Creative technologist & frontend developer: built the Canvas 2D polygon drawing pipeline, implemented Three.js ExtrudeGeometry with normal vector calculations, and created orbital camera navigation for web browsers.',
     businessIdea:
       'A lightweight browser-based tool that accepts simplified SVG/DXF or structured room coordinates, dynamically extruding walls, placing windows/doors, and rendering an interactive first-person or orbital 3D walkthrough with zero plugin installations.',
     customerExperience:
@@ -326,6 +356,11 @@ export const PROJECTS: ProjectCaseStudy[] = [
     ],
     whatILearned:
       'Spatial UX is about confidence. When users can freely rotate and inspect an environment, their anxiety about costly physical renovations drops drastically.',
+    futureImprovements: [
+      'Automated vector contour extraction from clean SVG/DXF files',
+      'Procedural texture mapping (hardwood, brick, glass) with PBR shaders',
+      'WebXR / Mobile AR room preview directly in iOS and Android browsers',
+    ],
     techStack: ['Three.js', 'React Three Fiber (concept)', 'HTML5 Canvas', 'TypeScript', 'Tailwind CSS', 'Vite'],
     demoHighlights: [
       { label: 'Rendering Engine', value: 'Three.js / WebGL' },
@@ -333,6 +368,7 @@ export const PROJECTS: ProjectCaseStudy[] = [
       { label: 'Core Mechanism', value: '2D Vector Path Extrusion' },
     ],
     interactivePreviewType: 'floorplan3d',
+    verifiedLink: { label: 'Interactive Spatial Simulation Spec', url: '#experiments', isLiveDemo: true },
   },
 ];
 
@@ -724,6 +760,19 @@ export const FLAGSHIP_CAMPAIGNS: CampaignProposal[] = [
       'Campus Dev Club Partnerships (GDG on Campus, ACM Student Chapters)',
       'Instagram Reels & Twitter/X short-form comparison clips',
     ],
+    marketingChannels: [
+      'Collegiate Hackathons & Tech Fests (Live speedrun stations)',
+      'Student Club Ambassador Programs (GDG, ACM, IEEE chapters)',
+      'Short-form Video Reels (Split-screen speed demonstrations)',
+      'Campus WhatsApp/Discord builder groups',
+    ],
+    exampleMessaging: [
+      '"Your brain has no backspace. Why should your IDE?"',
+      '"Dictate a complete React PRD in 60 seconds at our hackathon booth."',
+      '"Stop letting 45 WPM typing bottleneck your 180 WPM thinking."',
+    ],
+    experimentDesign:
+      'Hypothesis A/B test at ETHIndia & Smart India Hackathon: Half of participant teams receive instant Wispr Flow onboarding + custom tactile keycap rewards; the other half receives generic hackathon merchandise. Track Day-1 activation, Day-7 retention, and PRD word count.',
     contentIdeas: [
       'Split-screen reel: "Typing a React hook (1:45) vs Speaking a React hook with Wispr Flow (0:14)"',
       'The "Rambling to Clean PRD" transformation carousel showing real student chaos turned into crisp markdown',
@@ -736,9 +785,9 @@ export const FLAGSHIP_CAMPAIGNS: CampaignProposal[] = [
       { week: 'Week 4', action: 'Measure trial-to-D14 retention and invite top 20 student power users to an exclusive beta advisory circle.' },
     ],
     successMetricsHypotheses: [
-      { metric: 'New Active Trials', expectedLift: '+1,800 students', rationale: 'Driven by peer-to-peer competition at live events.' },
-      { metric: 'First-day Activation', expectedLift: '72%', rationale: 'Instant gratification of completing the 60-second speed challenge.' },
-      { metric: 'Day-14 Retention', expectedLift: '48%', rationale: 'Students who use Wispr Flow during an active project build persistent muscle memory.' },
+      { metric: 'New Active Trials (Hypothetical)', expectedLift: '+1,800 students', rationale: 'Driven by peer-to-peer competition at live events.' },
+      { metric: 'First-day Activation (Hypothetical)', expectedLift: '72%', rationale: 'Instant gratification of completing the 60-second speed challenge.' },
+      { metric: 'Day-14 Retention (Hypothetical)', expectedLift: '48%', rationale: 'Students who use Wispr Flow during an active project build persistent muscle memory.' },
     ],
     potentialRisks: [
       'Noisy hackathon environments could degrade microphone input if noise suppression is not highlighted.',
@@ -767,6 +816,19 @@ export const FLAGSHIP_CAMPAIGNS: CampaignProposal[] = [
       'Y Combinator & Indian Incubator WhatsApp/Slack communities',
       'Product Hunt launch with live founder walkthrough videos',
     ],
+    marketingChannels: [
+      'Twitter/X founder threads & raw Loom workflow shares',
+      'VC Portfolio Partner Perks (Kstart, Peak XV, Antler founder perks)',
+      'Substack engineering essays on cognitive throughput',
+      'Direct WhatsApp demo drops to batch founders',
+    ],
+    exampleMessaging: [
+      '"Draft your entire sprint roadmap on your morning walk."',
+      '"Built-in dictation types \'you effect\'. Wispr Flow formats useEffect(() => {}, [])."',
+      '"Reclaim 2 hours of typing fatigue every single day."',
+    ],
+    experimentDesign:
+      'Founder Cohort Experiment: Onboard 30 seed-stage founders across Bengaluru and Delhi with customized technical vocabulary profiles (Linear tags, GitHub usernames, repo names). Measure words dictated per morning and sprint ticket throughput.',
     contentIdeas: [
       'Loom-style breakdowns: "How I planned our entire Q3 sprint during my 12-minute commute"',
       'Technical glossary comparison: Showing Wispr Flow perfectly formatting `useEffect` vs Siri typing "you effect"',
@@ -779,9 +841,9 @@ export const FLAGSHIP_CAMPAIGNS: CampaignProposal[] = [
       { week: 'Week 4', action: 'Package the highest-performing workflows into a downloadable "Founder Voice Playbook".' },
     ],
     successMetricsHypotheses: [
-      { metric: 'Paid Conversion Rate', expectedLift: '14.5%', rationale: 'High willingness-to-pay when tied to direct hourly founder savings.' },
-      { metric: 'Organic Mentions on X', expectedLift: '+320 posts', rationale: 'Founders love flexing high-velocity development setups.' },
-      { metric: 'Weekly Words Spoken', expectedLift: '3,200 words/user', rationale: 'Voice replaces tedious manual Slack and PR drafting.' },
+      { metric: 'Paid Conversion Rate (Hypothetical)', expectedLift: '14.5%', rationale: 'High willingness-to-pay when tied to direct hourly founder savings.' },
+      { metric: 'Organic Mentions on X (Hypothetical)', expectedLift: '+320 posts', rationale: 'Founders love flexing high-velocity development setups.' },
+      { metric: 'Weekly Words Spoken (Hypothetical)', expectedLift: '3,200 words/user', rationale: 'Voice replaces tedious manual Slack and PR drafting.' },
     ],
     potentialRisks: [
       'Founders working in open offices might feel self-conscious speaking out loud unless whisper-level sensitivity is emphasized.',
@@ -809,6 +871,19 @@ export const FLAGSHIP_CAMPAIGNS: CampaignProposal[] = [
       'YouTube Tech commentary sponsorships',
       'LinkedIn thought-leadership carousels',
     ],
+    marketingChannels: [
+      'Creator Newsletter Co-Op (Sponsored issue drafted 100% via voice)',
+      'YouTube Behind-the-Scenes Vlogs (Real-time script drafting)',
+      'LinkedIn Carousel Tear-downs (Spoken audio vs Final post)',
+      'Creator Affiliate Program with custom voice-speed dashboards',
+    ],
+    exampleMessaging: [
+      '"Speak your video script in 8 minutes. Don\'t type it for 3 hours."',
+      '"The blank cursor is an enemy of creative voice. Just start talking."',
+      '"Turn a 10-minute voice memo into a published Substack essay."',
+    ],
+    experimentDesign:
+      'Creator Speed Run Challenge: 15 newsletter writers and YouTubers are given a prompt to write a 1,000-word essay. Group A types on mechanical keyboards; Group B dictates via Wispr Flow. Measure total drafting time and subjective cognitive fatigue score.',
     contentIdeas: [
       'Side-by-side timelapse: 10 minutes of talking vs 4 hours of typing a 2,000-word essay',
       '"Don\'t type your podcast show notes"—one-click voice workflow breakdown',
@@ -821,15 +896,72 @@ export const FLAGSHIP_CAMPAIGNS: CampaignProposal[] = [
       { week: 'Week 4', action: 'Aggregate viral testimonials into a creator wall of love.' },
     ],
     successMetricsHypotheses: [
-      { metric: 'Referral Coefficient (K)', expectedLift: '1.42', rationale: 'Creators naturally talk about the tools behind their content output.' },
-      { metric: 'Newsletter Signups via Landing Page', expectedLift: '+4,500', rationale: 'High social proof from trusted cultural voices.' },
-      { metric: 'Avg Session Frequency', expectedLift: '4.2x / week', rationale: 'Becomes the core step in every content ideation cycle.' },
+      { metric: 'Referral Coefficient (Hypothetical)', expectedLift: '1.42 K', rationale: 'Creators naturally talk about the tools behind their content output.' },
+      { metric: 'Landing Page Conversions (Hypothetical)', expectedLift: '+4,500 users', rationale: 'High social proof from trusted cultural voices.' },
+      { metric: 'Avg Weekly Frequency (Hypothetical)', expectedLift: '4.2x / week', rationale: 'Becomes the core step in every content ideation cycle.' },
     ],
     potentialRisks: [
       'Creators might worry about losing their distinct idiosyncratic writing voice to over-sanitized AI formatting.',
     ],
     learningAndIteration:
       'Ensure Wispr Flow preserves stylistic idioms and tonal personality rather than flattening output into generic corporate English.',
+  },
+  {
+    id: 'regional-voice-movement',
+    campaignLabel: 'Campaign 4: Regional Voice Movement',
+    title: 'Regional Voice Movement: "Bharat Speaks First"',
+    creativeHeadline: 'BHARAT SPEAKS FIRST.',
+    targetAudience: 'Multilingual Indian Builders & Regional Professionals',
+    challengeAddressed: 'Regional Language Adoption & Multilingual Dictation',
+    primaryObjective: 'Brand Awareness & Regional Community Adoption',
+    isFlagship: true,
+    problemAnalysis:
+      'Millions of Indian engineers, founders, and students brainstorm fluidly in Hindi, Telugu, Tamil, Marathi, or Hinglish, but are forced into clumsy keyboard transliteration tools. Traditional speech tools fail with Indian accents and code-switching.',
+    audienceInsight:
+      'Regional pride meets high-velocity building. When Indian creators see an AI tool recognize their native dialect, technical terms, and nuanced regional cadence without forcing Westernized pronunciation, it creates immediate viral word-of-mouth.',
+    campaignConcept:
+      'A grassroots showcase of 10 regional creator cohorts across Bengaluru, Hyderabad, Pune, Chennai, and Delhi demonstrating voice-first workflows in their native tongues. Side-by-side challenges showing rapid voice dictation in Hindi, Telugu, and Tamil converting effortlessly into clean English and regional documentation.',
+    distributionChannels: [
+      'Regional Tech Hub Meetups (Bengaluru, Hyderabad, Chennai, Pune)',
+      'Vernacular YouTube Tech Channels & Regional Podcasts',
+      'Collegiate Regional Language Clubs & WhatsApp Tech Communities',
+      'Twitter/X regional developer showcases',
+    ],
+    marketingChannels: [
+      'Vernacular Tech Communities (Telugu Coder Community, Hindi Tech Guides, Tamil Developers)',
+      'Regional Hackathon Bhasha Tracks (Dictate in native tongue, output in clean markdown)',
+      'Regional Podcasters & LinkedIn Creators (Bengaluru & Hyderabad builder networks)',
+      'Hyperlocal WhatsApp Engineering Groups across Tier-1/Tier-2 engineering colleges',
+    ],
+    exampleMessaging: [
+      '"Kyunki typing dimag ki speed nahi pakad sakti." (Because typing cannot match brain speed.)',
+      '"Type cheyadam aapandi, matladandi." (Stop typing, start speaking.)',
+      '"Externalize ideas in your native tongue; let Wispr Flow handle technical formatting."',
+    ],
+    experimentDesign:
+      'Pilot in Hyderabad and Bengaluru: Provide 50 regional developer ambassadors with Wispr Flow Pro licenses, measure daily words dictated across regional languages vs English, and track organic referral loops within local regional tech communities.',
+    contentIdeas: [
+      'Side-by-side: Transliterating on mobile keyboard vs speaking in Telugu/Hindi at 160 WPM',
+      'Hinglish code-mixing challenge: Dictating complex architectural thoughts in natural bilingual speech',
+      'State-by-state developer voice velocity leaderboards',
+    ],
+    executionTimeline: [
+      { week: 'Week 1', action: 'Curate 10 regional developer ambassadors across top Indian tech clusters.' },
+      { week: 'Week 2', action: 'Launch multilingual demonstration reels in Hindi, Telugu, Tamil, and Hinglish.' },
+      { week: 'Week 3', action: 'Host regional "Bhasha & Build" live voice-coding hackathons.' },
+      { week: 'Week 4', action: 'Evaluate multilingual retention cohorts and synthesize feedback for engine tuning.' },
+    ],
+    successMetricsHypotheses: [
+      { metric: 'Regional Activations (Hypothetical)', expectedLift: '+2,400 builders', rationale: 'Driven by high resonance of vernacular developer tooling.' },
+      { metric: 'Multilingual Dictation Ratio (Hypothetical)', expectedLift: '38% non-English', rationale: 'Encouraging natural bilingual cognitive drafting.' },
+      { metric: 'Organic Referral Loop (Hypothetical)', expectedLift: '1.45 K', rationale: 'Vernacular tech tools generate immense peer pride and sharing.' },
+    ],
+    potentialRisks: [
+      'Acoustic variations in dense urban transit or non-isolated environments.',
+      'Expectation of pure regional output vs code-mixed output requires clear UI expectations.',
+    ],
+    learningAndIteration:
+      'Validate whether Indian builders prefer pure regional language transcripts or bilingual code-mixed output (Hinglish/Tanglish). Adjust formatting heuristics accordingly.',
   },
 ];
 

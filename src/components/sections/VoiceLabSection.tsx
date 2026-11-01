@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { SectionHeading } from '../common/SectionHeading';
 import { VOICE_LAB_WORKFLOWS } from '../../data/portfolioData';
 import { VoiceLabWorkflow } from '../../types';
+import { VoiceStudio } from '../voice/VoiceStudio';
+import { IndiaVoiceExperience } from '../voice/IndiaVoiceExperience';
 import {
   Mic,
   Sparkles,
@@ -23,11 +25,14 @@ import {
   Bug,
   Layout,
   Cpu,
-  Share2
+  Share2,
+  Globe,
+  Radio
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 export const VoiceLabSection: React.FC = () => {
+  const [voiceLabView, setVoiceLabView] = useState<'studio' | 'pipeline' | 'india'>('studio');
   const [selectedWorkflowId, setSelectedWorkflowId] = useState<string>(VOICE_LAB_WORKFLOWS[0].id);
   const [activeStage, setActiveStage] = useState<number>(0);
   const [isSimulatingAudio, setIsSimulatingAudio] = useState<boolean>(false);
@@ -94,51 +99,113 @@ export const VoiceLabSection: React.FC = () => {
           subtitle="How I use Wispr Flow as an ambient cognitive co-processor. Transforming natural human speech velocity into clean code, rigorous PRDs, and executable architecture without the mechanical keyboard bottleneck."
         />
 
-        {/* Notice & Disclaimer */}
-        <div className="mb-9 p-4 rounded-2xl bg-[#0d0d16] border border-acid/25 flex flex-wrap items-center justify-between gap-3 text-xs font-mono">
-          <div className="flex items-center gap-2.5 text-[#A1A1AA]">
-            <Info className="w-4 h-4 text-acid shrink-0" />
-            <span>
-              <strong className="text-acid">Architectural Notice:</strong> Demonstrating authentic developer workflows. Wispr Flow transcription is presented via illustrative benchmarks without claiming direct private API hookup.
-            </span>
+        {/* Master Experience View Switcher (Voice Studio / Velocity Pipeline / Bharat Voice Matrix) */}
+        <div className="mb-8 flex flex-wrap items-center justify-between gap-3 p-2 rounded-2xl bg-[#0b0b14] border border-white/10 shadow-lg">
+          <div className="flex flex-wrap items-center gap-1.5 w-full sm:w-auto">
+            <button
+              onClick={() => setVoiceLabView('studio')}
+              className={`flex-1 sm:flex-initial px-4 py-2.5 rounded-xl font-mono text-xs font-bold transition flex items-center justify-center gap-2 ${
+                voiceLabView === 'studio'
+                  ? 'bg-acid text-black shadow-md shadow-acid/20'
+                  : 'text-[#A1A1AA] hover:text-white hover:bg-white/5'
+              }`}
+            >
+              <Radio className="w-3.5 h-3.5" />
+              <span>VOICE STUDIO (Live Dictation)</span>
+            </button>
+
+            <button
+              onClick={() => setVoiceLabView('pipeline')}
+              className={`flex-1 sm:flex-initial px-4 py-2.5 rounded-xl font-mono text-xs font-bold transition flex items-center justify-center gap-2 ${
+                voiceLabView === 'pipeline'
+                  ? 'bg-acid text-black shadow-md shadow-acid/20'
+                  : 'text-[#A1A1AA] hover:text-white hover:bg-white/5'
+              }`}
+            >
+              <Activity className="w-3.5 h-3.5" />
+              <span>VELOCITY PIPELINE (5 Scenarios)</span>
+            </button>
+
+            <button
+              onClick={() => setVoiceLabView('india')}
+              className={`flex-1 sm:flex-initial px-4 py-2.5 rounded-xl font-mono text-xs font-bold transition flex items-center justify-center gap-2 ${
+                voiceLabView === 'india'
+                  ? 'bg-acid text-black shadow-md shadow-acid/20'
+                  : 'text-[#A1A1AA] hover:text-white hover:bg-white/5'
+              }`}
+            >
+              <Globe className="w-3.5 h-3.5" />
+              <span>BHARAT VOICE MATRIX (11 Tongues)</span>
+            </button>
           </div>
-          <span className="text-acid font-bold uppercase tracking-wider">
-            Velocity Metric: ~3.2x Faster
+
+          <span className="text-[11px] font-mono text-[#71717A] hidden lg:inline pr-2">
+            Interactive Speech Lab
           </span>
         </div>
 
-        {/* Responsive 5-Workflow Grid (Visible on Desktop & Mobile without Cutoff) */}
-        <div className="mb-9">
-          <div className="flex items-center justify-between mb-3">
-            <span className="font-mono text-xs uppercase tracking-wider text-[#71717A] font-bold">
-              Select Developer Workflow (5 Scenarios)
-            </span>
-            {/* Mode Switcher */}
-            <div className="flex items-center gap-1.5 p-1 rounded-xl bg-[#0e0e16] border border-white/10">
-              <button
-                onClick={() => setComparisonMode('pipeline')}
-                className={`px-3 py-1 text-xs font-mono rounded-lg transition ${
-                  comparisonMode === 'pipeline'
-                    ? 'bg-acid text-black font-bold'
-                    : 'text-[#8E8E98] hover:text-white'
-                }`}
-              >
-                4-Stage Pipeline
-              </button>
-              <button
-                onClick={() => setComparisonMode('diff')}
-                className={`px-3 py-1 text-xs font-mono rounded-lg transition ${
-                  comparisonMode === 'diff'
-                    ? 'bg-acid text-black font-bold'
-                    : 'text-[#8E8E98] hover:text-white'
-                }`}
-              >
-                Before / After Diff
-              </button>
-            </div>
+        {/* VIEW 1: Live Voice Studio Workbench */}
+        {voiceLabView === 'studio' && (
+          <div className="space-y-6">
+            <VoiceStudio />
           </div>
+        )}
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-2.5 sm:gap-3">
+        {/* VIEW 2: India Voice Multilingual Matrix */}
+        {voiceLabView === 'india' && (
+          <div className="space-y-6">
+            <IndiaVoiceExperience />
+          </div>
+        )}
+
+        {/* VIEW 3: Thought-to-Execution Developer Pipeline */}
+        {voiceLabView === 'pipeline' && (
+          <div>
+            {/* Notice & Disclaimer */}
+            <div className="mb-9 p-4 rounded-2xl bg-[#0d0d16] border border-acid/25 flex flex-wrap items-center justify-between gap-3 text-xs font-mono">
+              <div className="flex items-center gap-2.5 text-[#A1A1AA]">
+                <Info className="w-4 h-4 text-acid shrink-0" />
+                <span>
+                  <strong className="text-acid">Architectural Notice:</strong> Demonstrating authentic developer workflows. Wispr Flow transcription is presented via illustrative benchmarks without claiming direct private API hookup.
+                </span>
+              </div>
+              <span className="text-acid font-bold uppercase tracking-wider">
+                Velocity Metric: ~3.2x Faster
+              </span>
+            </div>
+
+            {/* Responsive 5-Workflow Grid (Visible on Desktop & Mobile without Cutoff) */}
+            <div className="mb-9">
+              <div className="flex items-center justify-between mb-3">
+                <span className="font-mono text-xs uppercase tracking-wider text-[#71717A] font-bold">
+                  Select Developer Workflow (5 Scenarios)
+                </span>
+                {/* Mode Switcher */}
+                <div className="flex items-center gap-1.5 p-1 rounded-xl bg-[#0e0e16] border border-white/10">
+                  <button
+                    onClick={() => setComparisonMode('pipeline')}
+                    className={`px-3 py-1 text-xs font-mono rounded-lg transition ${
+                      comparisonMode === 'pipeline'
+                        ? 'bg-acid text-black font-bold'
+                        : 'text-[#8E8E98] hover:text-white'
+                    }`}
+                  >
+                    4-Stage Pipeline
+                  </button>
+                  <button
+                    onClick={() => setComparisonMode('diff')}
+                    className={`px-3 py-1 text-xs font-mono rounded-lg transition ${
+                      comparisonMode === 'diff'
+                        ? 'bg-acid text-black font-bold'
+                        : 'text-[#8E8E98] hover:text-white'
+                    }`}
+                  >
+                    Before / After Diff
+                  </button>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-2.5 sm:gap-3">
             {VOICE_LAB_WORKFLOWS.map((wf) => {
               const isSelected = wf.id === selectedWorkflowId;
               return (
@@ -548,6 +615,8 @@ export const VoiceLabSection: React.FC = () => {
                 Result: Unambiguous technical instruction ready for immediate execution in under 60 seconds.
               </div>
             </div>
+          </div>
+        )}
           </div>
         )}
       </div>

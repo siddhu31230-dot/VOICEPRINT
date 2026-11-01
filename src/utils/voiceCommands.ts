@@ -207,6 +207,34 @@ export function parseVoiceCommand(rawTranscript: string): VoiceCommandResult {
   }
 
   if (
+    t.includes('behind the build') ||
+    t === 'go to behind the build' ||
+    t === 'open architecture' ||
+    t.includes('system architecture') ||
+    t.includes('engineering blueprint')
+  ) {
+    return {
+      type: 'navigation',
+      targetId: '#behind-the-build',
+      label: 'Behind The Build (System Architecture)',
+      explanation: 'Navigating to Behind The Build Section (#behind-the-build)',
+    };
+  }
+
+  if (
+    t.includes('voice studio') ||
+    t === 'go to voice studio' ||
+    t === 'open voice studio'
+  ) {
+    return {
+      type: 'navigation',
+      targetId: '#voice-lab',
+      label: 'Voice Studio Workbench',
+      explanation: 'Navigating to Voice Studio Workbench (#voice-lab)',
+    };
+  }
+
+  if (
     t.includes('next chapter') ||
     t.includes('the next chapter') ||
     t.includes('setup section')

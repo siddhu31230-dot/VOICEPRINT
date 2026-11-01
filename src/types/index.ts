@@ -7,6 +7,9 @@ export interface ProjectCaseStudy {
   date: string;
   summary: string;
   problem: string;
+  whyItMatters?: string;
+  mySolution?: string;
+  myContribution?: string;
   businessIdea: string;
   customerExperience: string;
   architectureOrTechnicalApproach: string;
@@ -16,9 +19,11 @@ export interface ProjectCaseStudy {
   whatWorked: string[];
   whatFailed: string[];
   whatILearned: string;
+  futureImprovements?: string[];
   techStack: string[];
   demoHighlights: { label: string; value: string }[];
   interactivePreviewType: 'goduet' | 'wellness' | 'floorplan3d';
+  verifiedLink?: { label: string; url: string; isLiveDemo?: boolean };
 }
 
 export interface VoiceWorkflowStage {
@@ -73,8 +78,11 @@ export interface CampaignProposal {
   problemAnalysis: string;
   audienceInsight: string;
   campaignConcept: string;
+  marketingChannels?: string[];
   distributionChannels: string[];
+  exampleMessaging?: string[];
   contentIdeas: string[];
+  experimentDesign?: string;
   executionTimeline: { week: string; action: string }[];
   successMetricsHypotheses: { metric: string; expectedLift: string; rationale: string }[];
   potentialRisks: string[];

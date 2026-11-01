@@ -26,7 +26,8 @@ import {
   Sliders,
   CheckCircle,
   Users,
-  Compass
+  Compass,
+  Info
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -84,24 +85,25 @@ Generated via VOICEPRINT Growth Lab by Siddharth Singh (Wispr Flow India Hiring 
           subtitle="A tactical distribution playbook engineered specifically for Wispr Flow's India expansion. Choose from 3 flagship campaigns or customize parameters across student ambassadors, founder communities, and creators."
         />
 
-        {/* 3 Flagship Campaigns Showcase */}
+        {/* 4 Flagship Campaigns Showcase */}
         <div className="mb-7 p-4 sm:p-6 rounded-3xl bg-[#09090e] border border-white/10 shadow-xl space-y-3">
-          <div className="flex items-center justify-between">
+          <div className="flex flex-wrap items-center justify-between gap-2">
             <span className="font-mono text-xs uppercase tracking-wider text-acid font-bold flex items-center gap-2">
               <Zap className="w-4 h-4" />
-              <span>3 Flagship India Growth Campaigns (One-Click Activation)</span>
+              <span>4 Flagship India Growth Campaigns (One-Click Activation)</span>
             </span>
             <span className="text-[10px] font-mono text-[#71717A]">
-              Tested GTM Hypotheses
+              Strategic GTM Blueprints • Clearly Hypothesized
             </span>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
             {FLAGSHIP_CAMPAIGNS.map((flagship) => {
               const isSelected =
                 (flagship.id === 'brain-no-backspace' && selectedAudienceId === 'students') ||
                 (flagship.id === 'code-speed-of-thought' && selectedAudienceId === 'founders') ||
-                (flagship.id === 'whisper-dont-type' && selectedAudienceId === 'creators');
+                (flagship.id === 'zero-friction-writer' && selectedAudienceId === 'creators') ||
+                (flagship.id === 'regional-voice-movement' && selectedAudienceId === 'professionals');
 
               return (
                 <button
@@ -115,32 +117,39 @@ Generated via VOICEPRINT Growth Lab by Siddharth Singh (Wispr Flow India Hiring 
                       setSelectedAudienceId('founders');
                       setSelectedChallengeId('heavy-competition');
                       setSelectedObjectiveId('long-term-retention');
-                    } else {
+                    } else if (flagship.id === 'zero-friction-writer') {
                       setSelectedAudienceId('creators');
                       setSelectedChallengeId('adoption-friction');
                       setSelectedObjectiveId('organic-referrals');
+                    } else {
+                      setSelectedAudienceId('professionals');
+                      setSelectedChallengeId('community-growth');
+                      setSelectedObjectiveId('brand-awareness');
                     }
                   }}
-                  className={`p-4 rounded-2xl border text-left transition-all duration-200 relative ${
+                  className={`p-4 rounded-2xl border text-left transition-all duration-200 relative flex flex-col justify-between ${
                     isSelected
                       ? 'bg-acid/15 border-acid text-acid shadow-lg shadow-acid/15 ring-1 ring-acid/40'
                       : 'bg-[#101018] border-white/10 hover:border-acid/40 text-[#8E8E98]'
                   }`}
                 >
-                  <div className="flex items-center justify-between mb-1.5">
-                    <span className="text-[10px] font-mono font-bold uppercase text-acid">
-                      {flagship.campaignLabel || 'FLAGSHIP CAMPAIGN'}
+                  <div>
+                    <div className="flex items-center justify-between mb-1.5">
+                      <span className="text-[10px] font-mono font-bold uppercase text-acid">
+                        {flagship.campaignLabel?.split(':')[1]?.trim() || 'CAMPAIGN'}
+                      </span>
+                    </div>
+                    <span className="font-display font-black text-xs sm:text-sm text-white block">
+                      "{flagship.creativeHeadline}"
                     </span>
-                    <span className="text-[10px] font-mono text-[#71717A]">
-                      {flagship.targetAudience}
-                    </span>
+                    <p className="text-[11px] text-[#A1A1AA] mt-1.5 line-clamp-3 leading-relaxed">
+                      {flagship.campaignConcept}
+                    </p>
                   </div>
-                  <span className="font-display font-black text-xs sm:text-sm text-white block">
-                    "{flagship.creativeHeadline}"
-                  </span>
-                  <p className="text-[11px] text-[#A1A1AA] mt-1.5 line-clamp-2">
-                    {flagship.campaignConcept}
-                  </p>
+                  <div className="pt-3 mt-2 border-t border-white/5 flex items-center justify-between text-[10px] font-mono text-[#71717A]">
+                    <span>{flagship.targetAudience}</span>
+                    <span className="text-acid">Explore →</span>
+                  </div>
                 </button>
               );
             })}
@@ -297,10 +306,15 @@ Generated via VOICEPRINT Growth Lab by Siddharth Singh (Wispr Flow India Hiring 
 
           {/* Success Metrics Hypotheses */}
           <div className="p-5 rounded-2xl bg-[#111120] border border-acid/20 space-y-3">
-            <span className="text-xs font-mono text-acid font-bold uppercase tracking-wider flex items-center gap-2">
-              <BarChart3 className="w-4 h-4" />
-              <span>Projected Growth Lift (Empirical Hypotheses)</span>
-            </span>
+            <div className="flex items-center justify-between">
+              <span className="text-xs font-mono text-acid font-bold uppercase tracking-wider flex items-center gap-2">
+                <BarChart3 className="w-4 h-4" />
+                <span>Projected Growth Lift (Hypothetical Projections)</span>
+              </span>
+              <span className="text-[10px] font-mono text-amber-400 font-bold bg-amber-500/10 px-2 py-0.5 rounded border border-amber-500/30">
+                HYPOTHETICAL TARGETS
+              </span>
+            </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
               {currentProposal.successMetricsHypotheses.map((metric, i) => (
@@ -311,17 +325,83 @@ Generated via VOICEPRINT Growth Lab by Siddharth Singh (Wispr Flow India Hiring 
                   <span className="text-lg font-mono font-black text-white mt-0.5 block">
                     {metric.expectedLift}
                   </span>
+                  <span className="text-[10px] font-mono text-[#8E8E98] mt-1 block">
+                    {metric.rationale}
+                  </span>
                 </div>
               ))}
             </div>
           </div>
 
-          {/* Hiring Challenge Context Disclosure */}
-          <div className="pt-3 border-t border-white/10 flex items-center gap-2 text-[11px] font-mono text-[#71717A]">
-            <CheckCircle className="w-3.5 h-3.5 text-acid shrink-0" />
-            <span>
-              Engineered by Siddharth Singh as strategic portfolio proposals for Wispr Flow's India growth expansion.
-            </span>
+          {/* Marketing Channels & Example Messaging */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+            {/* Marketing Channels */}
+            <div className="p-5 rounded-2xl bg-[#10101c] border border-white/5 space-y-3">
+              <span className="text-xs font-mono text-acid font-bold uppercase tracking-wider block">
+                Target Marketing & Distribution Channels
+              </span>
+              <ul className="space-y-2 text-xs font-mono text-[#A1A1AA]">
+                {(currentProposal.marketingChannels || currentProposal.distributionChannels).map((ch, idx) => (
+                  <li key={idx} className="flex items-start gap-2">
+                    <span className="text-acid shrink-0 mt-0.5">•</span>
+                    <span>{ch}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            {/* Example Messaging */}
+            <div className="p-5 rounded-2xl bg-[#10101c] border border-white/5 space-y-3">
+              <span className="text-xs font-mono text-acid font-bold uppercase tracking-wider block">
+                Example Messaging & Ad Hooks
+              </span>
+              <ul className="space-y-2 text-xs font-mono text-white">
+                {(currentProposal.exampleMessaging || currentProposal.contentIdeas).map((msg, idx) => (
+                  <li key={idx} className="flex items-start gap-2 p-2 rounded-lg bg-black/40 border border-white/5">
+                    <span className="text-acid shrink-0 mt-0.5">"</span>
+                    <span className="italic">{msg.replace(/^"|"$/g, '')}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+
+          {/* Experiment Design & Potential Risks */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+            {/* Experiment Design */}
+            <div className="p-5 rounded-2xl bg-[#0e0e18] border border-white/5 space-y-2.5">
+              <span className="text-xs font-mono text-white font-bold uppercase tracking-wider flex items-center gap-2">
+                <Target className="w-3.5 h-3.5 text-acid" />
+                <span>Experiment Design & Validation Pilot</span>
+              </span>
+              <p className="text-xs text-[#A1A1AA] leading-relaxed font-sans">
+                {currentProposal.experimentDesign || currentProposal.learningAndIteration}
+              </p>
+            </div>
+
+            {/* Potential Risks */}
+            <div className="p-5 rounded-2xl bg-[#0e0e18] border border-white/5 space-y-2.5">
+              <span className="text-xs font-mono text-amber-400 font-bold uppercase tracking-wider flex items-center gap-2">
+                <AlertTriangle className="w-3.5 h-3.5 text-amber-400" />
+                <span>Identified Operational Risks & Mitigations</span>
+              </span>
+              <ul className="space-y-1.5 text-xs text-[#A1A1AA] font-sans">
+                {currentProposal.potentialRisks.map((risk, idx) => (
+                  <li key={idx} className="flex items-start gap-2">
+                    <span className="text-amber-400 shrink-0 mt-0.5">⚠</span>
+                    <span>{risk}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+
+          {/* Transparent Simulation Notice */}
+          <div className="p-4 rounded-2xl bg-amber-500/10 border border-amber-500/25 flex items-start gap-3 text-xs font-mono text-amber-200">
+            <Info className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" />
+            <p className="leading-relaxed">
+              <strong>Strategic Simulation Notice:</strong> All campaign proposals, projected metrics, and user growth hypotheses presented in this section are hypothetical strategic concepts formulated by Siddharth Singh for the Wispr Flow India Hiring Challenge 2026. They are not historical performance claims.
+            </p>
           </div>
         </motion.div>
       </div>

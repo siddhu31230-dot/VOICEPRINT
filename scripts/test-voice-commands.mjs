@@ -83,6 +83,8 @@ const navigationTests = [
   { text: 'Show why wispr flow', target: '#why-wispr-flow' },
   { text: 'Open growth arena', target: '#growth-arena' },
   { text: 'Go to ask me', target: '#ask-me' },
+  { text: 'Go to behind the build', target: '#behind-the-build' },
+  { text: 'open architecture', target: '#behind-the-build' },
   { text: 'Go to next chapter', target: '#next-chapter' },
   { text: 'Go to contact', target: '#contact' },
   { text: 'Go to top', target: '#home' },

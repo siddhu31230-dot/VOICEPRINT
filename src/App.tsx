@@ -8,6 +8,7 @@ import { VoiceLabSection } from './components/sections/VoiceLabSection';
 import { WhyWisprFlowSection } from './components/sections/WhyWisprFlowSection';
 import { GrowthArenaSection } from './components/sections/GrowthArenaSection';
 import { AskMeAnythingSection } from './components/sections/AskMeAnythingSection';
+import { BehindTheBuildSection } from './components/sections/BehindTheBuildSection';
 import { NextChapterSection } from './components/sections/NextChapterSection';
 import { ContactSection } from './components/sections/ContactSection';
 import { Footer } from './components/layout/Footer';
@@ -124,6 +125,7 @@ export const App: React.FC = () => {
         <AskMeAnythingSection
           onOpenTransparencyModal={() => setIsTransparencyModalOpen(true)}
         />
+        <BehindTheBuildSection />
         <NextChapterSection />
         <ContactSection
           links={links}

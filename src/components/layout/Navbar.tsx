@@ -31,6 +31,7 @@ export const Navbar: React.FC<NavbarProps> = ({
     { label: 'Why Wispr', href: '#why-wispr-flow' },
     { label: 'Growth Lab', href: '#growth-arena' },
     { label: 'Ask Me', href: '#ask-me' },
+    { label: 'Behind Build', href: '#behind-the-build' },
     { label: 'Contact', href: '#contact' },
   ];
 

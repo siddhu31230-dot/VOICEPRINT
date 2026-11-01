@@ -775,21 +775,41 @@ export const ExperimentsSection: React.FC<ExperimentsSectionProps> = ({
               <div className="p-5 sm:p-6 rounded-2xl bg-[#0e0e16] border border-white/10 space-y-2.5">
                 <div className="flex items-center gap-2 text-white font-display font-bold">
                   <span className="w-2 h-2 rounded-full bg-red-400" />
-                  <h4>The Problem Unpacked</h4>
+                  <h4>1. The Problem Unpacked</h4>
                 </div>
                 <p className="text-xs sm:text-sm text-[#A1A1AA] leading-relaxed">
                   {selectedProject.problem}
                 </p>
+                {selectedProject.whyItMatters && (
+                  <div className="pt-2 border-t border-white/5">
+                    <span className="text-[10px] font-mono text-acid font-bold uppercase block mb-1">
+                      2. Why It Matters
+                    </span>
+                    <p className="text-xs text-[#8E8E98] leading-relaxed">
+                      {selectedProject.whyItMatters}
+                    </p>
+                  </div>
+                )}
               </div>
 
               <div className="p-5 sm:p-6 rounded-2xl bg-[#0e0e16] border border-white/10 space-y-2.5">
                 <div className="flex items-center gap-2 text-white font-display font-bold">
                   <span className="w-2 h-2 rounded-full bg-acid" />
-                  <h4>Business / Product Solution</h4>
+                  <h4>3. Solution & Product Mechanics</h4>
                 </div>
                 <p className="text-xs sm:text-sm text-[#A1A1AA] leading-relaxed">
-                  {selectedProject.businessIdea}
+                  {selectedProject.mySolution || selectedProject.businessIdea}
                 </p>
+                {selectedProject.myContribution && (
+                  <div className="pt-2 border-t border-white/5">
+                    <span className="text-[10px] font-mono text-acid font-bold uppercase block mb-1">
+                      4. My Direct Contribution
+                    </span>
+                    <p className="text-xs text-[#8E8E98] leading-relaxed">
+                      {selectedProject.myContribution}
+                    </p>
+                  </div>
+                )}
               </div>
             </div>
 
@@ -797,20 +817,30 @@ export const ExperimentsSection: React.FC<ExperimentsSectionProps> = ({
             <div className="p-5 sm:p-6 rounded-2xl bg-[#0e0e16] border border-white/10 space-y-3">
               <div className="flex items-center gap-2 text-white font-display font-bold">
                 <Layers className="w-4 h-4 text-acid" />
-                <h4>Technical Architecture & State Model</h4>
+                <h4>5. Technical Architecture & Technologies Actually Used</h4>
               </div>
               <p className="text-xs sm:text-sm text-[#A1A1AA] leading-relaxed">
                 {selectedProject.architectureOrTechnicalApproach}
               </p>
+              <div className="flex flex-wrap gap-1.5 pt-2">
+                {selectedProject.techStack.map((tech) => (
+                  <span
+                    key={tech}
+                    className="text-xs font-mono px-2.5 py-1 rounded-lg bg-[#141422] text-acid border border-acid/20"
+                  >
+                    {tech}
+                  </span>
+                ))}
+              </div>
             </div>
 
-            {/* What Worked vs What Failed */}
+            {/* What Worked vs What Failed (Key Challenges) */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
               {/* What Worked */}
               <div className="p-5 sm:p-6 rounded-2xl bg-[#0d1611] border border-emerald-900/40 space-y-3">
                 <div className="flex items-center gap-2 text-emerald-400 font-display font-bold">
                   <CheckCircle2 className="w-4 h-4" />
-                  <h4>What Worked</h4>
+                  <h4>What Worked & Validated Assumptions</h4>
                 </div>
                 <ul className="space-y-2 text-xs sm:text-sm text-[#A1A1AA]">
                   {selectedProject.whatWorked.map((item, idx) => (
@@ -822,11 +852,11 @@ export const ExperimentsSection: React.FC<ExperimentsSectionProps> = ({
                 </ul>
               </div>
 
-              {/* What Failed */}
+              {/* What Failed / Challenges */}
               <div className="p-5 sm:p-6 rounded-2xl bg-[#170e10] border border-red-900/40 space-y-3">
                 <div className="flex items-center gap-2 text-red-400 font-display font-bold">
                   <XCircle className="w-4 h-4" />
-                  <h4>What Failed & Hard Truths</h4>
+                  <h4>6. Key Operational Challenges & Failures</h4>
                 </div>
                 <ul className="space-y-2 text-xs sm:text-sm text-[#A1A1AA]">
                   {selectedProject.whatFailed.map((item, idx) => (
@@ -843,28 +873,49 @@ export const ExperimentsSection: React.FC<ExperimentsSectionProps> = ({
             <div className="p-5 sm:p-6 rounded-2xl bg-acid/10 border border-acid/30 space-y-2">
               <div className="flex items-center gap-2 text-acid font-display font-bold">
                 <Lightbulb className="w-4 h-4" />
-                <h4>Builder Reflection: What I Learned</h4>
+                <h4>7. Lessons Learned (What Failure Taught Me)</h4>
               </div>
               <p className="text-xs sm:text-sm text-white leading-relaxed font-sans">
                 {selectedProject.whatILearned}
               </p>
             </div>
 
-            {/* Tech Stack Strip */}
-            <div className="pt-4 border-t border-white/10 flex flex-wrap items-center justify-between gap-3 font-mono text-xs">
-              <div className="flex flex-wrap gap-1.5">
-                {selectedProject.techStack.map((tech) => (
-                  <span
-                    key={tech}
-                    className="px-2.5 py-1 rounded-lg bg-[#181824] text-[#A1A1AA] border border-white/5"
-                  >
-                    {tech}
-                  </span>
-                ))}
+            {/* Future Improvements */}
+            {selectedProject.futureImprovements && (
+              <div className="p-5 sm:p-6 rounded-2xl bg-[#0e0e18] border border-white/10 space-y-2.5">
+                <span className="text-xs font-mono text-acid font-bold uppercase tracking-wider block">
+                  8. Future Improvements & Planned Evolution
+                </span>
+                <ul className="space-y-1.5 text-xs text-[#A1A1AA] font-sans">
+                  {selectedProject.futureImprovements.map((imp, idx) => (
+                    <li key={idx} className="flex items-start gap-2">
+                      <span className="text-acid shrink-0 mt-0.5">→</span>
+                      <span>{imp}</span>
+                    </li>
+                  ))}
+                </ul>
               </div>
+            )}
+
+            {/* Demo / Verification Strip */}
+            <div className="pt-4 border-t border-white/10 flex flex-wrap items-center justify-between gap-3 font-mono text-xs">
               <span className="text-acid font-bold">
-                Status: {selectedProject.status} (Verified Grounded Data)
+                Stage: {selectedProject.status} (Verified Grounded Data)
               </span>
+
+              {selectedProject.verifiedLink && (
+                <button
+                  onClick={() => {
+                    closeModal();
+                    const el = document.querySelector(selectedProject.verifiedLink!.url);
+                    el?.scrollIntoView({ behavior: 'smooth' });
+                  }}
+                  className="px-4 py-2 rounded-xl bg-acid text-black font-bold flex items-center gap-2 hover:bg-[#E5FF4D] transition cursor-pointer"
+                >
+                  <span>9. Open {selectedProject.verifiedLink.label}</span>
+                  <ArrowRight className="w-3.5 h-3.5" />
+                </button>
+              )}
             </div>
           </div>
         </Modal>
