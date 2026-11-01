@@ -114,7 +114,7 @@ async function runSecuritySuite() {
   const healthData = await healthRes.json();
   assert.strictEqual(healthData.status, 'ok');
   assert.strictEqual(healthData.service, 'VOICEPRINT Gemma 4 Gateway');
-  assert.strictEqual(healthData.model, 'gemma-4-31b-it');
+  assert.ok(healthData.model.startsWith('gemma-4'), `Model must be a Gemma 4 variant, got: ${healthData.model}`);
   assert.strictEqual(typeof healthData.keyConfigured, 'boolean');
   console.log(`   ✓ Health endpoint operational: Provider=${healthData.provider}, Model=${healthData.model}`);
 
@@ -128,7 +128,7 @@ async function runSecuritySuite() {
   const chatData = await chatRes.json();
   assert.ok(chatData.reply.includes('GoDuet'), 'Response must explain GoDuet');
   assert.strictEqual(chatData.grounded, true, 'Response must be marked grounded');
-  assert.strictEqual(chatData.model, 'gemma-4-31b-it');
+  assert.ok(chatData.model.startsWith('gemma-4'), `Response model must be Gemma 4 variant, got: ${chatData.model}`);
   console.log('   ✓ Successful query verified: Answer received grounded in portfolio knowledge base.');
 
   // 3. Anti-Hallucination Grounding Suite (Adversarial Testing)
@@ -188,23 +188,20 @@ async function runSecuritySuite() {
 
   // 7. Rate Limiter Stress Test (Verify HTTP 429 on abuse)
   console.log('\n--- TEST SUITE 5: API RATE LIMITING ENFORCEMENT ---');
-  let hitRateLimit = false;
-  // Send batch of rapid requests to trigger limiter threshold
-  for (let i = 0; i < 35; i++) {
-    const r = await fetch(`${baseUrl}/api/chat`, {
+  // Send burst batch of concurrent requests to trigger limiter threshold cleanly without delay
+  const burstRequests = Array.from({ length: 35 }, () =>
+    fetch(`${baseUrl}/api/chat`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ message: 'Rate limit probe' }),
-    });
-    if (r.status === 429) {
-      hitRateLimit = true;
-      const rateLimitBody = await r.json();
-      assert.strictEqual(rateLimitBody.code, 'RATE_LIMIT_EXCEEDED');
-      console.log(`   ✓ Rate limit strictly triggered on request #${i + 1} with HTTP 429 (RATE_LIMIT_EXCEEDED).`);
-      break;
-    }
-  }
-  assert.ok(hitRateLimit, 'Rate limiter must enforce HTTP 429 when threshold exceeded');
+    })
+  );
+  const responses = await Promise.all(burstRequests);
+  const rateLimitedRes = responses.find(r => r.status === 429);
+  assert.ok(rateLimitedRes, 'Rate limiter must enforce HTTP 429 when threshold exceeded');
+  const rateLimitBody = await rateLimitedRes.json();
+  assert.strictEqual(rateLimitBody.code, 'RATE_LIMIT_EXCEEDED');
+  console.log(`   ✓ Rate limit strictly triggered with HTTP 429 (RATE_LIMIT_EXCEEDED) across concurrent burst.`);
 
   console.log('\n============================================================');
   console.log('🎉 ALL SECURITY & GEMMA 4 VERIFICATION TESTS PASSED (100%)!');

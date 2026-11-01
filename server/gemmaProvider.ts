@@ -30,7 +30,7 @@ export async function callGemmaProvider(
   history: ChatMessage[] = []
 ): Promise<GemmaResponse> {
   const provider = (process.env.GEMMA_PROVIDER || 'google').toLowerCase();
-  const model = process.env.GEMMA_MODEL || 'gemma-4-31b-it';
+  const model = process.env.GEMMA_MODEL || 'gemma-4-26b-a4b-it';
   const apiKey = process.env.GEMMA_API_KEY || process.env.GEMINI_API_KEY || '';
   const apiBase = process.env.GEMMA_API_BASE || '';
   const temperature = parseFloat(process.env.GEMMA_TEMPERATURE || '0.2');
@@ -48,7 +48,7 @@ ${PORTFOLIO_KNOWLEDGE_BASE}`;
     }
 
     try {
-      // Call Google AI Studio endpoint for Gemma 4 (gemma-4-31b-it / gemma-4-26b-a4b-it)
+      // Call Google AI Studio endpoint for Gemma 4 (gemma-4-26b-a4b-it / gemma-4-31b-it)
       const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
 
       const contents = [
@@ -63,7 +63,7 @@ ${PORTFOLIO_KNOWLEDGE_BASE}`;
       ];
 
       const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 15000); // 15s timeout
+      const timeoutId = setTimeout(() => controller.abort(), 30000); // 30s timeout for reasoning models
 
       const res = await fetch(endpoint, {
         method: 'POST',
@@ -88,7 +88,10 @@ ${PORTFOLIO_KNOWLEDGE_BASE}`;
       }
 
       const data = await res.json();
-      const generatedText = data.candidates?.[0]?.content?.parts?.[0]?.text;
+      const parts = data.candidates?.[0]?.content?.parts || [];
+      // Filter out internal thinking / reasoning traces (thought: true) to return the clean model response
+      const responsePart = parts.find((p: any) => !p.thought) || parts[parts.length - 1];
+      const generatedText = responsePart?.text;
 
       if (!generatedText) {
         return generateLocalGroundedResponse(userQuery, model, 'Verified Portfolio Archive (Grounded Fallback - Empty Response)');
@@ -97,7 +100,7 @@ ${PORTFOLIO_KNOWLEDGE_BASE}`;
       return {
         reply: generatedText.trim(),
         model,
-        provider: 'Google AI Studio (Remote Gemma 4 - 31B-IT)',
+        provider: 'Google AI Studio (Remote Gemma 4)',
         grounded: true,
         isFallback: false
       };
