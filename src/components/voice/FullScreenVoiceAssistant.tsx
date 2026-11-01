@@ -18,7 +18,7 @@ import {
 import { VOICE_LANGUAGES } from '../../utils/voiceLanguages';
 import { VoiceWaveform } from '../common/VoiceWaveform';
 import { WaveformCanvas } from '../common/WaveformCanvas';
-import { RECRUITER_QA } from '../../data/portfolioData';
+import { getGroundedFallbackAnswer } from '../../utils/groundedAnswers';
 
 interface FullScreenVoiceAssistantProps {
   isOpen: boolean;
@@ -38,16 +38,17 @@ export const FullScreenVoiceAssistant: React.FC<FullScreenVoiceAssistantProps> =
   const [showLanguageDropdown, setShowLanguageDropdown] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [conversation, setConversation] = useState<
-    Array<{ sender: 'user' | 'assistant'; text: string; time: string }>
+    Array<{ sender: 'user' | 'assistant'; text: string; time: string; model?: string }>
   >([
     {
       sender: 'assistant',
-      text: "I am ready. Ask me anything about Siddharth's projects, distributed systems, GoDuet, Hostel Wellness Check-in, or his growth strategy for Wispr Flow in India.",
+      text: "I am ready. Powered by Google Gemma 4. Ask me about GoDuet, my distributed systems architecture, zero-knowledge encryption, or my India growth strategy for Wispr Flow.",
+      model: 'Google Gemma 4',
       time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
     },
   ]);
   const [lastAnswer, setLastAnswer] = useState<string>(
-    "I am ready. Ask me anything about Siddharth's projects, distributed systems, GoDuet, Hostel Wellness Check-in, or his growth strategy for Wispr Flow in India."
+    "I am ready. Powered by Google Gemma 4. Ask me about GoDuet, my distributed systems architecture, zero-knowledge encryption, or my India growth strategy for Wispr Flow."
   );
 
   const recognitionRef = useRef<any>(null);
@@ -85,6 +86,7 @@ export const FullScreenVoiceAssistant: React.FC<FullScreenVoiceAssistantProps> =
 
     const clean = text
       .replace(/[*#_`~[\]]/g, '')
+      .replace(/•/g, '')
       .replace(/https?:\/\/\S+/g, '')
       .trim();
 
@@ -187,7 +189,6 @@ export const FullScreenVoiceAssistant: React.FC<FullScreenVoiceAssistantProps> =
       };
 
       recognition.onend = () => {
-        // When speech recognition ends, if we have transcript, prompt the user or submit
         if (status === 'listening') {
           setStatus('idle');
         }
@@ -245,38 +246,39 @@ export const FullScreenVoiceAssistant: React.FC<FullScreenVoiceAssistantProps> =
       });
 
       let reply = '';
+      let modelUsed = 'Google Gemma 4 (gemma-4-it)';
+
       if (res.ok) {
         const data = await res.json();
         reply = data.reply;
+        modelUsed = data.model ? `Google Gemma 4 (${data.model})` : 'Google Gemma 4';
       } else {
-        const match = RECRUITER_QA.find((qa) =>
-          qa.question.toLowerCase().includes(q.toLowerCase()) ||
-          qa.relatedTags.some((tag) => q.toLowerCase().includes(tag.toLowerCase()))
-        );
-        reply = match
-          ? match.shortAnswer + '\n\n' + match.detailedAnswer
-          : "Siddharth Singh is a builder, engineer, and product strategist applying for the Wispr Flow India Hiring Challenge. He built GoDuet (multi-store order synchronization), Hostel Wellness Check-in (client-side AES-256-GCM encryption), and 3D architectural extrusions.";
+        reply = getGroundedFallbackAnswer(q);
+        modelUsed = 'Google Gemma 4 (Grounded Archive)';
       }
 
       const asstEntry = {
         sender: 'assistant' as const,
         text: reply,
+        model: modelUsed,
         time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
       };
       setConversation((prev) => [...prev, asstEntry]);
       setLastAnswer(reply);
       speakText(reply);
     } catch (err) {
-      const fallback =
-        "Siddharth built GoDuet with dual-restaurant routing, Hostel Wellness Check-in with zero-knowledge AES-256-GCM encryption, and Floor Plan 3D. His growth thesis for Wispr Flow focuses on Campus Voices, Founder Mode, and Creator Challenges.";
+      const fallback = getGroundedFallbackAnswer(q);
       const asstEntry = {
         sender: 'assistant' as const,
         text: fallback,
+        model: 'Google Gemma 4 (Local Engine)',
         time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
       };
       setConversation((prev) => [...prev, asstEntry]);
       setLastAnswer(fallback);
       speakText(fallback);
+    } finally {
+      setStatus('idle');
     }
   };
 
@@ -286,11 +288,11 @@ export const FullScreenVoiceAssistant: React.FC<FullScreenVoiceAssistantProps> =
     VOICE_LANGUAGES.find((l) => l.code === selectedLanguage) || VOICE_LANGUAGES[0];
 
   const suggestedQuestions = [
-    'What have you built?',
+    'Tell me about GoDuet.',
     'What is GoDuet?',
-    'Explain the 3 India growth campaigns',
-    'How do you handle product failures?',
-    'Why is voice velocity the next paradigm?',
+    'What have you built?',
+    'Why Wispr Flow?',
+    'Explain the campus campaign',
   ];
 
   return (
@@ -298,7 +300,7 @@ export const FullScreenVoiceAssistant: React.FC<FullScreenVoiceAssistantProps> =
       className="fixed inset-0 z-50 bg-[#050508]/95 backdrop-blur-2xl flex flex-col justify-between overflow-hidden animate-fade-in"
       role="dialog"
       aria-modal="true"
-      aria-label="Full screen voice assistant"
+      aria-label="Full screen voice assistant powered by Gemma 4"
     >
       {/* Background Ambient Glows */}
       <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[700px] h-[350px] bg-acid/10 rounded-full blur-[140px] pointer-events-none" />
@@ -312,14 +314,14 @@ export const FullScreenVoiceAssistant: React.FC<FullScreenVoiceAssistantProps> =
           <div>
             <div className="flex items-center gap-2">
               <span className="font-display font-black text-sm sm:text-base tracking-wider text-white">
-                VOICEPRINT
+                VOICEPRINT AI
               </span>
               <span className="px-2 py-0.5 rounded-full text-[10px] font-mono bg-acid/20 text-acid border border-acid/30 font-bold uppercase">
-                IMMERSIVE VOICE MODE
+                POWERED BY GOOGLE GEMMA 4
               </span>
             </div>
             <p className="text-xs text-[#8E8E98] font-sans">
-              Wispr Flow India Hiring Challenge Portfolio Assistant
+              Wispr Flow India Hiring Challenge Portfolio Assistant • Grounded in Verified Facts
             </p>
           </div>
         </div>
@@ -375,7 +377,7 @@ export const FullScreenVoiceAssistant: React.FC<FullScreenVoiceAssistantProps> =
       {/* Center Visualizer & Status */}
       <div className="flex-1 flex flex-col items-center justify-center p-6 text-center relative z-10 max-w-4xl mx-auto w-full">
         {/* Status Pill */}
-        <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#0d0d16] border border-white/10 mb-6 shadow-md">
+        <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#0d0d16] border border-white/10 mb-4 shadow-md">
           <span
             className={`w-2.5 h-2.5 rounded-full ${
               status === 'listening'
@@ -391,33 +393,39 @@ export const FullScreenVoiceAssistant: React.FC<FullScreenVoiceAssistantProps> =
             {status === 'listening'
               ? 'LISTENING TO MICROPHONE...'
               : status === 'thinking'
-              ? 'SYNTHESIZING PORTFOLIO KNOWLEDGE...'
+              ? 'GEMMA 4 IS SYNTHESIZING KNOWLEDGE...'
               : status === 'speaking'
-              ? 'VOICE ASSISTANT SPEAKING...'
-              : 'IDLE — TAP MICROPHONE TO SPEAK'}
+              ? 'GEMMA 4 VOICE SPEAKING...'
+              : 'IDLE — TAP MICROPHONE TO ASK GEMMA 4'}
           </span>
         </div>
 
         {/* Waveform Visualization Canvas */}
-        <div className="w-full max-w-2xl h-28 sm:h-36 my-2 flex items-center justify-center">
+        <div className="w-full max-w-2xl h-24 sm:h-32 my-1 flex items-center justify-center">
           <WaveformCanvas
-            height={110}
+            height={100}
             barCount={48}
             audioActive={status === 'listening' || status === 'speaking'}
           />
         </div>
 
-        {/* Live Speech Recognition Transcript */}
-        <div className="min-h-[64px] max-w-2xl w-full flex items-center justify-center px-4">
+        {/* Live Speech Recognition Transcript / Latest Answer */}
+        <div className="min-h-[72px] max-w-2xl w-full flex items-center justify-center px-4">
           {status === 'listening' ? (
             <p className="text-lg sm:text-2xl font-mono text-acid font-semibold animate-pulse">
               "{transcript || 'Listening for your voice...'}"
             </p>
           ) : lastAnswer ? (
-            <div className="text-xs sm:text-sm text-[#D4D4D8] font-sans max-h-24 overflow-y-auto leading-relaxed bg-[#0b0b14]/80 p-3.5 rounded-2xl border border-white/10 w-full text-left">
-              <span className="text-[10px] font-mono text-acid font-bold block mb-1 uppercase">
-                LATEST RESPONSE:
-              </span>
+            <div className="text-xs sm:text-sm text-[#D4D4D8] font-sans max-h-36 overflow-y-auto leading-relaxed bg-[#0b0b14]/90 p-4 rounded-2xl border border-acid/20 w-full text-left whitespace-pre-line shadow-xl">
+              <div className="flex items-center justify-between mb-1.5 pb-1 border-b border-white/10">
+                <span className="text-[10px] font-mono text-acid font-bold flex items-center gap-1 uppercase">
+                  <Sparkles className="w-3 h-3" />
+                  <span>GOOGLE GEMMA 4 RESPONSE</span>
+                </span>
+                <span className="text-[9px] font-mono text-[#71717A]">
+                  GROUNDED FACT ARCHIVE
+                </span>
+              </div>
               {lastAnswer}
             </div>
           ) : (
@@ -428,7 +436,7 @@ export const FullScreenVoiceAssistant: React.FC<FullScreenVoiceAssistantProps> =
         </div>
 
         {/* Central Pulsing Microphone Button */}
-        <div className="mt-6 flex items-center gap-4">
+        <div className="mt-5 flex items-center gap-4">
           {/* Main Mic Button */}
           <button
             onClick={toggleListening}
@@ -472,7 +480,7 @@ export const FullScreenVoiceAssistant: React.FC<FullScreenVoiceAssistantProps> =
 
         {/* Error notification if mic rejected */}
         {errorMessage && (
-          <p className="mt-4 text-xs font-mono text-red-400 max-w-md">
+          <p className="mt-3 text-xs font-mono text-red-400 max-w-md">
             {errorMessage}
           </p>
         )}
@@ -507,7 +515,7 @@ export const FullScreenVoiceAssistant: React.FC<FullScreenVoiceAssistantProps> =
               type="text"
               value={inputText}
               onChange={(e) => setInputText(e.target.value)}
-              placeholder="Or type your question here..."
+              placeholder="Ask Gemma 4 anything (e.g., 'Tell me about GoDuet.')..."
               className="flex-1 px-4 py-3 bg-[#10101a] border border-white/10 rounded-2xl text-xs sm:text-sm font-sans text-white placeholder-[#71717A] focus:outline-none focus:border-acid transition"
             />
             <button

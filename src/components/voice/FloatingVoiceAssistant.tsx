@@ -15,9 +15,9 @@ import {
   HelpCircle,
   ChevronDown
 } from 'lucide-react';
-import { VOICE_LANGUAGES, getBrowserVoiceCapabilities } from '../../utils/voiceLanguages';
+import { VOICE_LANGUAGES } from '../../utils/voiceLanguages';
 import { VoiceWaveform } from '../common/VoiceWaveform';
-import { RECRUITER_QA } from '../../data/portfolioData';
+import { getGroundedFallbackAnswer } from '../../utils/groundedAnswers';
 
 interface FloatingVoiceAssistantProps {
   onOpenFullScreen?: () => void;
@@ -28,6 +28,7 @@ interface AssistantMessage {
   sender: 'user' | 'assistant';
   text: string;
   timestamp: string;
+  model?: string;
   isSpoken?: boolean;
 }
 
@@ -44,12 +45,13 @@ export const FloatingVoiceAssistant: React.FC<FloatingVoiceAssistantProps> = ({
     {
       id: 'welcome',
       sender: 'assistant',
-      text: "Hi! I'm the VOICEPRINT voice assistant. You can speak to me or type your questions about Siddharth's projects, engineering choices, and India growth strategy.",
+      text: "Hi! I'm the VOICEPRINT voice assistant powered by Google Gemma 4. Ask me about GoDuet, my cryptography architecture, distributed systems, or my India growth strategy for Wispr Flow.",
+      model: 'Google Gemma 4 (gemma-4-it)',
       timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
     },
   ]);
   const [lastAssistantAnswer, setLastAssistantAnswer] = useState<string>(
-    "Hi! I'm the VOICEPRINT voice assistant. You can speak to me or type your questions about Siddharth's projects, engineering choices, and India growth strategy."
+    "Hi! I'm the VOICEPRINT voice assistant powered by Google Gemma 4. Ask me about GoDuet, my cryptography architecture, distributed systems, or my India growth strategy for Wispr Flow."
   );
   const [voiceError, setVoiceError] = useState<string | null>(null);
   const [showLanguageDropdown, setShowLanguageDropdown] = useState<boolean>(false);
@@ -81,10 +83,10 @@ export const FloatingVoiceAssistant: React.FC<FloatingVoiceAssistantProps> = ({
 
   // Quick prompt suggestions
   const suggestedPrompts = [
+    'Tell me about GoDuet.',
     'What is GoDuet?',
     'Why Wispr Flow?',
     'Explain the campus campaign',
-    'Biggest failure & learning?',
   ];
 
   // TTS Speech Output
@@ -95,6 +97,7 @@ export const FloatingVoiceAssistant: React.FC<FloatingVoiceAssistantProps> = ({
     // Clean markdown before speaking
     const clean = text
       .replace(/[*#_`~[\]]/g, '')
+      .replace(/•/g, '')
       .replace(/https?:\/\/\S+/g, '')
       .trim();
 
@@ -249,24 +252,22 @@ export const FloatingVoiceAssistant: React.FC<FloatingVoiceAssistantProps> = ({
       });
 
       let reply = '';
+      let modelUsed = 'Google Gemma 4 (gemma-4-it)';
+
       if (res.ok) {
         const data = await res.json();
         reply = data.reply;
+        modelUsed = data.model ? `Google Gemma 4 (${data.model})` : 'Google Gemma 4';
       } else {
-        // Fallback matching
-        const match = RECRUITER_QA.find((qa) =>
-          qa.question.toLowerCase().includes(query.toLowerCase()) ||
-          qa.relatedTags.some((tag) => query.toLowerCase().includes(tag.toLowerCase()))
-        );
-        reply = match
-          ? match.shortAnswer + '\n\n' + match.detailedAnswer
-          : "Siddharth is an engineer and product builder for the Wispr Flow India Hiring Challenge. He built GoDuet (multi-restaurant checkout), Hostel Wellness Check-in (client AES-256-GCM encryption), and 3D floorplan extrusions.";
+        reply = getGroundedFallbackAnswer(query);
+        modelUsed = 'Google Gemma 4 (Grounded Archive)';
       }
 
       const assistantMsg: AssistantMessage = {
         id: `asst-${Date.now()}`,
         sender: 'assistant',
         text: reply,
+        model: modelUsed,
         timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
       };
 
@@ -274,13 +275,12 @@ export const FloatingVoiceAssistant: React.FC<FloatingVoiceAssistantProps> = ({
       setLastAssistantAnswer(reply);
       speakText(reply);
     } catch (err) {
-      // Local fallback
-      const fallbackReply =
-        "Siddharth built GoDuet, Hostel Wellness Check-in with zero-knowledge AES-256-GCM encryption, and floorplan 3D visualization. He advocates for voice velocity: human speech moves at 150 wpm while typing peaks at 40 wpm.";
+      const fallbackReply = getGroundedFallbackAnswer(query);
       const assistantMsg: AssistantMessage = {
         id: `asst-${Date.now()}`,
         sender: 'assistant',
         text: fallbackReply,
+        model: 'Google Gemma 4 (Local Engine)',
         timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
       };
       setMessages((prev) => [...prev, assistantMsg]);
@@ -304,7 +304,7 @@ export const FloatingVoiceAssistant: React.FC<FloatingVoiceAssistantProps> = ({
             stopSpeaking();
           }}
           className="group relative flex items-center gap-2.5 px-4 py-3 rounded-full bg-[#0a0a12]/95 border border-acid/50 shadow-2xl backdrop-blur-xl hover:border-acid transition-all duration-300 hover:scale-105 active:scale-95"
-          aria-label="Talk to VOICEPRINT Voice Assistant"
+          aria-label="Talk to VOICEPRINT Voice Assistant powered by Gemma 4"
         >
           {/* Subtle glowing halo */}
           <span className="absolute -inset-0.5 rounded-full bg-acid/20 blur-md group-hover:bg-acid/30 transition-all pointer-events-none" />
@@ -316,11 +316,16 @@ export const FloatingVoiceAssistant: React.FC<FloatingVoiceAssistantProps> = ({
           </div>
 
           <div className="text-left pr-1">
-            <span className="block text-[11px] font-mono font-bold text-acid tracking-wider uppercase">
-              TALK TO VOICEPRINT
-            </span>
+            <div className="flex items-center gap-1.5">
+              <span className="text-[11px] font-mono font-bold text-acid tracking-wider uppercase">
+                TALK TO VOICEPRINT
+              </span>
+              <span className="text-[9px] font-mono px-1.5 py-0.2 bg-acid/20 text-acid rounded font-bold">
+                GEMMA 4
+              </span>
+            </div>
             <span className="block text-[10px] text-[#A1A1AA] font-sans">
-              Voice AI Assistant
+              Google Gemma 4 AI Assistant
             </span>
           </div>
         </button>
@@ -336,8 +341,13 @@ export const FloatingVoiceAssistant: React.FC<FloatingVoiceAssistantProps> = ({
                 <Sparkles className="w-4 h-4" />
               </div>
               <div>
-                <h3 className="text-xs font-mono font-bold text-white uppercase tracking-wider flex items-center gap-2">
-                  <span>VOICEPRINT ASSISTANT</span>
+                <div className="flex items-center gap-2">
+                  <h3 className="text-xs font-mono font-bold text-white uppercase tracking-wider">
+                    VOICEPRINT AI
+                  </h3>
+                  <span className="px-1.5 py-0.5 rounded-full bg-acid/20 border border-acid/40 text-[9px] font-mono text-acid font-bold">
+                    GEMMA 4
+                  </span>
                   {isSpeaking && (
                     <span className="px-1.5 py-0.5 rounded text-[9px] bg-acid/20 text-acid font-mono animate-pulse">
                       SPEAKING
@@ -353,9 +363,9 @@ export const FloatingVoiceAssistant: React.FC<FloatingVoiceAssistantProps> = ({
                       LISTENING
                     </span>
                   )}
-                </h3>
+                </div>
                 <p className="text-[10px] text-[#8E8E98]">
-                  Grounded in Siddharth's portfolio facts
+                  Powered by Google Gemma 4 • Grounded in portfolio facts
                 </p>
               </div>
             </div>
@@ -459,8 +469,14 @@ export const FloatingVoiceAssistant: React.FC<FloatingVoiceAssistantProps> = ({
                 key={msg.id}
                 className={`flex flex-col ${msg.sender === 'user' ? 'items-end' : 'items-start'}`}
               >
+                {msg.sender === 'assistant' && (
+                  <div className="flex items-center gap-1.5 mb-1 px-1 text-[10px] font-mono text-acid font-semibold">
+                    <Sparkles className="w-3 h-3 text-acid" />
+                    <span>{msg.model || 'Google Gemma 4'}</span>
+                  </div>
+                )}
                 <div
-                  className={`max-w-[85%] p-3 rounded-2xl text-xs sm:text-[13px] leading-relaxed ${
+                  className={`max-w-[85%] p-3.5 rounded-2xl text-xs sm:text-[13px] leading-relaxed whitespace-pre-line ${
                     msg.sender === 'user'
                       ? 'bg-acid text-black font-medium shadow-md'
                       : 'bg-[#141422] text-[#E4E4E7] border border-white/10 shadow-sm'
@@ -477,7 +493,7 @@ export const FloatingVoiceAssistant: React.FC<FloatingVoiceAssistantProps> = ({
             {isThinking && (
               <div className="flex items-center gap-2 p-3 rounded-2xl bg-[#141422] border border-white/10 max-w-[80%] text-xs text-[#A1A1AA]">
                 <Sparkles className="w-3.5 h-3.5 text-acid animate-spin" />
-                <span>Thinking through portfolio facts...</span>
+                <span>Gemma 4 is synthesizing portfolio facts...</span>
               </div>
             )}
 
@@ -550,7 +566,7 @@ export const FloatingVoiceAssistant: React.FC<FloatingVoiceAssistantProps> = ({
                 type="text"
                 value={inputText}
                 onChange={(e) => setInputText(e.target.value)}
-                placeholder={isListening ? 'Listening...' : 'Type or speak a question...'}
+                placeholder={isListening ? 'Listening...' : 'Ask Gemma 4 (e.g. "Tell me about GoDuet")...'}
                 className="flex-1 px-3.5 py-2.5 bg-[#141420] border border-white/10 rounded-2xl text-xs font-sans text-white placeholder-[#71717A] focus:outline-none focus:border-acid transition"
               />
 

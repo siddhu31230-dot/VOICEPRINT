@@ -191,11 +191,14 @@ export const Navbar: React.FC<NavbarProps> = ({
               <button
                 onClick={onOpenVoiceAssistant}
                 className="px-3 py-2 rounded-xl bg-[#10101c] border border-acid/40 text-acid hover:bg-acid hover:text-black transition-all duration-200 flex items-center gap-1.5 text-xs font-mono shadow-xl shadow-acid/10"
-                title="Launch full-screen voice assistant"
-                aria-label="Launch full-screen voice assistant"
+                title="Launch full-screen voice assistant powered by Google Gemma 4"
+                aria-label="Launch full-screen voice assistant powered by Google Gemma 4"
               >
                 <Mic className="w-3.5 h-3.5 animate-pulse" />
                 <span className="hidden sm:inline font-bold">TALK</span>
+                <span className="hidden md:inline text-[9px] px-1 py-0.2 bg-acid/20 rounded font-mono font-bold">
+                  GEMMA 4
+                </span>
               </button>
             )}
 

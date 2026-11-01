@@ -56,7 +56,7 @@ ${PORTFOLIO_KNOWLEDGE_BASE}`;
           role: 'user',
           parts: [
             {
-              text: `${fullSystemPrompt}\n\nRECRUITER QUESTION: ${userQuery}\n\nProvide a factual, grounded response adhering strictly to the above knowledge base.`
+              text: userQuery
             }
           ]
         }
@@ -69,10 +69,13 @@ ${PORTFOLIO_KNOWLEDGE_BASE}`;
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
+          systemInstruction: {
+            parts: [{ text: fullSystemPrompt }]
+          },
           contents,
           generationConfig: {
             temperature,
-            maxOutputTokens: 1024,
+            maxOutputTokens: 2048,
           }
         }),
         signal: controller.signal
@@ -97,8 +100,10 @@ ${PORTFOLIO_KNOWLEDGE_BASE}`;
         return generateLocalGroundedResponse(userQuery, model, 'Verified Portfolio Archive (Grounded Fallback - Empty Response)');
       }
 
+      const cleanedReply = cleanGemmaOutput(generatedText);
+
       return {
-        reply: generatedText.trim(),
+        reply: cleanedReply,
         model,
         provider: 'Google AI Studio (Remote Gemma 4)',
         grounded: true,
@@ -194,6 +199,41 @@ ${PORTFOLIO_KNOWLEDGE_BASE}`;
 }
 
 /**
+ * Sanitizes model text output, stripping any accidental internal reasoning tags
+ * or scratchpads emitted by reasoning-capable variants.
+ */
+function cleanGemmaOutput(raw: string): string {
+  if (!raw) return '';
+  let text = raw.trim();
+
+  // Strip <thought>...</thought> blocks
+  text = text.replace(/<thought>[\s\S]*?<\/thought>/gi, '').trim();
+
+  // If the model output a chain-of-thought scratchpad at the beginning
+  if (
+    text.includes('* User Role:') ||
+    text.includes('* Target Audience:') ||
+    text.includes('* Input Question:') ||
+    text.includes('* Constraint') ||
+    text.includes('* Check against rules:')
+  ) {
+    const lastQuoteIndex = text.lastIndexOf('\n    "');
+    const altQuoteIndex = text.lastIndexOf('\n"');
+    const quoteIdx = Math.max(lastQuoteIndex, altQuoteIndex);
+    if (quoteIdx !== -1) {
+      return text.slice(quoteIdx).replace(/^\s*"/, '').replace(/"\s*$/, '').trim();
+    }
+
+    const checkIdx = text.lastIndexOf('Yes.\n');
+    if (checkIdx !== -1) {
+      return text.slice(checkIdx + 4).replace(/^\s*"/, '').replace(/"\s*$/, '').trim();
+    }
+  }
+
+  return text.replace(/^"|"$/g, '').trim();
+}
+
+/**
  * Deterministic local grounded response generator.
  * Used when no external API key is provided, during offline testing,
  * or as a safe recruiter fallback when remote endpoints are rate-limited or unreachable.
@@ -236,7 +276,80 @@ Siddharth is currently a student builder and independent explorer. No venture fu
     };
   }
 
-  // Pattern match against authentic portfolio knowledge base
+  // 1. SPECIFIC PROJECT CHECK: GODUET (Must take priority over generic "project" or "built" queries)
+  if (q.includes('goduet') || q.includes('go duet')) {
+    return {
+      reply: `**GoDuet (Food Tech & Marketplace Architecture)**
+
+GoDuet is Siddharth's multi-restaurant ordering concept built specifically to solve the perennial hostel roommate dilemma: one person wants momos, another wants burgers, but platforms like Swiggy and Zomato force separate orders with doubled delivery charges, duplicate minimum-order thresholds, and unsynchronized couriers.
+
+• **The Problem:** In hostel dorms and co-living clusters, meal ordering is inherently collective. Forcing users into a single restaurant or disjointed deliveries introduces friction and doubles delivery costs.
+• **Core Concept & Architecture:**
+  - Clusters partner restaurants situated within a 600m micro-hub radius.
+  - A single courier collects both orders simultaneously, dropping them off as a single combined batch.
+  - Reduces customer delivery fees by ~35% while lifting Average Order Value (AOV) for restaurants.
+  - Features an optimistic client-side cart state machine with atomic rollback if an item goes out of stock.
+• **Key Technical Challenge:**
+  - Handling asynchronous race conditions on unstable 3G mobile connections when users rapidly toggle between two menus. Asynchronous API responses arrived out of order, corrupting the cart total.
+  - Resolved by implementing sequence-guarded reducers with AbortControllers.
+• **The Operational Failure & Takeaway:**
+  - In initial live trials with hostel mates, burgers cooked in 8 minutes while biryani took 28 minutes. Couriers arrived with cold food.
+  - This failure taught Siddharth that **software design without physical operational physics is wishful thinking**. He redesigned the bundling algorithm to strictly enforce kitchen prep-time tolerance bands.
+• **Current Status:**
+  - Functional prototype and state-flow simulation tested with hostel students, proving 88% preference over separate orders.`,
+      model,
+      provider: providerInfo,
+      grounded: true,
+      isFallback: true
+    };
+  }
+
+  // 2. SPECIFIC PROJECT CHECK: PRIVATE WELLNESS CHECK-IN
+  if (q.includes('wellness') || (q.includes('mental') && q.includes('health')) || q.includes('hostel check-in')) {
+    return {
+      reply: `**Private Wellness Check-in (Privacy Tech & Zero-Knowledge Architecture)**
+
+A zero-knowledge daily wellness check-in prototype engineered specifically for student hostels, where social stigma often prevents students from seeking mental health support.
+
+• **The Core Problem:** Students in shared hostel living experience severe academic stress but avoid campus counseling due to fear of institutional surveillance or peer judgment.
+• **Security & Privacy Architecture:**
+  - Pure client-side AES-256-GCM authenticated encryption using the native Web Crypto API.
+  - Generates fresh 12-byte cryptographically random IVs for every entry; keys are held strictly in browser memory and are never sent to any server.
+  - 128-bit authentication tags ensure zero tampering can occur undetected.
+• **Product Decision (What NOT to Build):**
+  - Originally designed with 18 comprehensive tracking metrics. Students abandoned it within 3 days.
+  - Siddharth ruthlessly subtracted the scope down to 3 visual micro-sliders taking under 30 seconds daily, restoring 94% retention.
+• **Key Takeaway:** Zero-knowledge cryptographic guarantees build emotional trust faster than any marketing copy.`,
+      model,
+      provider: providerInfo,
+      grounded: true,
+      isFallback: true
+    };
+  }
+
+  // 3. SPECIFIC PROJECT CHECK: FLOOR PLAN TO 3D VIEWER
+  if (q.includes('floor plan') || q.includes('floorplan') || q.includes('3d viewer') || q.includes('three.js') || q.includes('spatial')) {
+    return {
+      reply: `**Floor Plan to 3D Viewer Prototype (Spatial Web & Three.js)**
+
+A browser-based tool that parses static 2D architectural blueprint vectors and extrudes them into an interactive 3D WebGL spatial model in real time.
+
+• **The Core Problem:** Most home renovators and buyers struggle to understand spatial scale from flat 2D blueprint lines.
+• **Technical Approach:**
+  - Vector path parsing and vertex winding order validation in WebGL.
+  - Three.js ExtrudeGeometry with normal vector calculations at fixed 2.8m wall heights.
+  - Constructive Solid Geometry (CSG) mesh subtractions for parametric window and door openings.
+  - PBR glass and architectural shaders running smoothly at 60 FPS on integrated GPUs.
+• **Hard Engineering Lesson:**
+  - Complex boolean CSG operations on irregular polygon contours initially crashed the WebGL rendering context. Resolved by pre-validating winding order and tessellating complex polygons into simpler convex sets before extrusion.`,
+      model,
+      provider: providerInfo,
+      grounded: true,
+      isFallback: true
+    };
+  }
+
+  // 4. Pattern match against general portfolio inquiries
   if (q.includes('built') || q.includes('project') || q.includes('portfolio') || q.includes('what have you done')) {
     return {
       reply: `Siddharth has designed and engineered three distinct prototypes born from real daily friction:
@@ -246,21 +359,6 @@ Siddharth is currently a student builder and independent explorer. No venture fu
 3. **Floor Plan to 3D Viewer (Spatial Web):** Converts static 2D blueprint contours into an interactive 3D WebGL scene using Three.js and Constructive Solid Geometry (CSG) at 60 FPS.
 
 Every project has working code, architecture trade-offs, and documented operational learnings.`,
-      model,
-      provider: providerInfo,
-      grounded: true,
-      isFallback: true
-    };
-  }
-
-  if (q.includes('goduet') || q.includes('food') || q.includes('restaurant') || q.includes('basket')) {
-    return {
-      reply: `**GoDuet** is Siddharth's multi-restaurant food delivery concept designed for shared group living.
-
-- **The Problem:** In hostel dorms, roommates frequently want food from different places (e.g. burgers vs momos). Existing aggregators (Swiggy, Zomato) force separate disjoint orders with doubled delivery charges and unsynchronized couriers.
-- **The Architecture:** Partner restaurants within a 600m micro-hub radius are clustered together. A single courier collects from both kitchens in one run, cutting customer delivery fees by 35% while increasing vendor Average Order Value (AOV).
-- **Technical Challenge:** Distributed cart state machine with sequence-guarded reducers and AbortControllers to prevent race conditions during rapid menu toggles on slow mobile connections.
-- **The Failure:** Burgers cooked in 8 minutes while biryani took 28 minutes, causing couriers to deliver cold food. Siddharth redesigned the bundling algorithm around strict prep-time tolerance bands.`,
       model,
       provider: providerInfo,
       grounded: true,

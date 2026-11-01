@@ -124,10 +124,13 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
             <button
               onClick={onOpenVoiceAssistant}
               className="px-4 py-3 rounded-2xl border border-acid/40 bg-[#0c0c16] text-acid hover:bg-acid/10 transition text-xs font-mono flex items-center gap-2 shadow-md"
-              title="Launch full-screen voice conversation assistant"
+              title="Launch full-screen voice conversation assistant powered by Google Gemma 4"
             >
               <Mic className="w-3.5 h-3.5 animate-pulse text-acid" />
               <span>TALK TO VOICEPRINT</span>
+              <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-acid/20 text-acid uppercase">
+                GEMMA 4
+              </span>
             </button>
           )}
 
