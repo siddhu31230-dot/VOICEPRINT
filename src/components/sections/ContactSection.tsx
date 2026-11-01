@@ -33,11 +33,13 @@ import {
 interface ContactSectionProps {
   links: SocialLinks;
   onOpenConfigLinks: () => void;
+  onOpenTransparencyModal?: () => void;
 }
 
 export const ContactSection: React.FC<ContactSectionProps> = ({
   links,
   onOpenConfigLinks,
+  onOpenTransparencyModal,
 }) => {
   const [copiedField, setCopiedField] = useState<string | null>(null);
   const [formData, setFormData] = useState({
@@ -348,9 +350,21 @@ export const ContactSection: React.FC<ContactSectionProps> = ({
 
                     {encryptEnabled && (
                       <div className="space-y-2.5 pt-2 border-t border-white/5 font-mono text-[11px]">
-                        <p className="text-[#8E8E98]">
-                          Encrypt your note locally before dispatching. Keys exist strictly in your browser memory and are never sent to any server or AI model.
-                        </p>
+                        <div className="flex items-center justify-between text-[#8E8E98]">
+                          <span>
+                            Encrypt your note locally before dispatching. Keys exist strictly in your browser memory and are never sent to any server or AI model.
+                          </span>
+                          {onOpenTransparencyModal && (
+                            <button
+                              type="button"
+                              onClick={onOpenTransparencyModal}
+                              className="inline-flex items-center gap-1 text-[10px] text-acid hover:underline ml-2 flex-shrink-0"
+                            >
+                              <ShieldCheck className="w-3 h-3 text-acid" />
+                              <span>Key Lifetime Notice</span>
+                            </button>
+                          )}
+                        </div>
 
                         <div className="flex flex-col sm:flex-row gap-2">
                           <input

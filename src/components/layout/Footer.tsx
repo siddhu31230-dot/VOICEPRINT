@@ -1,14 +1,15 @@
 import React from 'react';
-import { ArrowUp, Github, Linkedin, Instagram, Mail, Globe, Settings, Sparkles } from 'lucide-react';
+import { ArrowUp, Github, Linkedin, Instagram, Mail, Globe, Settings, Sparkles, ShieldCheck } from 'lucide-react';
 import { PERSONAL_INFO } from '../../data/portfolioData';
 import { SocialLinks } from '../../types';
 
 interface FooterProps {
   links: SocialLinks;
   onOpenConfigLinks: () => void;
+  onOpenTransparencyModal?: () => void;
 }
 
-export const Footer: React.FC<FooterProps> = ({ links, onOpenConfigLinks }) => {
+export const Footer: React.FC<FooterProps> = ({ links, onOpenConfigLinks, onOpenTransparencyModal }) => {
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
@@ -38,13 +39,25 @@ export const Footer: React.FC<FooterProps> = ({ links, onOpenConfigLinks }) => {
               <span className="text-acid font-semibold">{PERSONAL_INFO.hiringChallengeContext}</span>. An exploration into voice-driven velocity, authentic product architecture, and human-centric engineering.
             </p>
 
-            <button
-              onClick={onOpenConfigLinks}
-              className="inline-flex items-center gap-2 text-xs font-mono text-[#8E8E98] hover:text-acid transition border border-white/10 hover:border-acid/40 px-3.5 py-2 rounded-xl bg-[#0e0e16]"
-            >
-              <Settings className="w-3.5 h-3.5" />
-              <span>Configure Authentic Profile Links</span>
-            </button>
+            <div className="flex flex-wrap items-center gap-2.5 pt-1">
+              <button
+                onClick={onOpenConfigLinks}
+                className="inline-flex items-center gap-2 text-xs font-mono text-[#8E8E98] hover:text-acid transition border border-white/10 hover:border-acid/40 px-3.5 py-2 rounded-xl bg-[#0e0e16]"
+              >
+                <Settings className="w-3.5 h-3.5" />
+                <span>Configure Authentic Profile Links</span>
+              </button>
+
+              {onOpenTransparencyModal && (
+                <button
+                  onClick={onOpenTransparencyModal}
+                  className="inline-flex items-center gap-2 text-xs font-mono text-[#8E8E98] hover:text-acid transition border border-white/10 hover:border-acid/40 px-3.5 py-2 rounded-xl bg-[#0e0e16]"
+                >
+                  <ShieldCheck className="w-3.5 h-3.5 text-acid" />
+                  <span>Security & AI Transparency</span>
+                </button>
+              )}
+            </div>
           </div>
 
           {/* Quick Section Links */}
@@ -145,7 +158,17 @@ export const Footer: React.FC<FooterProps> = ({ links, onOpenConfigLinks }) => {
             © {new Date().getFullYear()} Siddharth Singh. Built with React, TypeScript & Tailwind CSS.
           </div>
 
-          <div className="flex items-center gap-4">
+          <div className="flex flex-wrap items-center gap-4">
+            {onOpenTransparencyModal && (
+              <button
+                onClick={onOpenTransparencyModal}
+                className="hover:text-acid transition flex items-center gap-1.5"
+              >
+                <ShieldCheck className="w-3.5 h-3.5 text-acid" />
+                <span>Security & AI Disclosures</span>
+              </button>
+            )}
+
             <span className="flex items-center gap-1.5 text-acid font-semibold">
               <Sparkles className="w-3.5 h-3.5" />
               <span>Wispr Flow Ready</span>

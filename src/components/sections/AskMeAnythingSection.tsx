@@ -35,7 +35,11 @@ interface ChatTurn {
   timestamp: string;
 }
 
-export const AskMeAnythingSection: React.FC = () => {
+interface AskMeAnythingSectionProps {
+  onOpenTransparencyModal?: () => void;
+}
+
+export const AskMeAnythingSection: React.FC<AskMeAnythingSectionProps> = ({ onOpenTransparencyModal }) => {
   const [inputQuery, setInputQuery] = useState('');
   const [activeQAId, setActiveQAId] = useState<string>('what-have-you-built');
   const [isListening, setIsListening] = useState(false);
@@ -304,11 +308,20 @@ export const AskMeAnythingSection: React.FC = () => {
               </span>
             </div>
 
-            <div className="flex items-center gap-2">
-              <ShieldCheck className="w-3.5 h-3.5 text-acid" />
-              <span className="text-[11px] text-[#71717A]">
-                Privacy Notice: Server-side API key • In-memory session only
+            <div className="flex items-center gap-3">
+              <span className="text-[11px] text-[#71717A] hidden sm:inline">
+                Server-side API key • In-memory session only
               </span>
+              {onOpenTransparencyModal && (
+                <button
+                  type="button"
+                  onClick={onOpenTransparencyModal}
+                  className="flex items-center gap-1.5 text-[11px] text-[#A1A1AA] hover:text-acid transition border-b border-dotted border-white/20 hover:border-acid"
+                >
+                  <ShieldCheck className="w-3.5 h-3.5 text-acid" />
+                  <span>Security & AI Transparency</span>
+                </button>
+              )}
             </div>
           </div>
 

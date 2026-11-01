@@ -10,6 +10,7 @@ import { NextChapterSection } from './components/sections/NextChapterSection';
 import { ContactSection } from './components/sections/ContactSection';
 import { Footer } from './components/layout/Footer';
 import { ConfigurableLinksModal } from './components/common/ConfigurableLinksModal';
+import { SecurityTransparencyModal } from './components/common/SecurityTransparencyModal';
 import { INITIAL_SOCIAL_LINKS } from './data/portfolioData';
 import { SocialLinks } from './types';
 
@@ -26,6 +27,7 @@ export const App: React.FC = () => {
 
   const [isConfigModalOpen, setIsConfigModalOpen] = useState(false);
   const [isCaseStudyModalOpen, setIsCaseStudyModalOpen] = useState(false);
+  const [isTransparencyModalOpen, setIsTransparencyModalOpen] = useState(false);
   const [activeAudio, setActiveAudio] = useState(false);
 
   // Web Audio Context for subtle ambient resonance
@@ -83,7 +85,7 @@ export const App: React.FC = () => {
     } catch (e) {}
   };
 
-  const isAnyModalOpen = isConfigModalOpen || isCaseStudyModalOpen;
+  const isAnyModalOpen = isConfigModalOpen || isCaseStudyModalOpen || isTransparencyModalOpen;
 
   return (
     <div className="min-h-screen bg-[#08080a] text-[#F4F4F6] relative selection:bg-acid selection:text-black">
@@ -109,11 +111,14 @@ export const App: React.FC = () => {
         />
         <VoiceLabSection />
         <GrowthArenaSection />
-        <AskMeAnythingSection />
+        <AskMeAnythingSection
+          onOpenTransparencyModal={() => setIsTransparencyModalOpen(true)}
+        />
         <NextChapterSection />
         <ContactSection
           links={links}
           onOpenConfigLinks={() => setIsConfigModalOpen(true)}
+          onOpenTransparencyModal={() => setIsTransparencyModalOpen(true)}
         />
       </main>
 
@@ -121,6 +126,7 @@ export const App: React.FC = () => {
       <Footer
         links={links}
         onOpenConfigLinks={() => setIsConfigModalOpen(true)}
+        onOpenTransparencyModal={() => setIsTransparencyModalOpen(true)}
       />
 
       {/* Configurable Profile Links Modal */}
@@ -129,6 +135,12 @@ export const App: React.FC = () => {
         onClose={() => setIsConfigModalOpen(false)}
         links={links}
         onSave={handleSaveLinks}
+      />
+
+      {/* Security & AI Transparency Disclosures Modal */}
+      <SecurityTransparencyModal
+        isOpen={isTransparencyModalOpen}
+        onClose={() => setIsTransparencyModalOpen(false)}
       />
     </div>
   );
