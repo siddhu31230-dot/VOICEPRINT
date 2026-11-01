@@ -25,7 +25,9 @@ import {
   ArrowUpRight,
   Lock,
   ShieldCheck,
-  Key
+  Key,
+  Eye,
+  EyeOff
 } from 'lucide-react';
 
 interface ContactSectionProps {
@@ -51,6 +53,7 @@ export const ContactSection: React.FC<ContactSectionProps> = ({
   const [passphrase, setPassphrase] = useState('');
   const [encryptedEnvelope, setEncryptedEnvelope] = useState<EncryptedEnvelope | null>(null);
   const [rawKeyBackup, setRawKeyBackup] = useState<string | null>(null);
+  const [showRawKey, setShowRawKey] = useState(false);
   const [isEncrypting, setIsEncrypting] = useState(false);
 
   const handleCopy = (text: string, label: string) => {
@@ -390,11 +393,33 @@ export const ContactSection: React.FC<ContactSectionProps> = ({
                             </div>
 
                             {rawKeyBackup && (
-                              <div className="pt-1 text-[10px] text-amber-300">
-                                <span>Auto-generated 256-bit Key: </span>
-                                <code className="bg-black/80 px-1 py-0.5 rounded text-white">{rawKeyBackup}</code>
-                                <span className="block text-[9px] text-[#71717A] mt-0.5">
-                                  Save this key if you need to decrypt this note later. It is not saved in localStorage.
+                              <div className="pt-1.5 text-[10px] text-amber-300 space-y-1">
+                                <div className="flex items-center justify-between">
+                                  <span>Auto-Generated 256-bit Key:</span>
+                                  <div className="flex items-center gap-1.5">
+                                    <button
+                                      type="button"
+                                      onClick={() => setShowRawKey(!showRawKey)}
+                                      className="text-white hover:text-acid flex items-center gap-1 text-[10px]"
+                                    >
+                                      {showRawKey ? <EyeOff className="w-3 h-3" /> : <Eye className="w-3 h-3" />}
+                                      <span>{showRawKey ? 'Hide' : 'Reveal'}</span>
+                                    </button>
+                                    <button
+                                      type="button"
+                                      onClick={() => handleCopy(rawKeyBackup, 'rawKey')}
+                                      className="text-white hover:text-acid flex items-center gap-1 text-[10px]"
+                                    >
+                                      {copiedField === 'rawKey' ? <Check className="w-3 h-3 text-acid" /> : <Copy className="w-3 h-3" />}
+                                      <span>Copy</span>
+                                    </button>
+                                  </div>
+                                </div>
+                                <code className="block bg-black/80 px-2 py-1 rounded text-white break-all font-mono">
+                                  {showRawKey ? rawKeyBackup : '••••••••••••••••••••••••••••••••••••••••••••'}
+                                </code>
+                                <span className="block text-[9px] text-[#71717A] leading-tight">
+                                  ⚠️ Security Notice: Save this key in a secure manager if you need to decrypt this note later. It is stored strictly in browser memory and vanishes on page reload.
                                 </span>
                               </div>
                             )}

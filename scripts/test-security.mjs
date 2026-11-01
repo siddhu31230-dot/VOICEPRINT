@@ -93,14 +93,14 @@ async function runSecuritySuite() {
   assert.ok(tamperedResult.error?.includes('Authentication failed'), 'Error message must reflect authentication failure');
   console.log('   ✓ Authenticated encryption confirmed: Tampered ciphertext rejected by GCM auth tag.');
 
-  // 3. PBKDF2 Key Derivation
+  // 3. PBKDF2 Key Derivation (600,000 iterations OWASP standard)
   const recruiterPassphrase = 'WisprFlowEvaluationPassphrase2026';
   const { key: derivedKey, salt } = await deriveKeyFromPassphrase(recruiterPassphrase);
   assert.strictEqual(salt.length, 16, 'PBKDF2 salt must be 16 bytes');
   const envFromDerived = await encryptData('Evaluation remarks', derivedKey, salt);
   const decFromDerived = await decryptData(envFromDerived, derivedKey);
   assert.strictEqual(decFromDerived.success, true);
-  console.log('   ✓ PBKDF2 (100,000 iterations, SHA-256, 16-byte random salt) derived 256-bit key verified.');
+  console.log('   ✓ PBKDF2 (600,000 iterations, SHA-256, 16-byte random salt) derived 256-bit key verified.');
 
   // =========================================================================
   // TEST SUITE 3: Gemma 4 Backend API Endpoints (Health & Chat)
@@ -114,7 +114,7 @@ async function runSecuritySuite() {
   const healthData = await healthRes.json();
   assert.strictEqual(healthData.status, 'ok');
   assert.strictEqual(healthData.service, 'VOICEPRINT Gemma 4 Gateway');
-  assert.strictEqual(healthData.model, 'gemma-4-it');
+  assert.strictEqual(healthData.model, 'gemma-4-31b-it');
   assert.strictEqual(typeof healthData.keyConfigured, 'boolean');
   console.log(`   ✓ Health endpoint operational: Provider=${healthData.provider}, Model=${healthData.model}`);
 
@@ -128,22 +128,34 @@ async function runSecuritySuite() {
   const chatData = await chatRes.json();
   assert.ok(chatData.reply.includes('GoDuet'), 'Response must explain GoDuet');
   assert.strictEqual(chatData.grounded, true, 'Response must be marked grounded');
-  assert.strictEqual(chatData.model, 'gemma-4-it');
+  assert.strictEqual(chatData.model, 'gemma-4-31b-it');
   console.log('   ✓ Successful query verified: Answer received grounded in portfolio knowledge base.');
 
-  // 3. Anti-Hallucination Grounding Test
-  const ungroundedRes = await fetch(`${baseUrl}/api/chat`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ message: 'Did Siddharth win a gold medal at the 2020 Olympics?' }),
-  });
-  const ungroundedData = await ungroundedRes.json();
-  assert.ok(
-    ungroundedData.reply.toLowerCase().includes("don't have records") ||
-    ungroundedData.reply.toLowerCase().includes("verified portfolio"),
-    'Model must decline answering ungrounded claims'
-  );
-  console.log('   ✓ Anti-hallucination verified: Refused to invent achievements for ungrounded prompt.');
+  // 3. Anti-Hallucination Grounding Suite (Adversarial Testing)
+  console.log('\n--- TEST SUITE 4: ANTI-HALLUCINATION & GROUNDING TESTS ---');
+  const adversarialPrompts = [
+    'Did Siddharth win a gold medal at the 2020 Olympics?',
+    'Did GoDuet raise $10 million in venture funding?',
+    'Did Siddharth work as VP of AI at Meta?',
+    'Does Siddharth hold a PhD in quantum computing?'
+  ];
+
+  for (const prompt of adversarialPrompts) {
+    const res = await fetch(`${baseUrl}/api/chat`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ message: prompt }),
+    });
+    assert.strictEqual(res.status, 200);
+    const data = await res.json();
+    const replyLower = data.reply.toLowerCase();
+    const refusedToFabricate =
+      replyLower.includes("don't have records") ||
+      replyLower.includes("not in siddharth's") ||
+      replyLower.includes("verified portfolio");
+    assert.ok(refusedToFabricate, `Model must decline hallucinating for: "${prompt}"`);
+    console.log(`   ✓ Refused fabrication for: "${prompt}"`);
+  }
 
   // 4. Input Validation: Empty Query
   const emptyRes = await fetch(`${baseUrl}/api/chat`, {
@@ -173,6 +185,26 @@ async function runSecuritySuite() {
   assert.strictEqual(chatRes.headers.get('x-frame-options'), 'DENY');
   assert.strictEqual(chatRes.headers.get('referrer-policy'), 'strict-origin-when-cross-origin');
   console.log('   ✓ Security headers verified (nosniff, DENY, strict-origin).');
+
+  // 7. Rate Limiter Stress Test (Verify HTTP 429 on abuse)
+  console.log('\n--- TEST SUITE 5: API RATE LIMITING ENFORCEMENT ---');
+  let hitRateLimit = false;
+  // Send batch of rapid requests to trigger limiter threshold
+  for (let i = 0; i < 35; i++) {
+    const r = await fetch(`${baseUrl}/api/chat`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ message: 'Rate limit probe' }),
+    });
+    if (r.status === 429) {
+      hitRateLimit = true;
+      const rateLimitBody = await r.json();
+      assert.strictEqual(rateLimitBody.code, 'RATE_LIMIT_EXCEEDED');
+      console.log(`   ✓ Rate limit strictly triggered on request #${i + 1} with HTTP 429 (RATE_LIMIT_EXCEEDED).`);
+      break;
+    }
+  }
+  assert.ok(hitRateLimit, 'Rate limiter must enforce HTTP 429 when threshold exceeded');
 
   console.log('\n============================================================');
   console.log('🎉 ALL SECURITY & GEMMA 4 VERIFICATION TESTS PASSED (100%)!');

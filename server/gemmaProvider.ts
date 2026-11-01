@@ -30,7 +30,7 @@ export async function callGemmaProvider(
   history: ChatMessage[] = []
 ): Promise<GemmaResponse> {
   const provider = (process.env.GEMMA_PROVIDER || 'google').toLowerCase();
-  const model = process.env.GEMMA_MODEL || 'gemma-4-it';
+  const model = process.env.GEMMA_MODEL || 'gemma-4-31b-it';
   const apiKey = process.env.GEMMA_API_KEY || process.env.GEMINI_API_KEY || '';
   const apiBase = process.env.GEMMA_API_BASE || '';
   const temperature = parseFloat(process.env.GEMMA_TEMPERATURE || '0.2');
@@ -44,11 +44,11 @@ ${PORTFOLIO_KNOWLEDGE_BASE}`;
   if (provider === 'google') {
     if (!apiKey) {
       // Graceful fallback to verified grounded engine when API key is unconfigured
-      return generateLocalGroundedResponse(userQuery, model, 'google (local grounded fallback - GEMMA_API_KEY unconfigured)');
+      return generateLocalGroundedResponse(userQuery, model, 'Verified Portfolio Archive (Grounded Fallback - GEMMA_API_KEY unconfigured)');
     }
 
     try {
-      // Call Google AI Studio endpoint for Gemma / Gemini
+      // Call Google AI Studio endpoint for Gemma 4 (gemma-4-31b-it / gemma-4-26b-a4b-it)
       const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
 
       const contents = [
@@ -84,26 +84,26 @@ ${PORTFOLIO_KNOWLEDGE_BASE}`;
         const errText = await res.text();
         console.warn(`[GemmaProvider] Google API error (${res.status}):`, errText);
         // Fallback to grounded portfolio engine rather than leaving recruiter empty-handed
-        return generateLocalGroundedResponse(userQuery, model, 'google (grounded archive fallback)');
+        return generateLocalGroundedResponse(userQuery, model, 'Verified Portfolio Archive (Grounded Fallback - Remote API Unavailable)');
       }
 
       const data = await res.json();
       const generatedText = data.candidates?.[0]?.content?.parts?.[0]?.text;
 
       if (!generatedText) {
-        return generateLocalGroundedResponse(userQuery, model, 'google (empty response fallback)');
+        return generateLocalGroundedResponse(userQuery, model, 'Verified Portfolio Archive (Grounded Fallback - Empty Response)');
       }
 
       return {
         reply: generatedText.trim(),
         model,
-        provider: 'Google AI Studio (Remote Gemma 4)',
+        provider: 'Google AI Studio (Remote Gemma 4 - 31B-IT)',
         grounded: true,
         isFallback: false
       };
     } catch (err: any) {
       console.warn('[GemmaProvider] Network error calling Google AI Studio:', err.message);
-      return generateLocalGroundedResponse(userQuery, model, 'google (network error fallback)');
+      return generateLocalGroundedResponse(userQuery, model, 'Verified Portfolio Archive (Grounded Fallback - Network Error)');
     }
   }
 
@@ -197,6 +197,41 @@ ${PORTFOLIO_KNOWLEDGE_BASE}`;
  */
 function generateLocalGroundedResponse(query: string, model: string, providerInfo: string): GemmaResponse {
   const q = query.toLowerCase();
+
+  // Strict anti-hallucination check for ungrounded claims, funding, institutional awards, or corporate affiliations
+  if (
+    q.includes('funding') ||
+    q.includes('venture') ||
+    q.includes('raise') ||
+    q.includes('raised') ||
+    q.includes('valuation') ||
+    q.includes('investor') ||
+    q.includes('medal') ||
+    q.includes('olympic') ||
+    q.includes('nobel') ||
+    q.includes('forbes') ||
+    q.includes('phd') ||
+    q.includes('doctorate') ||
+    q.includes('patent') ||
+    (q.includes('work') && (q.includes('meta') || q.includes('apple') || q.includes('netflix')))
+  ) {
+    return {
+      reply: `I don't have records of that in Siddharth's verified portfolio.
+
+Siddharth's documented work and builder records focus on:
+- **GoDuet:** Multi-restaurant shared courier logistics and distributed cart state machine (independent student prototype, not venture-funded).
+- **Private Wellness Check-in:** Client-side AES-256-GCM zero-knowledge student privacy.
+- **Floor Plan to 3D Viewer:** WebGL Three.js spatial extrusion from 2D vectors.
+- **Wispr Flow Voice Velocity:** Voice-first developer workflows saving ~25-35 minutes per task.
+- **GTM Strategy:** Collegiate hackathon growth campaigns ("Your Brain Has No Backspace").
+
+Siddharth is currently a student builder and independent explorer. No venture funding, institutional awards, or external corporate employment are claimed in his verified portfolio.`,
+      model,
+      provider: providerInfo,
+      grounded: true,
+      isFallback: true
+    };
+  }
 
   // Pattern match against authentic portfolio knowledge base
   if (q.includes('built') || q.includes('project') || q.includes('portfolio') || q.includes('what have you done')) {

@@ -415,9 +415,15 @@ export const AskMeAnythingSection: React.FC = () => {
                     // MODEL: {currentTurn.model}
                   </span>
 
-                  {currentTurn.isFallback && (
-                    <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-amber-500/15 text-amber-300 border border-amber-500/30 font-bold">
-                      GROUNDED ARCHIVE
+                  {currentTurn.isFallback ? (
+                    <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-amber-500/15 text-amber-300 border border-amber-500/30 font-bold flex items-center gap-1">
+                      <span className="w-1.5 h-1.5 rounded-full bg-amber-400" />
+                      <span>GROUNDED ARCHIVE (LOCAL FALLBACK)</span>
+                    </span>
+                  ) : (
+                    <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-acid/15 text-acid border border-acid/30 font-bold flex items-center gap-1">
+                      <span className="w-1.5 h-1.5 rounded-full bg-acid animate-pulse" />
+                      <span>LIVE GEMMA 4 INFERENCE</span>
                     </span>
                   )}
                 </div>

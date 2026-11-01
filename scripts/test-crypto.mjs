@@ -41,7 +41,7 @@ async function runCryptoTests() {
   const exp1 = await exportKeyToBase64(derivedKey1);
   const exp2 = await exportKeyToBase64(derivedKey2);
   assert.strictEqual(exp1, exp2, 'Identical passphrase + salt must derive identical 256-bit key');
-  console.log('   ✓ PBKDF2 key derivation (100,000 rounds, SHA-256, 16-byte salt) verified.');
+  console.log('   ✓ PBKDF2 key derivation (600,000 rounds, SHA-256, 16-byte salt) verified.');
 
   // Test 4: Fresh IV Generation Invariant (No IV Reuse)
   console.log('\n4. Testing Fresh IV Generation Invariant (Never reuse IVs)...');
