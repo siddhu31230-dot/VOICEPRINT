@@ -102,14 +102,14 @@ export const PORTFOLIO_KNOWLEDGE_BASE = `
 
 ## 8. VERIFIED HACKATHON CHAMPIONSHIPS & AWARDS
 - Event: Hacktoberfest 2026 (24-Hour Overnight Hackathon)
-- Award / Result: 1ST PLACE WINNER — TRACK 2 (CHAMPION)
+- Award / Result: 1ST PLACE WINNER — TRACK 2: BEST USE OF GOOGLE GEMMA 4 (CHAMPION)
 - Date: October 30–31, 2026
 - Location / Venue: SMRU Campus, Hyderabad, India
 - Organizers: Newton School of Technology & St. Mary's Rehabilitation University (SMRU)
 - Partners: Powered by Major League Hacking (MLH), DEV; in partnership with Hacktoberfest 26
-- Track Partner: Google Gemma
-- Key Context: Track 2 focused on Google Gemma AI model integration, agentic workflows, and developer tooling. Competing over 24 continuous hours against collegiate engineering teams in Hyderabad, Siddharth's team built and shipped an overnight prototype that claimed First Place in Track 2.
-- Significance for Wispr Flow Application: Demonstrates high-speed builder grit, direct hands-on mastery with Google Gemma models under hackathon pressure, and authentic collegiate developer empathy.
+- Track Category: Best Use of Google Gemma 4 (Track 2)
+- Key Context: Track 2 focused on the Best Use of Google Gemma 4 AI models, agentic workflows, and developer tooling. Competing over 24 continuous hours against collegiate engineering teams in Hyderabad, Siddharth's team built and shipped an overnight prototype that claimed First Place in Track 2.
+- Significance for Wispr Flow Application: Demonstrates high-speed builder grit, direct hands-on mastery with Google Gemma 4 models under hackathon pressure, and authentic collegiate developer empathy.
 `;
 
 export const GEMMA_SYSTEM_INSTRUCTION = `

@@ -178,11 +178,11 @@ async function runE2ETests() {
       return text.includes('1ST PLACE WINNER') &&
              text.includes('Hacktoberfest 2026') &&
              text.includes('Track 2') &&
-             text.includes('Google Gemma') &&
+             text.includes('Best Use of Google Gemma 4') &&
              text.includes('Hyderabad');
     });
-    assert.ok(hasHackathonChampionship, 'Origin section must showcase Hacktoberfest 2026 1st Place win with Track 2: Google Gemma');
-    console.log('   ✓ Verified Hacktoberfest 2026 Track 2 Championship spotlight in Origin section.');
+    assert.ok(hasHackathonChampionship, 'Origin section must showcase Hacktoberfest 2026 1st Place win with Track 2: Best Use of Google Gemma 4');
+    console.log('   ✓ Verified Hacktoberfest 2026 Track 2 (Best Use of Google Gemma 4) Championship spotlight in Origin section.');
 
     // Interactive Test: Contact Section AES-256-GCM Vault
     console.log('\n7. Testing Contact Section AES-256-GCM Client Vault...');

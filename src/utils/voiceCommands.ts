@@ -338,7 +338,7 @@ export function parseVoiceCommand(rawTranscript: string): VoiceCommandResult {
   ) {
     return {
       type: 'question',
-      query: 'Tell me about your 1st place hackathon win at Hacktoberfest 2026 (Track 2: Gemma).',
+      query: 'Tell me about your 1st place hackathon win at Hacktoberfest 2026 (Best Use of Google Gemma 4).',
       originalCommand: clean,
     };
   }

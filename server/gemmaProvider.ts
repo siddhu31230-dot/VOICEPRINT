@@ -289,19 +289,19 @@ Siddharth is currently a student builder and independent explorer. No venture fu
     q.includes('achievement')
   ) {
     return {
-      reply: `**Hackathon Championship: 1st Place Winner — Hacktoberfest 2026 (Track 2: Google Gemma)**
+      reply: `**Hackathon Championship: 1st Place Winner — Hacktoberfest 2026 (Track 2: Best Use of Google Gemma 4)**
 
-Siddharth and his team won **1st Place in Track 2** at **Hacktoberfest 2026**, a 24-hour overnight hackathon held at **SMRU Campus, Hyderabad** on **October 30–31, 2026**.
+Siddharth and his team won **1st Place in Track 2 (Best Use of Google Gemma 4)** at **Hacktoberfest 2026**, a 24-hour overnight hackathon held at **SMRU Campus, Hyderabad** on **October 30–31, 2026**.
 
 **Key Event Details:**
 - **Event:** Hacktoberfest 2026 (24-Hour Overnight Hackathon)
 - **Organizers:** Newton School of Technology & St. Mary's Rehabilitation University (SMRU)
 - **Official Partners:** Powered by Major League Hacking (MLH) and DEV; in partnership with Hacktoberfest 26
-- **Track Partner:** **Google Gemma** (Track 2)
+- **Track Category:** **Best Use of Google Gemma 4** (Track 2)
 - **Result:** **1st Place (Championship)**
 
 **The Builder Takeaway:**
-Competing under 24-hour time pressure against collegiate engineering teams in Hyderabad, their solution combined Google Gemma's instruction-following models with high-speed developer workflows, turning a concept into a winning production-ready prototype overnight. This firsthand hackathon victory directly reinforces Siddharth's conviction in voice velocity for Indian builders and the Wispr Flow campus campaign.`,
+Competing under 24-hour time pressure against collegiate engineering teams in Hyderabad, their solution combined Google Gemma 4's instruction-following models with high-speed developer workflows, turning a concept into a winning production-ready prototype overnight. This firsthand hackathon victory directly reinforces Siddharth's conviction in voice velocity for Indian builders and the Wispr Flow campus campaign.`,
       model,
       provider: providerInfo,
       grounded: true,

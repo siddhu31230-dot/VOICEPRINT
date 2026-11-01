@@ -320,9 +320,9 @@ export const OriginSection: React.FC<OriginSectionProps> = ({ onOpenConfigLinks 
                   </span>
                 </div>
                 <div className="p-2.5 rounded-xl bg-black/40 border border-acid/30">
-                  <span className="text-[10px] font-mono text-acid uppercase block">TRACK PARTNER</span>
+                  <span className="text-[10px] font-mono text-acid uppercase block">TRACK CATEGORY</span>
                   <span className="text-xs font-mono font-bold text-acid block mt-0.5 truncate">
-                    Google Gemma
+                    Best Use of Google Gemma 4
                   </span>
                 </div>
                 <div className="p-2.5 rounded-xl bg-black/40 border border-white/10">
@@ -469,7 +469,7 @@ export const OriginSection: React.FC<OriginSectionProps> = ({ onOpenConfigLinks 
                 />
               </div>
               <div className="text-center font-mono text-[11px] text-[#8E8E98]">
-                SMRU Campus, Hyderabad • Oct 30–31, 2026 • 1st Place Winner Track 2 (Gemma)
+                SMRU Campus, Hyderabad • Oct 30–31, 2026 • 1st Place Winner Track 2 (Best Use of Google Gemma 4)
               </div>
             </div>
           </motion.div>
