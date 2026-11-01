@@ -7,6 +7,10 @@
     "dev": "vite",
     "server": "tsx server/index.ts",
     "test:crypto": "tsx scripts/test-crypto.mjs",
+    "test:voice": "tsx scripts/test-voice-commands.mjs",
+    "test:api": "node scripts/test-api-resilience.mjs",
+    "test:e2e": "node scripts/test-e2e-browser.mjs",
+    "test": "npm run test:crypto && npm run test:voice && npm run test:api && npm run test:e2e",
     "build": "tsc && vite build",
     "preview": "vite preview"
   },

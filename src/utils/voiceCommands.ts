@@ -136,6 +136,37 @@ export function parseVoiceCommand(rawTranscript: string): VoiceCommandResult {
   }
 
   if (
+    t === 'go to how i think' ||
+    t === 'open how i think' ||
+    t === 'show how i think' ||
+    t === 'how i think' ||
+    t.includes('mental models') ||
+    t.includes('engineering principles')
+  ) {
+    return {
+      type: 'navigation',
+      targetId: '#how-i-think',
+      label: 'How I Think (Mental Models)',
+      explanation: 'Navigating to How I Think Section (#how-i-think)',
+    };
+  }
+
+  if (
+    t === 'go to why wispr flow' ||
+    t === 'open why wispr flow' ||
+    t === 'show why wispr flow' ||
+    t.includes('why wispr flow section') ||
+    t.includes('india playbook')
+  ) {
+    return {
+      type: 'navigation',
+      targetId: '#why-wispr-flow',
+      label: 'Why Wispr Flow & India Playbook',
+      explanation: 'Navigating to Why Wispr Flow Section (#why-wispr-flow)',
+    };
+  }
+
+  if (
     t.includes('voice lab') ||
     t === 'go to voice' ||
     t === 'open voice lab' ||

@@ -95,8 +95,83 @@ async function runCryptoTests() {
   assert.match(wrongKeyRes.error, /Authentication failed/);
   console.log('   ✓ Wrong key safely rejected by GCM authentication tag.');
 
+  // Test 9: Empty String Encryption and Decryption Roundtrip
+  console.log('\n9. Testing Empty String Plaintext Roundtrip...');
+  const emptyEnv = await encryptData('', key);
+  const emptyRes = await decryptData(emptyEnv, key);
+  assert.strictEqual(emptyRes.success, true);
+  assert.strictEqual(emptyRes.plaintext, '');
+  console.log('   ✓ Empty string encrypted with 128-bit auth tag and decrypted successfully.');
+
+  // Test 10: Large Payload Encryption (50KB text) Roundtrip
+  console.log('\n10. Testing Large 50KB Payload Roundtrip...');
+  const largePayload = 'A'.repeat(50 * 1024);
+  const t0 = Date.now();
+  const largeEnv = await encryptData(largePayload, key);
+  const largeRes = await decryptData(largeEnv, key);
+  const dt = Date.now() - t0;
+  assert.strictEqual(largeRes.success, true);
+  assert.strictEqual(largeRes.plaintext?.length, 50 * 1024);
+  console.log(`   ✓ 50KB payload encrypted and decrypted in ${dt}ms.`);
+
+  // Test 11: Truncated Ciphertext Rejection (<16 bytes auth tag missing)
+  console.log('\n11. Testing Truncated Ciphertext (<16 bytes)...');
+  const shortEnv = {
+    ...env1,
+    ciphertext: Buffer.from(new Uint8Array(8)).toString('base64')
+  };
+  const shortRes = await decryptData(shortEnv, key);
+  assert.strictEqual(shortRes.success, false);
+  assert.match(shortRes.error, /truncated/);
+  console.log('   ✓ Truncated ciphertext safely rejected with descriptive error.');
+
+  // Test 12: Corrupted / Invalid Base64 Handling
+  console.log('\n12. Testing Corrupted Base64 Input Handling...');
+  const corruptedEnv = {
+    ...env1,
+    ciphertext: '!!!ThisIsNotValidBase64!!!'
+  };
+  const corruptedRes = await decryptData(corruptedEnv, key);
+  assert.strictEqual(corruptedRes.success, false);
+  console.log('   ✓ Corrupted Base64 handled without unhandled exception.');
+
+  // Test 13: Unsupported Envelope Version Rejection
+  console.log('\n13. Testing Invalid Envelope Version Rejection...');
+  const invalidVersionEnv = {
+    ...env1,
+    version: 99
+  };
+  const invalidVersionRes = await decryptData(invalidVersionEnv, key);
+  assert.strictEqual(invalidVersionRes.success, false);
+  assert.match(invalidVersionRes.error, /Unsupported encryption envelope/);
+  console.log('   ✓ Invalid envelope version 99 rejected.');
+
+  // Test 14: Unsupported Algorithm Rejection
+  console.log('\n14. Testing Unsupported Algorithm Rejection...');
+  const invalidAlgoEnv = {
+    ...env1,
+    algorithm: 'AES-CBC-128'
+  };
+  const invalidAlgoRes = await decryptData(invalidAlgoEnv, key);
+  assert.strictEqual(invalidAlgoRes.success, false);
+  assert.match(invalidAlgoRes.error, /Unsupported encryption envelope/);
+  console.log('   ✓ Unsupported algorithm AES-CBC-128 rejected.');
+
+  // Test 15: Invalid Key Length Import Validation
+  console.log('\n15. Testing Invalid Key Length Import Validation...');
+  const invalidShortKeyBase64 = Buffer.from(new Uint8Array(16)).toString('base64'); // 16 bytes instead of 32
+  let threw = false;
+  try {
+    await importKeyFromBase64(invalidShortKeyBase64);
+  } catch (err) {
+    threw = true;
+    assert.match(err.message, /expected 32 bytes/);
+  }
+  assert.strictEqual(threw, true, 'importKeyFromBase64 must throw on invalid key length');
+  console.log('   ✓ Key import correctly throws on non-256-bit key.');
+
   console.log('\n=========================================');
-  console.log('🎉 ALL AES-256-GCM CRYPTO TESTS PASSED!');
+  console.log('🎉 ALL 15 AES-256-GCM CRYPTO TESTS PASSED!');
   console.log('=========================================\n');
 }
 

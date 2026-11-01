@@ -1,15 +1,35 @@
 import assert from 'node:assert';
 import { parseVoiceCommand, VOICE_LANGUAGES } from '../src/utils/voiceCommands.ts';
+import { ALL_VOICE_LANGUAGES, getBrowserVoiceCapabilities } from '../src/utils/voiceLanguages.ts';
 
 console.log('🎤 STARTING VOICEPRINT VOICE COMMANDS UNIT TESTS...\n');
 
 // 1. Language Definitions
 console.log('1. Testing Voice Language Definitions...');
-assert.strictEqual(VOICE_LANGUAGES.length, 3, 'Must support 3 languages (English, Hindi, Telugu)');
+assert.strictEqual(VOICE_LANGUAGES.length, 3, 'Must support 3 quick-switch languages (English, Hindi, Telugu)');
 assert.strictEqual(VOICE_LANGUAGES[0].code, 'en-US');
 assert.strictEqual(VOICE_LANGUAGES[1].code, 'hi-IN');
 assert.strictEqual(VOICE_LANGUAGES[2].code, 'te-IN');
-console.log('   ✓ Supported languages verified: English (en-US), Hindi (hi-IN), Telugu (te-IN).');
+console.log('   ✓ Supported primary languages verified: English (en-US), Hindi (hi-IN), Telugu (te-IN).');
+
+// 1b. Multilingual 17-Language Suite
+console.log('\n1b. Testing Comprehensive 17-Language Multilingual Suite...');
+assert.strictEqual(ALL_VOICE_LANGUAGES.length, 17, 'Must define exactly 17 languages in full catalog');
+const indianRegional = ALL_VOICE_LANGUAGES.filter(l => l.family === 'Indian Regional');
+assert.strictEqual(indianRegional.length, 10, 'Must include 10 Indian regional languages');
+for (const lang of ALL_VOICE_LANGUAGES) {
+  assert.ok(lang.code, `Language ${lang.name} missing code`);
+  assert.ok(lang.nativeName, `Language ${lang.name} missing nativeName`);
+  assert.ok(lang.bcp47, `Language ${lang.name} missing bcp47 tag`);
+}
+console.log(`   ✓ All 17 languages verified (10 Indian regional + 6 international + 1 global).`);
+
+// 1c. Browser Capability Detection Fallback
+console.log('\n1c. Testing Browser Voice Capability Detection...');
+const caps = getBrowserVoiceCapabilities('hi-IN');
+assert.strictEqual(typeof caps.speechRecognitionSupported, 'boolean');
+assert.strictEqual(typeof caps.ttsVoiceAvailable, 'boolean');
+console.log('   ✓ Capability detector safely returns boolean flags in headless/Node environment.');
 
 // 2. Six Required Natural Voice Commands
 console.log('\n2. Testing 6 Primary Natural Voice Commands...');
@@ -50,18 +70,23 @@ assert.strictEqual(cmd6.type, 'navigation');
 assert.strictEqual(cmd6.targetId, '#contact');
 console.log('   ✓ "Go to the contact section." -> Correctly mapped to #contact navigation.');
 
-// 3. Section Navigation Suite
-console.log('\n3. Testing Comprehensive Section Navigation...');
+// 3. Section Navigation Suite (All 9 sections + Home)
+console.log('\n3. Testing Comprehensive Section Navigation (All Portfolio Sections)...');
 const navigationTests = [
   { text: 'Go to origin', target: '#origin' },
   { text: 'Show origin story', target: '#origin' },
+  { text: 'Go to how i think', target: '#how-i-think' },
+  { text: 'Show how i think', target: '#how-i-think' },
   { text: 'Open experiments', target: '#experiments' },
   { text: 'Go to voice lab', target: '#voice-lab' },
+  { text: 'Go to why wispr flow', target: '#why-wispr-flow' },
+  { text: 'Show why wispr flow', target: '#why-wispr-flow' },
   { text: 'Open growth arena', target: '#growth-arena' },
   { text: 'Go to ask me', target: '#ask-me' },
   { text: 'Go to next chapter', target: '#next-chapter' },
   { text: 'Go to contact', target: '#contact' },
   { text: 'Go to top', target: '#home' },
+  { text: 'scroll to top', target: '#home' },
 ];
 
 for (const t of navigationTests) {
@@ -69,7 +94,7 @@ for (const t of navigationTests) {
   assert.strictEqual(result.type, 'navigation', `Command "${t.text}" must be navigation`);
   assert.strictEqual(result.targetId, t.target, `Command "${t.text}" must target ${t.target}`);
 }
-console.log(`   ✓ All ${navigationTests.length} navigation voice commands verified.`);
+console.log(`   ✓ All ${navigationTests.length} navigation voice commands verified across all 9 portfolio sections.`);
 
 // 4. Confirmation-Guarded Commands
 console.log('\n4. Testing Confirmation-Guarded Destructive/Change Actions...');
@@ -89,8 +114,18 @@ for (const p of protectedCommands) {
 }
 console.log(`   ✓ All ${protectedCommands.length} protected actions require explicit confirmation before execution.`);
 
-// 5. General Recruiter Queries
-console.log('\n5. Testing General Spoken Queries...');
+// 5. Topic-Grounded Voice Queries (GoDuet, Vault, Tech Stack)
+console.log('\n5. Testing Topic-Grounded Spoken Inquiries...');
+const goduetVariants = ['explain goduet', 'what is goduet', 'tell me about goduet', 'GoDuet architecture'];
+for (const v of goduetVariants) {
+  const res = parseVoiceCommand(v);
+  assert.strictEqual(res.type, 'question', `"${v}" should be recognized as a question`);
+  assert.ok(res.query.includes('GoDuet'), `"${v}" query should specifically focus on GoDuet`);
+}
+console.log('   ✓ All GoDuet speech variations mapped exclusively to GoDuet architectural query.');
+
+// 6. General Recruiter Queries
+console.log('\n6. Testing General Spoken Queries...');
 const general = parseVoiceCommand('What is your biggest product failure?');
 assert.strictEqual(general.type, 'general_query');
 assert.strictEqual(general.query, 'What is your biggest product failure?');
