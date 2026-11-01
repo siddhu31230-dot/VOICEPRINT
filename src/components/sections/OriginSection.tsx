@@ -1,7 +1,23 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { SectionHeading } from '../common/SectionHeading';
 import { ORIGIN_SECTIONS, TIMELINE_EVENTS } from '../../data/portfolioData';
-import { Compass, Sparkles, BookOpen, Layers, CheckCircle, Terminal, HelpCircle, UserCheck, Quote, ArrowRight } from 'lucide-react';
+import { VoiceWaveform } from '../common/VoiceWaveform';
+import {
+  Compass,
+  Sparkles,
+  BookOpen,
+  Layers,
+  CheckCircle,
+  Terminal,
+  HelpCircle,
+  UserCheck,
+  Quote,
+  ArrowRight,
+  Headphones,
+  Square,
+  Play,
+  RotateCcw
+} from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 interface OriginSectionProps {
@@ -11,9 +27,51 @@ interface OriginSectionProps {
 export const OriginSection: React.FC<OriginSectionProps> = ({ onOpenConfigLinks }) => {
   const [activeStoryTab, setActiveStoryTab] = useState(ORIGIN_SECTIONS[0].id);
   const [selectedTimelineIndex, setSelectedTimelineIndex] = useState<number>(TIMELINE_EVENTS.length - 1);
+  const [isSpeakingChapter, setIsSpeakingChapter] = useState(false);
 
   const activeStory = ORIGIN_SECTIONS.find((s) => s.id === activeStoryTab) || ORIGIN_SECTIONS[0];
   const activeTimeline = TIMELINE_EVENTS[selectedTimelineIndex];
+
+  // Stop speaking when switching story tabs or unmounting
+  useEffect(() => {
+    if ('speechSynthesis' in window) {
+      window.speechSynthesis.cancel();
+    }
+    setIsSpeakingChapter(false);
+  }, [activeStoryTab]);
+
+  const handleSpeakChapter = () => {
+    if (!('speechSynthesis' in window)) return;
+
+    if (isSpeakingChapter) {
+      window.speechSynthesis.cancel();
+      setIsSpeakingChapter(false);
+      return;
+    }
+
+    window.speechSynthesis.cancel();
+    const narrationText =
+      activeStory.spokenSummary ||
+      `${activeStory.title}. ${activeStory.summary}. ${activeStory.quote || ''}`;
+
+    const utterance = new SpeechSynthesisUtterance(narrationText);
+    utterance.rate = 1.05;
+    utterance.pitch = 1.0;
+
+    utterance.onstart = () => {
+      setIsSpeakingChapter(true);
+    };
+
+    utterance.onend = () => {
+      setIsSpeakingChapter(false);
+    };
+
+    utterance.onerror = () => {
+      setIsSpeakingChapter(false);
+    };
+
+    window.speechSynthesis.speak(utterance);
+  };
 
   return (
     <section id="origin" className="scroll-mt-28 py-24 sm:py-28 border-t border-white/10 bg-[#070709] relative z-10">
@@ -47,7 +105,7 @@ export const OriginSection: React.FC<OriginSectionProps> = ({ onOpenConfigLinks 
                 Story Exploration
               </span>
               <p className="text-xs text-[#8E8E98]">
-                Select an exploration chapter to understand my thought process:
+                Select an exploration chapter to hear and read my thought process:
               </p>
             </div>
 
@@ -64,13 +122,20 @@ export const OriginSection: React.FC<OriginSectionProps> = ({ onOpenConfigLinks 
                   }`}
                 >
                   <div className="space-y-1">
-                    <span
-                      className={`text-[10px] font-mono uppercase px-2 py-0.5 rounded ${
-                        isSelected ? 'bg-acid text-black font-bold' : 'bg-[#14141e] text-[#8E8E98]'
-                      }`}
-                    >
-                      {section.badge}
-                    </span>
+                    <div className="flex items-center gap-2">
+                      <span
+                        className={`text-[10px] font-mono uppercase px-2 py-0.5 rounded ${
+                          isSelected ? 'bg-acid text-black font-bold' : 'bg-[#14141e] text-[#8E8E98]'
+                        }`}
+                      >
+                        {section.badge}
+                      </span>
+                      {section.audioDuration && (
+                        <span className="text-[10px] font-mono text-[#71717A]">
+                          {section.audioDuration}
+                        </span>
+                      )}
+                    </div>
                     <h3
                       className={`font-display font-bold text-xs sm:text-sm block ${
                         isSelected ? 'text-acid' : 'text-[#E4E4E7] group-hover:text-white'
@@ -101,6 +166,7 @@ export const OriginSection: React.FC<OriginSectionProps> = ({ onOpenConfigLinks 
                 transition={{ duration: 0.22 }}
                 className="p-6 sm:p-9 rounded-3xl bg-[#0a0a10] border border-white/10 shadow-2xl relative"
               >
+                {/* Panel Header */}
                 <div className="flex flex-wrap items-center justify-between gap-3 mb-6 pb-4 border-b border-white/10">
                   <div className="flex items-center gap-2.5">
                     <span className="font-mono text-xs uppercase px-2.5 py-1 rounded bg-acid/15 text-acid border border-acid/30 font-bold">
@@ -110,11 +176,45 @@ export const OriginSection: React.FC<OriginSectionProps> = ({ onOpenConfigLinks 
                       {activeStory.title}
                     </h4>
                   </div>
-                  <span className="font-mono text-xs text-[#71717A]">
-                    Siddharth Singh // Authentic Reflection
-                  </span>
+
+                  {/* Audio Listen Button for this Chapter */}
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={handleSpeakChapter}
+                      className={`px-3.5 py-1.5 rounded-xl text-xs font-mono font-bold flex items-center gap-2 transition ${
+                        isSpeakingChapter
+                          ? 'bg-red-500/20 text-red-300 border border-red-500/40'
+                          : 'bg-acid/15 text-acid border border-acid/30 hover:bg-acid hover:text-black'
+                      }`}
+                      title={isSpeakingChapter ? 'Stop narration' : 'Listen to this chapter summary'}
+                    >
+                      {isSpeakingChapter ? (
+                        <>
+                          <Square className="w-3.5 h-3.5 fill-red-400 text-red-400" />
+                          <span>STOP NARRATION</span>
+                        </>
+                      ) : (
+                        <>
+                          <Headphones className="w-3.5 h-3.5" />
+                          <span>LISTEN ({activeStory.audioDuration || '15s'})</span>
+                        </>
+                      )}
+                    </button>
+                  </div>
                 </div>
 
+                {/* Spoken Narration Waveform Bar */}
+                {isSpeakingChapter && (
+                  <div className="mb-5 p-3 rounded-2xl bg-acid/10 border border-acid/30 flex items-center justify-between text-xs font-mono text-acid animate-fade-in">
+                    <div className="flex items-center gap-2">
+                      <VoiceWaveform isListening={true} barCount={12} className="h-4" />
+                      <span>Narrating chapter summary aloud...</span>
+                    </div>
+                    <span className="text-[10px] text-[#A1A1AA]">Web Speech Synthesis</span>
+                  </div>
+                )}
+
+                {/* Story Text */}
                 <div className="text-[#A1A1AA] leading-relaxed font-sans text-sm sm:text-base space-y-4 whitespace-pre-line">
                   {activeStory.content}
                 </div>
@@ -162,61 +262,65 @@ export const OriginSection: React.FC<OriginSectionProps> = ({ onOpenConfigLinks 
                 <button
                   key={event.year}
                   onClick={() => setSelectedTimelineIndex(idx)}
-                  className={`p-3.5 sm:p-4 rounded-2xl border text-left transition-all duration-200 relative ${
+                  className={`p-3 rounded-2xl border text-left transition-all duration-200 ${
                     isSelected
-                      ? 'bg-[#141420] border-acid shadow-lg shadow-acid/15'
-                      : 'bg-[#09090e] border-white/10 hover:border-white/20 hover:bg-[#0e0e16]'
+                      ? 'bg-[#12121e] border-acid/60 shadow-lg'
+                      : 'bg-[#09090e] border-white/5 hover:border-white/20'
                   }`}
                 >
-                  <div className="flex items-center justify-between mb-1.5">
-                    <span className="font-mono text-xs text-acid font-bold">
-                      {event.year}
-                    </span>
-                    {event.isPlaceholder && (
-                      <span className="text-[9px] font-mono text-[#71717A] border border-white/10 px-1 rounded">
-                        EDITABLE
-                      </span>
-                    )}
-                  </div>
-                  <span className="text-xs font-display font-bold text-white block truncate">
-                    {event.title}
+                  <span
+                    className={`font-mono text-xs block font-bold mb-1 ${
+                      isSelected ? 'text-acid' : 'text-[#71717A]'
+                    }`}
+                  >
+                    {event.year}
                   </span>
-                  <span className="text-[10px] font-mono text-[#8E8E98] block truncate mt-0.5">
-                    {event.category}
+                  <span
+                    className={`text-xs font-display font-bold block truncate ${
+                      isSelected ? 'text-white' : 'text-[#A1A1AA]'
+                    }`}
+                  >
+                    {event.title}
                   </span>
                 </button>
               );
             })}
           </div>
 
-          {/* Selected Timeline Card */}
-          <div className="p-6 sm:p-8 rounded-3xl bg-[#09090e] border border-white/10 flex flex-col md:flex-row items-start md:items-center justify-between gap-6 shadow-2xl">
-            <div className="space-y-2 max-w-3xl">
-              <div className="flex items-center gap-2.5">
-                <span className="font-mono text-xs px-2.5 py-0.5 rounded bg-acid text-black font-bold">
-                  {activeTimeline.year}
+          {/* Detailed Timeline Milestone View */}
+          {activeTimeline && (
+            <div className="p-6 sm:p-8 rounded-3xl bg-[#090910] border border-white/10 grid grid-cols-1 md:grid-cols-3 gap-6 shadow-xl">
+              <div>
+                <span className="font-mono text-xs text-acid uppercase tracking-wider block mb-1 font-bold">
+                  {activeTimeline.year} // {activeTimeline.period}
                 </span>
-                <span className="text-xs font-mono text-[#8E8E98]">
-                  {activeTimeline.period}
-                </span>
+                <h4 className="text-xl font-display font-bold text-white mb-2">
+                  {activeTimeline.title}
+                </h4>
+                <p className="text-xs sm:text-sm text-[#A1A1AA] leading-relaxed">
+                  {activeTimeline.description}
+                </p>
               </div>
-              <h4 className="text-xl sm:text-2xl font-display font-bold text-white">
-                {activeTimeline.title}
-              </h4>
-              <p className="text-[#A1A1AA] text-sm font-sans leading-relaxed">
-                {activeTimeline.description}
-              </p>
-            </div>
 
-            <div className="p-5 rounded-2xl bg-[#101018] border border-white/10 md:min-w-[300px]">
-              <span className="font-mono text-[10px] text-acid uppercase tracking-wider block mb-1 font-bold">
-                KEY OPERATIONAL TAKEAWAY
-              </span>
-              <p className="text-xs font-mono text-white leading-relaxed">
-                "{activeTimeline.learning}"
-              </p>
+              <div>
+                <span className="font-mono text-xs text-acid/80 uppercase tracking-wider block mb-1 font-bold">
+                  CATEGORY FOCUS
+                </span>
+                <p className="text-xs sm:text-sm text-[#D4D4D8] leading-relaxed bg-[#12121a] p-3.5 rounded-2xl border border-white/5">
+                  {activeTimeline.category}
+                </p>
+              </div>
+
+              <div>
+                <span className="font-mono text-xs text-acid uppercase tracking-wider block mb-1 font-bold">
+                  BUILDER TAKEAWAY
+                </span>
+                <p className="text-xs sm:text-sm text-[#D4D4D8] leading-relaxed bg-[#12121a] p-3.5 rounded-2xl border border-acid/20">
+                  {activeTimeline.learning}
+                </p>
+              </div>
             </div>
-          </div>
+          )}
         </div>
       </div>
     </section>

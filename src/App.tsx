@@ -2,8 +2,10 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Navbar } from './components/layout/Navbar';
 import { HeroSection } from './components/sections/HeroSection';
 import { OriginSection } from './components/sections/OriginSection';
+import { HowIThinkSection } from './components/sections/HowIThinkSection';
 import { ExperimentsSection } from './components/sections/ExperimentsSection';
 import { VoiceLabSection } from './components/sections/VoiceLabSection';
+import { WhyWisprFlowSection } from './components/sections/WhyWisprFlowSection';
 import { GrowthArenaSection } from './components/sections/GrowthArenaSection';
 import { AskMeAnythingSection } from './components/sections/AskMeAnythingSection';
 import { NextChapterSection } from './components/sections/NextChapterSection';
@@ -11,6 +13,8 @@ import { ContactSection } from './components/sections/ContactSection';
 import { Footer } from './components/layout/Footer';
 import { ConfigurableLinksModal } from './components/common/ConfigurableLinksModal';
 import { SecurityTransparencyModal } from './components/common/SecurityTransparencyModal';
+import { FloatingVoiceAssistant } from './components/voice/FloatingVoiceAssistant';
+import { FullScreenVoiceAssistant } from './components/voice/FullScreenVoiceAssistant';
 import { INITIAL_SOCIAL_LINKS } from './data/portfolioData';
 import { SocialLinks } from './types';
 
@@ -28,6 +32,7 @@ export const App: React.FC = () => {
   const [isConfigModalOpen, setIsConfigModalOpen] = useState(false);
   const [isCaseStudyModalOpen, setIsCaseStudyModalOpen] = useState(false);
   const [isTransparencyModalOpen, setIsTransparencyModalOpen] = useState(false);
+  const [isFullScreenVoiceOpen, setIsFullScreenVoiceOpen] = useState(false);
   const [activeAudio, setActiveAudio] = useState(false);
 
   // Web Audio Context for subtle ambient resonance
@@ -85,7 +90,8 @@ export const App: React.FC = () => {
     } catch (e) {}
   };
 
-  const isAnyModalOpen = isConfigModalOpen || isCaseStudyModalOpen || isTransparencyModalOpen;
+  const isAnyModalOpen =
+    isConfigModalOpen || isCaseStudyModalOpen || isTransparencyModalOpen || isFullScreenVoiceOpen;
 
   return (
     <div className="min-h-screen bg-[#08080a] text-[#F4F4F6] relative selection:bg-acid selection:text-black">
@@ -94,6 +100,7 @@ export const App: React.FC = () => {
         activeAudio={activeAudio}
         onToggleAudio={handleToggleAudio}
         onOpenConfigLinks={() => setIsConfigModalOpen(true)}
+        onOpenVoiceAssistant={() => setIsFullScreenVoiceOpen(true)}
         isModalOpen={isAnyModalOpen}
       />
 
@@ -102,14 +109,17 @@ export const App: React.FC = () => {
         <HeroSection
           activeAudio={activeAudio}
           onToggleAudio={handleToggleAudio}
+          onOpenVoiceAssistant={() => setIsFullScreenVoiceOpen(true)}
         />
         <OriginSection
           onOpenConfigLinks={() => setIsConfigModalOpen(true)}
         />
+        <HowIThinkSection />
         <ExperimentsSection
           onModalStateChange={setIsCaseStudyModalOpen}
         />
         <VoiceLabSection />
+        <WhyWisprFlowSection />
         <GrowthArenaSection />
         <AskMeAnythingSection
           onOpenTransparencyModal={() => setIsTransparencyModalOpen(true)}
@@ -127,6 +137,17 @@ export const App: React.FC = () => {
         links={links}
         onOpenConfigLinks={() => setIsConfigModalOpen(true)}
         onOpenTransparencyModal={() => setIsTransparencyModalOpen(true)}
+      />
+
+      {/* Floating AI Voice Assistant */}
+      <FloatingVoiceAssistant
+        onOpenFullScreen={() => setIsFullScreenVoiceOpen(true)}
+      />
+
+      {/* Immersive Fullscreen Voice Experience */}
+      <FullScreenVoiceAssistant
+        isOpen={isFullScreenVoiceOpen}
+        onClose={() => setIsFullScreenVoiceOpen(false)}
       />
 
       {/* Configurable Profile Links Modal */}

@@ -3,6 +3,7 @@ import { SectionHeading } from '../common/SectionHeading';
 import { PERSONAL_INFO } from '../../data/portfolioData';
 import { SocialLinks } from '../../types';
 import { MagneticButton } from '../common/MagneticButton';
+import { VoiceDictationButton } from '../voice/VoiceDictationButton';
 import {
   generateAes256GcmKey,
   deriveKeyFromPassphrase,
@@ -27,7 +28,8 @@ import {
   ShieldCheck,
   Key,
   Eye,
-  EyeOff
+  EyeOff,
+  Headphones
 } from 'lucide-react';
 
 interface ContactSectionProps {
@@ -78,14 +80,14 @@ export const ContactSection: React.FC<ContactSectionProps> = ({
         setRawKeyBackup(null);
       } else {
         key = await generateAes256GcmKey();
-        const raw = await exportKeyToBase64(key);
-        setRawKeyBackup(raw);
+        const b64Key = await exportKeyToBase64(key);
+        setRawKeyBackup(b64Key);
       }
 
-      const env = await encryptData(formData.message, key, salt);
-      setEncryptedEnvelope(env);
+      const envelope = await encryptData(formData.message.trim(), key, salt);
+      setEncryptedEnvelope(envelope);
     } catch (err) {
-      console.warn('Encryption failed:', err);
+      console.error('Encryption failed:', err);
     } finally {
       setIsEncrypting(false);
     }
@@ -93,85 +95,87 @@ export const ContactSection: React.FC<ContactSectionProps> = ({
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    confetti({
-      particleCount: 90,
-      spread: 75,
-      origin: { y: 0.8 },
-      colors: ['#D4FF00', '#ffffff', '#8AA600'],
-    });
 
-    setSubmitted(true);
-    const subject = encodeURIComponent(
-      `Wispr Flow Challenge Inquiry from ${formData.name || 'Recruiter'}${encryptEnabled ? ' [AES-256-GCM Encrypted]' : ''}`
-    );
+    let mailSubject = `VOICEPRINT Portfolio Inquiry - ${formData.role}`;
+    let mailBody = `Name: ${formData.name}\nEmail: ${formData.email}\nRole: ${formData.role}\n\n`;
 
-    let contentBody = formData.message;
-    if (encryptEnabled && encryptedEnvelope) {
-      contentBody = `--- AES-256-GCM CLIENT-ENCRYPTED ENVELOPE ---\n${JSON.stringify(encryptedEnvelope, null, 2)}\n\n(Key held strictly by sender in volatile browser memory)`;
+    if (encryptedEnvelope) {
+      mailBody += `--- AES-256-GCM ENCRYPTED PAYLOAD ---\n${JSON.stringify(
+        encryptedEnvelope,
+        null,
+        2
+      )}\n\n(Decrypt using your shared passphrase or the exported raw key in browser memory)`;
+    } else {
+      mailBody += `Message:\n${formData.message}`;
     }
 
-    const body = encodeURIComponent(
-      `Hi Siddharth,\n\nRole/Organization: ${formData.role}\nContact Email: ${formData.email}\n\nMessage Payload:\n${contentBody}`
-    );
-    window.location.href = `mailto:${links.email}?subject=${subject}&body=${body}`;
+    const mailtoUrl = `mailto:${links.email}?subject=${encodeURIComponent(
+      mailSubject
+    )}&body=${encodeURIComponent(mailBody)}`;
+
+    confetti({
+      particleCount: 50,
+      spread: 60,
+      origin: { y: 0.8 },
+      colors: ['#D4FF00', '#FFFFFF', '#4ADE80'],
+    });
+
+    window.open(mailtoUrl, '_blank');
+    setSubmitted(true);
   };
 
   return (
     <section id="contact" className="scroll-mt-28 py-24 sm:py-28 border-t border-white/10 bg-[#070709] relative z-10">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <SectionHeading
-          number="07 // CONTACT"
-          tag="Recruiter Gateway"
-          title="LET'S BUILD SOMETHING AMBITIOUS TOGETHER."
-          subtitle="Whether you represent Wispr Flow, an engineering team, or want to discuss multi-restaurant logistics and spatial web experiments—my inbox is open."
+          number="07 // INITIATE DIALOGUE"
+          tag="Direct Lines & Secure Dispatch"
+          title="LET'S TURN IDEAS INTO SOMETHING PEOPLE CAN HEAR."
+          subtitle="Whether you are evaluating my submission for Wispr Flow's India growth team, exploring technical collaborations, or discussing distributed systems, my inbox is open."
         />
 
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-          {/* Left Column: Direct Links & Profile Identity (5 cols) */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start mt-10">
+          {/* Left Column: Direct Coordinates & Socials (5 cols) */}
           <div className="lg:col-span-5 space-y-6">
-            <div className="p-7 sm:p-8 rounded-3xl bg-[#09090e] border border-white/10 space-y-5 shadow-2xl">
-              <div className="flex items-center justify-between">
-                <div>
-                  <span className="font-mono text-xs text-acid uppercase block font-bold">
-                    Portfolio Owner
-                  </span>
-                  <h3 className="text-3xl font-display font-black text-white">
-                    {PERSONAL_INFO.name}
-                  </h3>
-                </div>
+            {/* Primary Email Card */}
+            <div className="p-7 rounded-3xl bg-[#09090e] border border-white/10 relative overflow-hidden shadow-2xl">
+              <span className="font-mono text-xs uppercase tracking-widest text-acid block mb-2 font-bold">
+                PRIMARY DIRECT FREQUENCY
+              </span>
+              <div className="flex items-center justify-between gap-3">
+                <a
+                  href={`mailto:${links.email}`}
+                  className="font-display font-bold text-lg sm:text-xl text-white hover:text-acid transition truncate"
+                >
+                  {links.email}
+                </a>
+                <button
+                  onClick={() => handleCopy(links.email, 'email')}
+                  className="p-2.5 rounded-xl bg-[#141420] border border-white/10 hover:border-acid text-[#8E8E98] hover:text-acid transition shrink-0"
+                  title="Copy email address"
+                  aria-label="Copy email address"
+                >
+                  {copiedField === 'email' ? <Check className="w-4 h-4 text-acid" /> : <Copy className="w-4 h-4" />}
+                </button>
+              </div>
+            </div>
+
+            {/* Social Grid */}
+            <div className="p-7 rounded-3xl bg-[#09090e] border border-white/10 space-y-4 shadow-2xl">
+              <div className="flex items-center justify-between pb-3 border-b border-white/10">
+                <span className="font-mono text-xs uppercase tracking-widest text-[#8E8E98] font-bold">
+                  VERIFIED IDENTIFIERS
+                </span>
                 <button
                   onClick={onOpenConfigLinks}
-                  title="Configure URLs"
-                  className="p-2.5 rounded-xl bg-[#141420] border border-white/10 hover:border-acid text-[#8E8E98] hover:text-acid transition"
+                  className="text-xs font-mono text-acid hover:underline flex items-center gap-1 font-semibold"
                 >
-                  <Settings className="w-4 h-4" />
+                  <Settings className="w-3.5 h-3.5" />
+                  <span>Configure URLs</span>
                 </button>
               </div>
 
-              <p className="text-xs text-[#A1A1AA] leading-relaxed font-sans">
-                {PERSONAL_INFO.heroDescription}
-              </p>
-
-              <div className="pt-2 border-t border-white/10 space-y-2.5 font-mono text-xs">
-                {/* Email Item */}
-                <div className="flex items-center justify-between p-3.5 rounded-2xl bg-[#101018] border border-white/10">
-                  <div className="flex items-center gap-2.5 text-white truncate mr-2">
-                    <Mail className="w-4 h-4 text-acid shrink-0" />
-                    <span className="truncate">{links.email}</span>
-                  </div>
-                  <button
-                    onClick={() => handleCopy(links.email, 'email')}
-                    className="text-[#71717A] hover:text-acid shrink-0 p-1"
-                    title="Copy email"
-                  >
-                    {copiedField === 'email' ? (
-                      <Check className="w-4 h-4 text-acid" />
-                    ) : (
-                      <Copy className="w-4 h-4" />
-                    )}
-                  </button>
-                </div>
-
+              <div className="space-y-2.5 font-mono text-xs">
                 {/* LinkedIn Item */}
                 <div className="flex items-center justify-between p-3.5 rounded-2xl bg-[#101018] border border-white/10">
                   <div className="flex items-center gap-2.5 text-white truncate mr-2">
@@ -183,6 +187,7 @@ export const ContactSection: React.FC<ContactSectionProps> = ({
                     target="_blank"
                     rel="noreferrer"
                     className="text-[#71717A] hover:text-acid shrink-0 p-1"
+                    aria-label="LinkedIn profile"
                   >
                     <ArrowUpRight className="w-4 h-4" />
                   </a>
@@ -199,6 +204,7 @@ export const ContactSection: React.FC<ContactSectionProps> = ({
                     target="_blank"
                     rel="noreferrer"
                     className="text-[#71717A] hover:text-acid shrink-0 p-1"
+                    aria-label="GitHub profile"
                   >
                     <ArrowUpRight className="w-4 h-4" />
                   </a>
@@ -215,6 +221,7 @@ export const ContactSection: React.FC<ContactSectionProps> = ({
                     target="_blank"
                     rel="noreferrer"
                     className="text-[#71717A] hover:text-acid shrink-0 p-1"
+                    aria-label="Instagram profile"
                   >
                     <ArrowUpRight className="w-4 h-4" />
                   </a>
@@ -225,10 +232,10 @@ export const ContactSection: React.FC<ContactSectionProps> = ({
             {/* Builder Manifesto Card */}
             <div className="p-7 rounded-3xl bg-acid/10 border border-acid/25 space-y-2 shadow-xl">
               <span className="font-mono text-[10px] text-acid uppercase tracking-widest block font-bold">
-                THE BUILDER'S PLEDGE
+                THE CLOSING THOUGHT
               </span>
               <p className="font-display font-black text-xl text-white">
-                "{PERSONAL_INFO.centralMessage}"
+                "Let's turn ideas into something people can hear."
               </p>
               <p className="text-xs text-[#A1A1AA] font-sans leading-relaxed">
                 {PERSONAL_INFO.supportingMessage}
@@ -311,8 +318,23 @@ export const ContactSection: React.FC<ContactSectionProps> = ({
                     </select>
                   </div>
 
+                  {/* Project Note with Voice Dictation Button */}
                   <div className="space-y-1.5">
-                    <label className="text-[#A1A1AA] uppercase">Project Note / Inquiry</label>
+                    <div className="flex items-center justify-between">
+                      <label className="text-[#A1A1AA] uppercase">Project Note / Inquiry</label>
+                      <div className="flex items-center gap-1.5">
+                        <span className="text-[10px] text-[#71717A]">Voice Typing:</span>
+                        <VoiceDictationButton
+                          onTranscript={(spoken) => {
+                            setFormData((prev) => ({
+                              ...prev,
+                              message: prev.message ? `${prev.message} ${spoken}` : spoken,
+                            }));
+                          }}
+                          placeholderPrompt="Dictating note into message..."
+                        />
+                      </div>
+                    </div>
                     <textarea
                       required
                       rows={4}
@@ -358,10 +380,9 @@ export const ContactSection: React.FC<ContactSectionProps> = ({
                             <button
                               type="button"
                               onClick={onOpenTransparencyModal}
-                              className="inline-flex items-center gap-1 text-[10px] text-acid hover:underline ml-2 flex-shrink-0"
+                              className="text-acid underline text-[10px] shrink-0 ml-2"
                             >
-                              <ShieldCheck className="w-3 h-3 text-acid" />
-                              <span>Key Lifetime Notice</span>
+                              Transparency Report
                             </button>
                           )}
                         </div>
@@ -371,32 +392,33 @@ export const ContactSection: React.FC<ContactSectionProps> = ({
                             type="password"
                             value={passphrase}
                             onChange={(e) => setPassphrase(e.target.value)}
-                            placeholder="Optional passphrase (or leave empty for auto-generated 256-bit key)"
-                            className="flex-1 px-3 py-2 bg-[#121220] border border-white/10 rounded-xl text-white text-xs focus:outline-none focus:border-acid"
+                            placeholder="Optional custom passphrase (or leave empty for auto 256-bit key)"
+                            className="flex-1 px-3 py-2 rounded-xl bg-[#141424] border border-white/10 text-white placeholder-[#71717A] text-xs focus:outline-none focus:border-acid"
                           />
                           <button
                             type="button"
                             onClick={handleEncryptMessage}
                             disabled={isEncrypting || !formData.message.trim()}
-                            className="px-4 py-2 rounded-xl bg-acid text-black font-bold text-xs hover:bg-[#E5FF4D] transition disabled:opacity-50"
+                            className="px-4 py-2 rounded-xl bg-acid/20 text-acid border border-acid/40 hover:bg-acid hover:text-black transition disabled:opacity-50 text-xs font-bold flex items-center justify-center gap-1.5 shrink-0"
                           >
-                            {isEncrypting ? 'Encrypting...' : 'Encrypt Note'}
+                            <Key className="w-3.5 h-3.5" />
+                            <span>{isEncrypting ? 'Encrypting...' : 'Encrypt Payload'}</span>
                           </button>
                         </div>
 
                         {encryptedEnvelope && (
-                          <div className="p-3 rounded-xl bg-black/70 border border-emerald-500/30 space-y-1.5">
-                            <div className="flex items-center justify-between text-emerald-400">
-                              <span className="font-bold flex items-center gap-1">
+                          <div className="p-3 rounded-xl bg-[#111122] border border-acid/30 space-y-1.5 animate-fade-in">
+                            <div className="flex items-center justify-between text-acid font-bold">
+                              <span className="flex items-center gap-1">
                                 <ShieldCheck className="w-3.5 h-3.5" />
-                                <span>Note Encrypted (AES-GCM-256)</span>
+                                <span>Payload Encrypted (AES-256-GCM)</span>
                               </span>
                               <button
                                 type="button"
-                                onClick={() => handleCopy(JSON.stringify(encryptedEnvelope, null, 2), 'envelope')}
-                                className="text-xs text-[#A1A1AA] hover:text-white flex items-center gap-1"
+                                onClick={() => handleCopy(JSON.stringify(encryptedEnvelope), 'envelope')}
+                                className="text-white hover:text-acid flex items-center gap-1 text-[10px]"
                               >
-                                {copiedField === 'envelope' ? <Check className="w-3.5 h-3.5 text-acid" /> : <Copy className="w-3.5 h-3.5" />}
+                                <Copy className="w-3 h-3" />
                                 <span>Copy JSON</span>
                               </button>
                             </div>

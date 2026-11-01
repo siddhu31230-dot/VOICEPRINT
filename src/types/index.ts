@@ -80,6 +80,7 @@ export interface CampaignProposal {
   potentialRisks: string[];
   learningAndIteration: string;
   isFlagship?: boolean;
+  campaignLabel?: string;
 }
 
 export interface RecruiterQAItem {

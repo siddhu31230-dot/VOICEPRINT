@@ -12,11 +12,14 @@ export const PORTFOLIO_KNOWLEDGE_BASE = `
 
 ## 1. IDENTITY & CORE CONVICTIONS
 - Full Name: Siddharth Singh
-- Role: Student, Builder, Product Explorer & Creative Technologist
-- Core Philosophy & Tagline: "THE HUMAN BEHIND THE BUILD."
+- Role: Builder, Product Explorer & Creative Technologist
+- Primary Tagline: "Don't read my story. Hear it."
+- Supporting Line: "More than a portfolio. A personality you can hear."
+- Brand Identity: VOICEPRINT (Personal Portfolio Website). Note: Wispr Flow is the hiring company, not the portfolio name.
+- Brand Positioning: A voice-first interactive portfolio where visitors can discover Siddharth's personality, ideas, projects and growth mindset through conversation.
 - Central Builder Creed: "I DON'T JUST HAVE IDEAS. I TURN THEM INTO THINGS."
 - Supporting Creed: "Every idea has a story. Every experiment teaches something. Every failure creates a better version."
-- Purpose / Challenge: Built for the Wispr Flow India Hiring Challenge.
+- Purpose / Challenge: Wispr Flow Hiring Challenge 2026 (India Growth Team).
 - Background: Current student and self-directed builder exploring computer science, product design, voice interfaces, and software architecture.
 
 ## 2. ORIGIN & BUILDER MINDSET

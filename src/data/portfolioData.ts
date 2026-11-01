@@ -13,17 +13,60 @@ import {
 
 export const PERSONAL_INFO = {
   name: 'Siddharth Singh',
-  role: 'Student, Builder & Product Explorer',
-  tagline: 'THE HUMAN BEHIND THE BUILD.',
-  heroLabel: 'INDEPENDENT THINKER. CONSTANT BUILDER.',
-  heroHeadline: "I DON'T JUST HAVE IDEAS.\nI TURN THEM INTO THINGS.",
+  role: 'Builder, Product Explorer & Creative Technologist',
+  tagline: "Don't read my story. Hear it.",
+  primaryTagline: "Don't read my story. Hear it.",
+  supportingLine: 'More than a portfolio. A personality you can hear.',
+  heroLabel: 'VOICEPRINT // INTERACTIVE VOICE PORTFOLIO',
+  heroHeadline: "Don't read my story. Hear it.",
   heroDescription:
-    'An independent thinker, ambitious builder and curious mind exploring the intersection of technology, creativity and execution.',
+    "I'm Siddharth Singh. I build ideas, explore technology, solve problems and experiment with possibilities. This is my story — told through voice.",
+  primaryCTA: 'Listen to My Story',
+  secondaryCTA: 'Explore My World',
   centralMessage: "I DON'T JUST HAVE IDEAS. I TURN THEM INTO THINGS.",
   supportingMessage:
     'Every idea has a story. Every experiment teaches something. Every failure creates a better version.',
   closingStatement: 'THE BEST VERSION IS ALWAYS UNDER CONSTRUCTION.',
-  hiringChallengeContext: 'Built for the Wispr Flow India Hiring Challenge',
+  hiringChallengeContext: 'Wispr Flow Hiring Challenge 2026',
+  brandPositioning:
+    'A voice-first interactive portfolio where visitors can discover my personality, ideas, projects and growth mindset through conversation.',
+};
+
+export const PERSONAL_INTRO_AUDIO = {
+  title: 'Personal Voice Introduction',
+  speaker: 'Siddharth Singh',
+  role: 'Builder & Product Explorer',
+  audioSrc: '/audio/siddharth-intro.mp3',
+  durationSeconds: 78,
+  durationFormatted: '1:18',
+  honestNotice:
+    'Audio Slot: Configured for authentic voice recording (/audio/siddharth-intro.mp3). When no custom recording file is uploaded, the interactive transcript player with synchronized speech synthesis acts as an audio preview.',
+  transcriptParagraphs: [
+    {
+      id: 'p1',
+      startTime: 0,
+      endTime: 18,
+      text: "Hi, I'm Siddharth. Welcome to VOICEPRINT. Rather than making you scroll through a standard corporate resume, I wanted you to hear who I am directly.",
+    },
+    {
+      id: 'p2',
+      startTime: 18,
+      endTime: 38,
+      text: "I build ideas. When I lived in student housing and saw roommates argue over ordering from different food joints, I didn't write a blog post—I built GoDuet, an optimistic distributed cart prototype.",
+    },
+    {
+      id: 'p3',
+      startTime: 38,
+      endTime: 58,
+      text: "When I saw friends struggle with mental health in silence because of hostel stigma, I built Private Wellness Check-in with client-side zero-knowledge AES-256-GCM encryption.",
+    },
+    {
+      id: 'p4',
+      startTime: 58,
+      endTime: 78,
+      text: "I want to join Wispr Flow because voice is the highest-bandwidth modality human beings have. Let's build the future of voice-first computing together.",
+    },
+  ],
 };
 
 export const INITIAL_SOCIAL_LINKS: SocialLinks = {
@@ -37,10 +80,12 @@ export const INITIAL_SOCIAL_LINKS: SocialLinks = {
 export const ORIGIN_SECTIONS = [
   {
     id: 'where-i-started',
-    title: 'Where I Started',
+    title: 'Who I Am & Where I Started',
     badge: 'Roots',
     quote: 'Curiosity before code. The itch to understand how things work behind the screen.',
     summary: 'Curiosity before code. The itch to understand how things work behind the screen.',
+    audioDuration: '0:32',
+    spokenSummary: "I didn't start with polished frameworks or grand startup theories. I started with a genuine itch to tinker. Whenever I encountered a friction point in daily life—my reflex was: what would it look like if I built a prototype this weekend?",
     content: `I didn't start with polished frameworks or grand startup theories. I started with a genuine itch to tinker. 
 Whenever I encountered a friction point in daily life—whether it was ordering food with hostel mates, feeling the isolation of college living, or watching architects struggle to convey 3D spatial scale to non-designers—my reflex was never "someone should fix this." My reflex was: "What would it look like if I built a prototype this weekend?"
 
@@ -48,28 +93,34 @@ Whenever I encountered a friction point in daily life—whether it was ordering 
   },
   {
     id: 'what-makes-me-curious',
-    title: 'What Makes Me Curious',
+    title: 'What Excites Me & What Makes Me Curious',
     badge: 'Cognition',
     quote: 'The gap where a user hesitates because a tool demands unnatural rigidity is where the best products are born.',
     summary: 'The intersection of human friction, interface velocity, and autonomous tooling.',
+    audioDuration: '0:28',
+    spokenSummary: "I am deeply curious about cognitive load and human friction. Why do we still type out 500-word PRDs when spoken natural language can be distilled in 45 seconds? When a user hesitates because a tool demands unnatural rigidity, that gap is where the best products are born.",
     content: `I am deeply curious about cognitive load and human friction. Why do we still type out 500-word PRDs when spoken natural language can be distilled in 45 seconds? Why are interfaces still built for keyboard and mouse bottlenecks when voice and ambient intelligence can bridge intent directly to execution?
 When I watch how everyday people interact with software, I look for the hesitation gaps—the moments where a user pauses because the tool demands unnatural rigidity. That gap is where the best products are born.`,
   },
   {
     id: 'why-i-enjoy-building',
-    title: 'Why I Enjoy Building Products',
+    title: 'My Journey & Why I Enjoy Building Products',
     badge: 'Builder DNA',
     quote: 'An idea trapped in your head is a comfortable illusion. Building forces honesty.',
     summary: 'Building is the ultimate feedback loop. Code does not lie; users do not pretend.',
+    audioDuration: '0:34',
+    spokenSummary: "An idea trapped in your head is a comfortable illusion. It feels flawless until you compile it, deploy it, and hand it to a stressed user. Building forces honesty. The sheer dopamine of going from a scribble in a notebook to a live URL that solves someone's immediate headache is unmatched.",
     content: `An idea trapped in your head is a comfortable illusion. It feels flawless until you compile it, deploy it, and hand it to a stressed user. 
 Building forces honesty. When a multi-restaurant basket synchronization fails on poor hostel Wi-Fi, you don't get to defend your architecture; you rewrite the state machine. The sheer dopamine of going from a scribble in a notebook to a live URL that solves someone's immediate headache is unmatched.`,
   },
   {
     id: 'what-i-believe',
-    title: 'What I Believe About Technology',
+    title: 'How I Think & What I Believe About Tech',
     badge: 'Convictions',
     quote: 'Speed of iteration beats perfectionism every single time. Voice is the highest-bandwidth modality we have.',
     summary: 'Tools should amplify human bandwidth, not trap human attention in dopamine loops.',
+    audioDuration: '0:30',
+    spokenSummary: "Speed of iteration beats perfectionism every time. Voice is not a gimmick or accessibility afterthought—it is the highest-bandwidth modality human beings have evolved for externalizing thought. Privacy is a fundamental dignity requirement, and AI is only as powerful as the ergonomic harness around it.",
     content: `1. Speed of iteration beats perfectionism every single time.
 2. Voice is not a gimmick or an accessibility afterthought—it is the highest-bandwidth modality human beings have evolved for externalizing thought.
 3. Privacy is not a compliance checkbox; it is a fundamental dignity requirement, especially in high-stress environments like student housing.
@@ -81,6 +132,8 @@ Building forces honesty. When a multi-restaurant basket synchronization fails on
     badge: 'Current Stack',
     quote: 'Low-latency audio pipelines, local-first state machines, and organic growth loops.',
     summary: 'High-performance React architectures, Web Audio API, voice UX, and go-to-market mechanics.',
+    audioDuration: '0:26',
+    spokenSummary: "Right now my active learning hours are split between real-time Web Audio API streaming pipelines, local-first zero-knowledge state machines, and organic growth loops that turn daily utility into viral word-of-mouth adoption.",
     content: `Right now, my active study and experiment hours are split between:
 • Real-time audio pipelines: Web Audio API, streaming WebSocket protocols, and low-latency client-side audio processing.
 • Robust state orchestration: Local-first offline sync, optimistic UI mutations, and resilient network fallbacks.
@@ -88,10 +141,12 @@ Building forces honesty. When a multi-restaurant basket synchronization fails on
   },
   {
     id: 'what-i-want-to-accomplish',
-    title: 'What I Want to Accomplish',
+    title: 'What I Want to Build Next',
     badge: 'Mission',
     quote: 'Join a team of obsessive builders to make voice-first execution the default developer reality.',
     summary: 'Ship products that eliminate cognitive drudgery and empower independent thinkers.',
+    audioDuration: '0:29',
+    spokenSummary: "I want to join a team of obsessive builders where high-speed execution is the default culture. At Wispr Flow, my ambition is to help pioneer the next generation of voice-first workflows—proving that dictation isn't just transcription, but an intelligent cognitive co-processor that makes builders 10x faster.",
     content: `I want to join a team of obsessive builders where high-speed execution is the default culture. At Wispr Flow, my ambition is to help pioneer the next generation of voice-first workflows—proving that dictation isn't just transcription, but an intelligent cognitive co-processor that makes builders 10x faster.`,
   },
 ];
@@ -651,6 +706,7 @@ export const GROWTH_OBJECTIVES: GrowthObjective[] = [
 export const FLAGSHIP_CAMPAIGNS: CampaignProposal[] = [
   {
     id: 'brain-no-backspace',
+    campaignLabel: 'Campaign 1: Campus Voices',
     title: 'Campus Hackathon Blitz: "Your Brain Has No Backspace"',
     creativeHeadline: 'YOUR BRAIN HAS NO BACKSPACE.',
     targetAudience: 'College Students',
@@ -693,6 +749,7 @@ export const FLAGSHIP_CAMPAIGNS: CampaignProposal[] = [
   },
   {
     id: 'code-speed-of-thought',
+    campaignLabel: 'Campaign 2: Founder Mode',
     title: 'Founder Velocity: "Code at the Speed of Thought"',
     creativeHeadline: 'DICTATE CODE AT THE SPEED OF THOUGHT.',
     targetAudience: 'Startup Founders',
@@ -734,6 +791,7 @@ export const FLAGSHIP_CAMPAIGNS: CampaignProposal[] = [
   },
   {
     id: 'zero-friction-writer',
+    campaignLabel: 'Campaign 3: Creator Challenge',
     title: 'Creator Unleashed: "The Zero-Friction Writer\'s Room"',
     creativeHeadline: 'THE ZERO-FRICTION WRITER\'S ROOM.',
     targetAudience: 'Content Creators',
@@ -926,3 +984,129 @@ export const PRODUCTIVITY_ITEMS: ProductivityItem[] = [
     selected: true,
   },
 ];
+
+export interface HowIThinkPillar {
+  id: string;
+  number: string;
+  title: string;
+  corePrinciple: string;
+  description: string;
+  projectExample: {
+    project: string;
+    decision: string;
+    outcome: string;
+  };
+  quote: string;
+}
+
+export const HOW_I_THINK_PILLARS: HowIThinkPillar[] = [
+  {
+    id: 'problem-identification',
+    number: '01',
+    title: 'Identifying Unarticulated Friction',
+    corePrinciple: 'Look for the hesitation gaps where users accept unnatural friction as normal.',
+    description: 'Most people don’t complain about clunky interfaces—they just develop painful workarounds. I observe daily human habits to spot where friction is being tolerated.',
+    projectExample: {
+      project: 'GoDuet',
+      decision: 'Noticed roommates placing two separate Swiggy orders and manually splitting delivery fees via UPI.',
+      outcome: 'Built a multi-restaurant basket prototype combining orders from partner kitchens within 600m.'
+    },
+    quote: 'The best product opportunities hide inside everyday friction that people have stopped questioning.'
+  },
+  {
+    id: 'solution-architecture',
+    number: '02',
+    title: 'Designing for Operational Reality',
+    corePrinciple: 'Software architecture without physical operational physics is wishful thinking.',
+    description: 'A UI that looks brilliant on Figma is meaningless if the operational constraints under the hood fail in real life.',
+    projectExample: {
+      project: 'GoDuet',
+      decision: 'Enforced strict kitchen prep-time tolerance bands to prevent fast-food items from sitting cold while slow tandoor items cooked.',
+      outcome: 'Transformed an abstract delivery concept into an operationally resilient dispatch system.'
+    },
+    quote: 'Respect physical constraints and messy network conditions before celebrating UI aesthetics.'
+  },
+  {
+    id: 'rapid-experimentation',
+    number: '03',
+    title: 'Building Weekend Prototypes to Force Honesty',
+    corePrinciple: 'An idea trapped in your head is a comfortable illusion. Building forces truth.',
+    description: 'I test hypotheses by building small, testable prototypes rather than writing lengthy speculative decks.',
+    projectExample: {
+      project: 'Floor Plan to 3D Viewer',
+      decision: 'Built an interactive WebGL polygon extrusion canvas over a single weekend.',
+      outcome: 'Tested immediately with home renovators, proving that 3D spatial rotation dramatically increased buyer confidence.'
+    },
+    quote: 'Code does not lie, and users do not pretend. Real prototypes reveal real answers.'
+  },
+  {
+    id: 'ai-and-technology',
+    number: '04',
+    title: 'AI as a Cognitive Co-Processor',
+    corePrinciple: 'Amplify human velocity and intent, never replace core engineering judgment.',
+    description: 'I use voice interfaces and LLMs to externalize complex architectures in seconds, translating natural thought into high-signal specifications.',
+    projectExample: {
+      project: 'Voice Lab (Wispr Flow Workflow)',
+      decision: 'Spoke architecture specs in 40 seconds to scaffold full TypeScript types, PRDs, and test suites.',
+      outcome: 'Bypassed the keyboard typing bottleneck, saving 25-35 minutes per feature sprint.'
+    },
+    quote: 'Generative AI is only as powerful as the ergonomic harness around it.'
+  },
+  {
+    id: 'learning-from-failures',
+    number: '05',
+    title: 'Iterating on Hard Operational Lessons',
+    corePrinciple: 'Failures are not dead ends; they are runtime telemetry that refines the next commit.',
+    description: 'When an assumption fails in the field, I don’t defend the design—I diagnose the breakdown and rewrite the architecture.',
+    projectExample: {
+      project: 'Private Wellness Check-in',
+      decision: 'Students stopped filling out an 18-metric questionnaire after 3 days. Relentlessly subtracted scope down to 3 visual sliders.',
+      outcome: 'Completion rate jumped to 94% because the check-in respected students’ limited emotional bandwidth.'
+    },
+    quote: 'Perfection is reached when there is nothing left to take away.'
+  },
+  {
+    id: 'converting-ideas-to-products',
+    number: '06',
+    title: 'Baking Empathy Directly into Architecture',
+    corePrinciple: 'Security and privacy must be foundational guarantees, not compliance checkboxes.',
+    description: 'True product trust is earned through verifiable technical guarantees rather than marketing promises.',
+    projectExample: {
+      project: 'Private Wellness Check-in',
+      decision: 'Employed native Web Crypto AES-256-GCM zero-knowledge client encryption so servers never hold plaintext records.',
+      outcome: 'Overcame student fear of hostel surveillance, proving that privacy architecture drives user adoption.'
+    },
+    quote: 'When users know you cannot read their data, their honesty and engagement skyrocket.'
+  }
+];
+
+export const WHY_WISPR_FLOW_CONTENT = {
+  headline: 'Why Wispr Flow?',
+  subheadline: 'Why voice is the frontier of human-computer interaction, and why I want to help build its growth in India.',
+  corePillars: [
+    {
+      id: 'voice-velocity',
+      title: 'Voice is the Highest-Bandwidth Human Modality',
+      summary: 'Externalizing thought through keyboard bottlenecks is an artificial tax on cognition.',
+      content: 'Human beings speak at 150-180 words per minute, but type at only 40-60 words per minute. For builders, writers, and thinkers, keyboard typing forces analytical self-censorship too early. Wispr Flow removes that friction by letting you speak at the speed of thought.'
+    },
+    {
+      id: 'os-layer-ergonomics',
+      title: 'Ambient Ergonomics at the OS Layer',
+      summary: 'Isolated chatbot wrappers fail; ambient operating system integration wins.',
+      content: 'Most AI startups build web apps in a browser tab, forcing users to constantly switch windows. Wispr Flow sits directly at the operating system layer, enhancing every tool—Cursor, Linear, Slack, Notion—without breaking flow. That is how foundational software is built.'
+    },
+    {
+      id: 'india-growth-frontier',
+      title: "India as the World's Premier Voice-First Crucible",
+      summary: 'Multilingual diversity, massive developer density, and rapid collegiate tech adoption.',
+      content: 'India represents the most dynamic proving ground for voice technology. With 1.4 billion people speaking 22 official languages, and millions of young builders at hackathons and tech campuses, voice is not a luxury—it is the ultimate velocity unlock for Indian tech talent.'
+    },
+    {
+      id: 'what-i-bring',
+      title: 'What I Bring to the Growth Team',
+      summary: 'A rare fusion of engineering execution, product intuition, and grassroots growth grit.',
+      content: 'I don’t just understand growth metrics on spreadsheets; I build products, test live prototypes with hostel roommates, and design interactive campaigns that give builders an unfair speed advantage. I am eager to learn from Wispr Flow’s leadership while executing relentless ground-level growth in India.'
+    }
+  ]
+};

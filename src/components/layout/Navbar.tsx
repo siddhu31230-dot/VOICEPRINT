@@ -1,11 +1,12 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Menu, X, Sparkles, Volume2, VolumeX, ArrowUpRight } from 'lucide-react';
+import { Menu, X, Sparkles, Volume2, VolumeX, ArrowUpRight, Mic } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 interface NavbarProps {
   activeAudio: boolean;
   onToggleAudio: () => void;
   onOpenConfigLinks: () => void;
+  onOpenVoiceAssistant?: () => void;
   isModalOpen?: boolean;
 }
 
@@ -13,6 +14,7 @@ export const Navbar: React.FC<NavbarProps> = ({
   activeAudio,
   onToggleAudio,
   onOpenConfigLinks,
+  onOpenVoiceAssistant,
   isModalOpen = false,
 }) => {
   const [scrollProgress, setScrollProgress] = useState(0);
@@ -23,9 +25,11 @@ export const Navbar: React.FC<NavbarProps> = ({
 
   const navLinks = [
     { label: 'Origin', href: '#origin' },
+    { label: 'How I Think', href: '#how-i-think' },
     { label: 'Experiments', href: '#experiments' },
     { label: 'Voice Lab', href: '#voice-lab', highlight: true },
-    { label: 'Growth Arena', href: '#growth-arena' },
+    { label: 'Why Wispr', href: '#why-wispr-flow' },
+    { label: 'Growth Lab', href: '#growth-arena' },
     { label: 'Ask Me', href: '#ask-me' },
     { label: 'Contact', href: '#contact' },
   ];
@@ -61,17 +65,26 @@ export const Navbar: React.FC<NavbarProps> = ({
       } else {
         const diff = scrollY - lastScrollY.current;
         if (diff > 8) {
-          // Scrolling down
           setIsVisible(false);
         } else if (diff < -8) {
-          // Scrolling up
           setIsVisible(true);
         }
       }
       lastScrollY.current = scrollY;
 
-      // Active section calculation with generous trigger line
-      const sections = ['home', 'origin', 'experiments', 'voice-lab', 'growth-arena', 'ask-me', 'next-chapter', 'contact'];
+      // Active section calculation
+      const sections = [
+        'home',
+        'origin',
+        'how-i-think',
+        'experiments',
+        'voice-lab',
+        'why-wispr-flow',
+        'growth-arena',
+        'ask-me',
+        'next-chapter',
+        'contact',
+      ];
       const scrollPosition = scrollY + 220;
 
       for (const section of sections) {
@@ -103,17 +116,17 @@ export const Navbar: React.FC<NavbarProps> = ({
 
       {/* Floating Navigation Dock Header */}
       <header
-        className={`fixed top-4 left-0 right-0 z-40 transition-all duration-300 px-4 sm:px-6 pointer-events-none ${
+        className={`fixed top-4 left-0 right-0 z-40 transition-all duration-300 px-3 sm:px-6 pointer-events-none ${
           isModalOpen || (!isVisible && !mobileMenuOpen)
             ? '-translate-y-32 opacity-0 pointer-events-none'
             : 'translate-y-0 opacity-100'
         }`}
       >
-        <div className="max-w-6xl mx-auto flex items-center justify-between">
+        <div className="max-w-7xl mx-auto flex items-center justify-between">
           {/* Brand Wordmark Pill */}
           <a
             href="#home"
-            className="pointer-events-auto group flex items-center gap-3 px-4 py-2 rounded-2xl bg-[#09090f]/90 backdrop-blur-xl border border-white/10 shadow-2xl hover:border-acid/40 transition-all duration-200"
+            className="pointer-events-auto group flex items-center gap-2.5 px-3.5 py-2 rounded-2xl bg-[#09090f]/90 backdrop-blur-xl border border-white/10 shadow-2xl hover:border-acid/40 transition-all duration-200"
           >
             <div className="w-7 h-7 rounded-lg bg-black border border-acid/40 flex items-center justify-center group-hover:border-acid transition-all duration-300 overflow-hidden relative">
               <div className="flex items-center gap-0.5">
@@ -130,24 +143,24 @@ export const Navbar: React.FC<NavbarProps> = ({
             </div>
 
             <div className="flex flex-col">
-              <span className="font-display font-black text-sm tracking-tight text-white group-hover:text-acid transition">
+              <span className="font-display font-black text-xs sm:text-sm tracking-tight text-white group-hover:text-acid transition">
                 VOICEPRINT
               </span>
-              <span className="font-mono text-[9px] tracking-widest text-[#8E8E98] uppercase">
+              <span className="font-mono text-[8px] sm:text-[9px] tracking-widest text-[#8E8E98] uppercase">
                 SIDDHARTH SINGH
               </span>
             </div>
           </a>
 
           {/* Central Dock Navigation */}
-          <nav className="pointer-events-auto hidden md:flex items-center gap-1 bg-[#09090f]/90 backdrop-blur-xl border border-white/10 px-2 py-1.5 rounded-full shadow-2xl">
+          <nav className="pointer-events-auto hidden xl:flex items-center gap-1 bg-[#09090f]/90 backdrop-blur-xl border border-white/10 px-2 py-1.5 rounded-full shadow-2xl">
             {navLinks.map((link) => {
               const isActive = activeSection === link.href.replace('#', '');
               return (
                 <a
                   key={link.href}
                   href={link.href}
-                  className={`relative px-4 py-1.5 rounded-full text-xs font-mono tracking-wider transition-all duration-200 ${
+                  className={`relative px-3.5 py-1.5 rounded-full text-xs font-mono tracking-wider transition-all duration-200 ${
                     isActive
                       ? 'text-black font-bold'
                       : link.highlight
@@ -173,7 +186,20 @@ export const Navbar: React.FC<NavbarProps> = ({
 
           {/* Right Controls Pill */}
           <div className="pointer-events-auto flex items-center gap-2">
-            {/* Audio Toggle */}
+            {/* Talk to VOICEPRINT AI Assistant Trigger */}
+            {onOpenVoiceAssistant && (
+              <button
+                onClick={onOpenVoiceAssistant}
+                className="px-3 py-2 rounded-xl bg-[#10101c] border border-acid/40 text-acid hover:bg-acid hover:text-black transition-all duration-200 flex items-center gap-1.5 text-xs font-mono shadow-xl shadow-acid/10"
+                title="Launch full-screen voice assistant"
+                aria-label="Launch full-screen voice assistant"
+              >
+                <Mic className="w-3.5 h-3.5 animate-pulse" />
+                <span className="hidden sm:inline font-bold">TALK</span>
+              </button>
+            )}
+
+            {/* Audio Ambient Resonance Toggle */}
             <button
               onClick={onToggleAudio}
               title={activeAudio ? 'Mute ambient soundwave resonance' : 'Unmute ambient soundwave resonance'}
@@ -199,13 +225,13 @@ export const Navbar: React.FC<NavbarProps> = ({
               className="hidden sm:inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-acid text-black font-display font-black text-xs hover:bg-[#E5FF4D] transition shadow-lg shadow-acid/20"
             >
               <Sparkles className="w-3.5 h-3.5 fill-black" />
-              <span>WISPR SPRINT</span>
+              <span>VOICE LAB</span>
             </a>
 
             {/* Mobile Menu Trigger */}
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="md:hidden p-2.5 rounded-xl bg-[#09090f]/95 backdrop-blur-xl border border-white/10 text-white shadow-2xl focus:outline-none focus:ring-2 focus:ring-acid"
+              className="xl:hidden p-2.5 rounded-xl bg-[#09090f]/95 backdrop-blur-xl border border-white/10 text-white shadow-2xl focus:outline-none focus:ring-2 focus:ring-acid"
               aria-label="Toggle Navigation Menu"
             >
               {mobileMenuOpen ? <X className="w-5 h-5 text-acid" /> : <Menu className="w-5 h-5" />}
@@ -217,7 +243,6 @@ export const Navbar: React.FC<NavbarProps> = ({
         <AnimatePresence>
           {mobileMenuOpen && (
             <div className="pointer-events-auto fixed inset-0 z-50 flex items-start justify-center p-4 pt-16">
-              {/* Fullscreen Blurred Backdrop */}
               <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
@@ -226,13 +251,12 @@ export const Navbar: React.FC<NavbarProps> = ({
                 className="fixed inset-0 bg-black/85 backdrop-blur-xl"
               />
 
-              {/* Menu Container Card */}
               <motion.div
                 initial={{ opacity: 0, scale: 0.96, y: -15 }}
                 animate={{ opacity: 1, scale: 1, y: 0 }}
                 exit={{ opacity: 0, scale: 0.96, y: -15 }}
                 transition={{ duration: 0.2 }}
-                className="relative w-full max-w-sm p-6 bg-[#09090e] border border-white/15 rounded-3xl shadow-2xl space-y-4 z-10"
+                className="relative w-full max-w-sm p-6 bg-[#09090e] border border-white/15 rounded-3xl shadow-2xl space-y-4 z-10 max-h-[85vh] overflow-y-auto"
               >
                 <div className="flex items-center justify-between pb-3 border-b border-white/10">
                   <div className="flex items-center gap-2">
@@ -250,37 +274,44 @@ export const Navbar: React.FC<NavbarProps> = ({
                   </button>
                 </div>
 
+                {/* Mobile Voice Assistant Button */}
+                {onOpenVoiceAssistant && (
+                  <button
+                    onClick={() => {
+                      setMobileMenuOpen(false);
+                      onOpenVoiceAssistant();
+                    }}
+                    className="w-full py-3 px-4 rounded-2xl bg-acid text-black font-display font-black text-xs uppercase tracking-wider flex items-center justify-center gap-2 shadow-lg shadow-acid/20"
+                  >
+                    <Mic className="w-4 h-4 fill-black" />
+                    <span>TALK TO VOICEPRINT AI</span>
+                  </button>
+                )}
+
                 <div className="space-y-1">
                   {navLinks.map((link) => (
                     <a
                       key={link.href}
                       href={link.href}
                       onClick={() => setMobileMenuOpen(false)}
-                      className="flex items-center justify-between px-4 py-3 rounded-2xl text-base font-display font-bold text-[#E4E4E7] hover:text-black hover:bg-acid transition-all duration-150"
+                      className="block px-4 py-2.5 rounded-xl font-mono text-xs text-[#D4D4D8] hover:bg-white/5 hover:text-acid transition"
                     >
-                      <span>{link.label}</span>
-                      <ArrowUpRight className="w-4 h-4 opacity-70" />
+                      {link.label}
                     </a>
                   ))}
                 </div>
 
-                <div className="pt-3 border-t border-white/10 flex flex-col gap-2.5">
+                <div className="pt-3 border-t border-white/10 flex items-center justify-between text-xs font-mono text-[#8E8E98]">
+                  <span>Siddharth Singh</span>
                   <button
                     onClick={() => {
                       setMobileMenuOpen(false);
                       onOpenConfigLinks();
                     }}
-                    className="w-full text-left px-4 py-2 text-xs font-mono text-[#8E8E98] hover:text-acid"
+                    className="text-acid hover:underline"
                   >
-                    ⚙ Configure Profile Links
+                    Config URLs
                   </button>
-                  <a
-                    href="#voice-lab"
-                    onClick={() => setMobileMenuOpen(false)}
-                    className="w-full py-3.5 text-center text-xs font-mono font-bold bg-acid text-black rounded-2xl shadow-lg shadow-acid/20"
-                  >
-                    EXPLORE VOICE LAB →
-                  </a>
                 </div>
               </motion.div>
             </div>
