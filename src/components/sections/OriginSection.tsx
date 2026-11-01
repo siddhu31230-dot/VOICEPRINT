@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { SectionHeading } from '../common/SectionHeading';
 import { ORIGIN_SECTIONS, TIMELINE_EVENTS } from '../../data/portfolioData';
-import { Compass, Sparkles, BookOpen, Layers, CheckCircle, Terminal, HelpCircle, UserCheck } from 'lucide-react';
+import { Compass, Sparkles, BookOpen, Layers, CheckCircle, Terminal, HelpCircle, UserCheck, Quote, ArrowRight } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 interface OriginSectionProps {
@@ -16,7 +16,7 @@ export const OriginSection: React.FC<OriginSectionProps> = ({ onOpenConfigLinks 
   const activeTimeline = TIMELINE_EVENTS[selectedTimelineIndex];
 
   return (
-    <section id="origin" className="py-24 border-t border-[#14141c] relative z-10 bg-[#08080a]">
+    <section id="origin" className="py-28 border-t border-white/10 bg-[#070709] relative z-10">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <SectionHeading
           number="01 // ORIGIN"
@@ -25,15 +25,28 @@ export const OriginSection: React.FC<OriginSectionProps> = ({ onOpenConfigLinks 
           subtitle="Behind every line of code is a human who decided not to accept the status quo. Here is how I think, why I build, and what drives my work."
         />
 
-        {/* Storytelling Grid */}
+        {/* Large Editorial Pull Quote Header */}
+        <div className="mb-14 p-8 sm:p-10 rounded-3xl bg-[#09090e] border border-white/10 relative overflow-hidden shadow-2xl">
+          <Quote className="w-16 h-16 text-acid/20 absolute -top-2 -left-2 pointer-events-none" />
+          <div className="relative z-10 max-w-4xl space-y-3">
+            <span className="font-mono text-xs uppercase tracking-widest text-acid font-bold">
+              THE CORE PHILOSOPHY
+            </span>
+            <blockquote className="font-display font-extrabold text-2xl sm:text-3xl lg:text-4xl text-white leading-tight">
+              "{activeStory.quote || activeStory.summary}"
+            </blockquote>
+          </div>
+        </div>
+
+        {/* Storytelling Split Layout */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-          {/* Navigation Tabs (Left 4 cols) */}
+          {/* Navigation Chapters (Left 4 cols) */}
           <div className="lg:col-span-4 space-y-2">
-            <div className="p-3 bg-[#0d0d12] rounded-xl border border-border-subtle mb-4">
-              <span className="font-mono text-xs text-text-muted uppercase tracking-wider block mb-1">
-                Story Navigation
+            <div className="p-4 bg-[#0a0a10] rounded-2xl border border-white/10 mb-4">
+              <span className="font-mono text-xs text-acid uppercase tracking-wider block font-bold mb-1">
+                Story Exploration
               </span>
-              <p className="text-xs text-text-secondary">
+              <p className="text-xs text-[#8E8E98]">
                 Select an exploration chapter to understand my thought process:
               </p>
             </div>
@@ -44,25 +57,23 @@ export const OriginSection: React.FC<OriginSectionProps> = ({ onOpenConfigLinks 
                 <button
                   key={section.id}
                   onClick={() => setActiveStoryTab(section.id)}
-                  className={`w-full text-left p-4 rounded-xl border transition-all duration-200 flex items-center justify-between group ${
+                  className={`w-full text-left p-4 rounded-2xl border transition-all duration-200 flex items-center justify-between group ${
                     isSelected
-                      ? 'bg-[#12121c] border-acid/50 shadow-lg'
-                      : 'bg-[#0a0a0f] border-[#181822] hover:border-border-medium hover:bg-[#0f0f15]'
+                      ? 'bg-[#12121e] border-acid/60 shadow-xl'
+                      : 'bg-[#09090e] border-white/5 hover:border-white/20 hover:bg-[#0e0e16]'
                   }`}
                 >
-                  <div>
-                    <div className="flex items-center gap-2 mb-1">
-                      <span
-                        className={`text-[10px] font-mono uppercase px-1.5 py-0.5 rounded ${
-                          isSelected ? 'bg-acid text-black font-semibold' : 'bg-[#191924] text-text-muted'
-                        }`}
-                      >
-                        {section.badge}
-                      </span>
-                    </div>
+                  <div className="space-y-1">
+                    <span
+                      className={`text-[10px] font-mono uppercase px-2 py-0.5 rounded ${
+                        isSelected ? 'bg-acid text-black font-bold' : 'bg-[#14141e] text-[#8E8E98]'
+                      }`}
+                    >
+                      {section.badge}
+                    </span>
                     <h3
-                      className={`font-display font-semibold text-sm ${
-                        isSelected ? 'text-acid' : 'text-text-primary group-hover:text-text-primary'
+                      className={`font-display font-bold text-sm block ${
+                        isSelected ? 'text-acid' : 'text-[#E4E4E7] group-hover:text-white'
                       }`}
                     >
                       {section.title}
@@ -70,8 +81,8 @@ export const OriginSection: React.FC<OriginSectionProps> = ({ onOpenConfigLinks 
                   </div>
 
                   <span
-                    className={`w-2 h-2 rounded-full transition-transform ${
-                      isSelected ? 'bg-acid scale-125' : 'bg-border-medium group-hover:bg-text-muted'
+                    className={`w-2.5 h-2.5 rounded-full transition-transform ${
+                      isSelected ? 'bg-acid scale-125 shadow-[0_0_8px_#D4FF00]' : 'bg-white/10 group-hover:bg-[#8E8E98]'
                     }`}
                   />
                 </button>
@@ -84,45 +95,41 @@ export const OriginSection: React.FC<OriginSectionProps> = ({ onOpenConfigLinks 
             <AnimatePresence mode="wait">
               <motion.div
                 key={activeStory.id}
-                initial={{ opacity: 0, y: 10 }}
+                initial={{ opacity: 0, y: 15 }}
                 animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -10 }}
+                exit={{ opacity: 0, y: -15 }}
                 transition={{ duration: 0.25 }}
-                className="p-6 sm:p-8 rounded-2xl bg-[#0c0c12] border border-[#20202c] shadow-2xl relative"
+                className="p-6 sm:p-10 rounded-3xl bg-[#0a0a10] border border-white/10 shadow-2xl relative"
               >
-                <div className="flex flex-wrap items-center justify-between gap-3 mb-6 pb-4 border-b border-[#1b1b26]">
+                <div className="flex flex-wrap items-center justify-between gap-3 mb-6 pb-4 border-b border-white/10">
                   <div className="flex items-center gap-2.5">
-                    <span className="font-mono text-xs uppercase px-2.5 py-1 rounded bg-acid/10 text-acid border border-acid/20">
+                    <span className="font-mono text-xs uppercase px-2.5 py-1 rounded bg-acid/15 text-acid border border-acid/30 font-bold">
                       {activeStory.badge}
                     </span>
-                    <h4 className="text-xl sm:text-2xl font-display font-bold text-text-primary">
+                    <h4 className="text-xl sm:text-2xl font-display font-bold text-white">
                       {activeStory.title}
                     </h4>
                   </div>
-                  <span className="font-mono text-xs text-text-muted">
-                    Siddharth Singh // Authentic Chronicle
+                  <span className="font-mono text-xs text-[#71717A]">
+                    Siddharth Singh // Authentic Reflection
                   </span>
                 </div>
 
-                <blockquote className="p-4 rounded-xl bg-acid/5 border-l-2 border-acid text-acid font-mono text-xs sm:text-sm mb-6 leading-relaxed">
-                  "{activeStory.summary}"
-                </blockquote>
-
-                <div className="text-text-secondary leading-relaxed font-sans text-sm sm:text-base space-y-4 whitespace-pre-line">
+                <div className="text-[#A1A1AA] leading-relaxed font-sans text-sm sm:text-base space-y-4 whitespace-pre-line">
                   {activeStory.content}
                 </div>
 
                 {/* Transparency Callout */}
-                <div className="mt-8 pt-6 border-t border-[#181824] flex flex-wrap items-center justify-between gap-3 text-xs font-mono text-text-muted">
+                <div className="mt-8 pt-6 border-t border-white/10 flex flex-wrap items-center justify-between gap-3 text-xs font-mono text-[#8E8E98]">
                   <div className="flex items-center gap-2">
                     <UserCheck className="w-4 h-4 text-acid" />
-                    <span>Honest Narrative: No fabricated titles or embellished credentials.</span>
+                    <span>Honest Narrative: Zero fabricated credentials or artificial accolades.</span>
                   </div>
                   <button
                     onClick={onOpenConfigLinks}
-                    className="text-acid hover:underline flex items-center gap-1"
+                    className="text-acid hover:underline flex items-center gap-1 font-semibold"
                   >
-                    <span>View / Edit Profile Data</span>
+                    <span>View / Configure Profile Data</span>
                     <span>→</span>
                   </button>
                 </div>
@@ -131,84 +138,81 @@ export const OriginSection: React.FC<OriginSectionProps> = ({ onOpenConfigLinks 
           </div>
         </div>
 
-        {/* Interactive Timeline */}
-        <div className="mt-20">
+        {/* Interactive Timeline Visualization */}
+        <div className="mt-24">
           <div className="flex flex-wrap items-center justify-between gap-4 mb-8">
             <div>
-              <span className="font-mono text-xs text-acid uppercase tracking-widest block mb-1">
-                CHRONOLOGY OF EXPERIMENTS
+              <span className="font-mono text-xs text-acid uppercase tracking-widest block mb-1 font-bold">
+                EXPERIMENT CHRONOLOGY
               </span>
-              <h3 className="text-2xl sm:text-3xl font-display font-bold text-text-primary">
-                Interactive Journey Timeline
+              <h3 className="text-2xl sm:text-3xl font-display font-black text-white">
+                Interactive Journey Progression
               </h3>
             </div>
-            <p className="text-xs font-mono text-text-muted max-w-sm">
-              Click any stage along the progression to reveal the key operational problem tackled and the resulting insight.
+            <p className="text-xs font-mono text-[#8E8E98] max-w-sm">
+              Click any stage to reveal the operational friction faced and the resulting builder insight.
             </p>
           </div>
 
-          {/* Timeline Bar Navigator */}
-          <div className="relative mb-8">
-            <div className="absolute top-1/2 left-0 right-0 h-0.5 bg-[#1a1a24] -translate-y-1/2 hidden md:block" />
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3 relative z-10">
-              {TIMELINE_EVENTS.map((event, idx) => {
-                const isSelected = selectedTimelineIndex === idx;
-                return (
-                  <button
-                    key={event.year}
-                    onClick={() => setSelectedTimelineIndex(idx)}
-                    className={`p-3.5 rounded-xl border text-left transition-all duration-200 relative ${
-                      isSelected
-                        ? 'bg-[#151522] border-acid shadow-md shadow-acid/10'
-                        : 'bg-[#0d0d12] border-[#1d1d28] hover:border-border-medium hover:bg-[#12121a]'
-                    }`}
-                  >
-                    <div className="flex items-center justify-between mb-2">
-                      <span className="font-mono text-xs text-acid font-semibold">
-                        {event.year}
+          {/* Timeline Milestones Navigation */}
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3 mb-6">
+            {TIMELINE_EVENTS.map((event, idx) => {
+              const isSelected = selectedTimelineIndex === idx;
+              return (
+                <button
+                  key={event.year}
+                  onClick={() => setSelectedTimelineIndex(idx)}
+                  className={`p-4 rounded-2xl border text-left transition-all duration-200 relative ${
+                    isSelected
+                      ? 'bg-[#141420] border-acid shadow-lg shadow-acid/15'
+                      : 'bg-[#09090e] border-white/10 hover:border-white/20 hover:bg-[#0e0e16]'
+                  }`}
+                >
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="font-mono text-xs text-acid font-bold">
+                      {event.year}
+                    </span>
+                    {event.isPlaceholder && (
+                      <span className="text-[9px] font-mono text-[#71717A] border border-white/10 px-1 rounded">
+                        EDITABLE
                       </span>
-                      {event.isPlaceholder && (
-                        <span className="text-[9px] font-mono text-text-muted border border-border-subtle px-1 rounded">
-                          EDITABLE
-                        </span>
-                      )}
-                    </div>
-                    <span className="text-xs font-display font-bold text-text-primary block truncate">
-                      {event.title}
-                    </span>
-                    <span className="text-[11px] font-mono text-text-muted block truncate mt-0.5">
-                      {event.category}
-                    </span>
-                  </button>
-                );
-              })}
-            </div>
+                    )}
+                  </div>
+                  <span className="text-xs font-display font-bold text-white block truncate">
+                    {event.title}
+                  </span>
+                  <span className="text-[10px] font-mono text-[#8E8E98] block truncate mt-0.5">
+                    {event.category}
+                  </span>
+                </button>
+              );
+            })}
           </div>
 
           {/* Selected Timeline Card */}
-          <div className="p-6 sm:p-7 rounded-2xl bg-[#0c0c12] border border-[#232332] flex flex-col md:flex-row items-start md:items-center justify-between gap-6 shadow-xl">
+          <div className="p-6 sm:p-8 rounded-3xl bg-[#09090e] border border-white/10 flex flex-col md:flex-row items-start md:items-center justify-between gap-6 shadow-2xl">
             <div className="space-y-2 max-w-3xl">
-              <div className="flex items-center gap-2">
-                <span className="font-mono text-xs px-2 py-0.5 rounded bg-acid text-black font-semibold">
+              <div className="flex items-center gap-2.5">
+                <span className="font-mono text-xs px-2.5 py-0.5 rounded bg-acid text-black font-bold">
                   {activeTimeline.year}
                 </span>
-                <span className="text-xs font-mono text-text-muted">
+                <span className="text-xs font-mono text-[#8E8E98]">
                   {activeTimeline.period}
                 </span>
               </div>
-              <h4 className="text-xl sm:text-2xl font-display font-bold text-text-primary">
+              <h4 className="text-xl sm:text-2xl font-display font-bold text-white">
                 {activeTimeline.title}
               </h4>
-              <p className="text-text-secondary text-sm font-sans leading-relaxed">
+              <p className="text-[#A1A1AA] text-sm font-sans leading-relaxed">
                 {activeTimeline.description}
               </p>
             </div>
 
-            <div className="p-4 rounded-xl bg-[#12121a] border border-[#242436] md:min-w-[280px]">
-              <span className="font-mono text-[10px] text-acid uppercase tracking-wider block mb-1">
-                KEY LEARNING / COGNITIVE TAKEAWAY
+            <div className="p-5 rounded-2xl bg-[#101018] border border-white/10 md:min-w-[300px]">
+              <span className="font-mono text-[10px] text-acid uppercase tracking-wider block mb-1 font-bold">
+                KEY OPERATIONAL TAKEAWAY
               </span>
-              <p className="text-xs font-mono text-text-primary leading-relaxed">
+              <p className="text-xs font-mono text-white leading-relaxed">
                 "{activeTimeline.learning}"
               </p>
             </div>

@@ -39,7 +39,6 @@ export const NextChapterSection: React.FC = () => {
     );
   };
 
-  // Reset to default
   const handleReset = () => {
     setItems(PRODUCTIVITY_ITEMS);
   };
@@ -60,7 +59,7 @@ export const NextChapterSection: React.FC = () => {
   };
 
   return (
-    <section id="next-chapter" className="py-24 border-t border-[#181826] bg-[#09090e] relative z-10">
+    <section id="next-chapter" className="py-28 border-t border-white/10 bg-[#070709] relative z-10">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <SectionHeading
           number="06 // THE NEXT CHAPTER"
@@ -69,94 +68,94 @@ export const NextChapterSection: React.FC = () => {
           subtitle="Ambition requires both intentional learning and ergonomic leverage. Here is my development roadmap and an illustrative $3,000 setup proposal designed to maximize output velocity."
         />
 
-        {/* Roadmap & Ambition Quadrants */}
+        {/* Future Ambition Quadrants */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5 mb-16">
-          {/* Card 1: Current Learning Goals */}
-          <div className="p-6 rounded-2xl bg-[#0c0c14] border border-[#202030] space-y-3">
+          {/* Card 1: Future Ambitions */}
+          <div className="p-7 rounded-3xl bg-[#09090e] border border-white/10 space-y-3 shadow-xl">
             <div className="flex items-center gap-2 text-acid font-mono text-xs font-bold uppercase">
               <Compass className="w-4 h-4" />
-              <span>Current Learning Goals</span>
+              <span>Future Ambitions</span>
             </div>
-            <p className="text-xs text-text-secondary leading-relaxed font-sans">
-              Mastering low-latency audio pipelines (Web Audio API, streaming WebSockets, local ONNX runtimes) and high-throughput TypeScript distributed state architectures.
+            <p className="text-xs text-[#A1A1AA] leading-relaxed font-sans">
+              Pioneering ambient voice-first operating workflows where speech seamlessly controls code generation, git branches, and live deployments with near-zero latency.
             </p>
           </div>
 
-          {/* Card 2: Future Experiments */}
-          <div className="p-6 rounded-2xl bg-[#0c0c14] border border-[#202030] space-y-3">
-            <div className="flex items-center gap-2 text-acid font-mono text-xs font-bold uppercase">
-              <Sparkles className="w-4 h-4" />
-              <span>Future Experiments</span>
-            </div>
-            <p className="text-xs text-text-secondary leading-relaxed font-sans">
-              "WhisperCode": an experimental local voice macro engine mapping conversational intent to complex Git rebase commands and AST syntax tree modifications.
-            </p>
-          </div>
-
-          {/* Card 3: Skills to Develop */}
-          <div className="p-6 rounded-2xl bg-[#0c0c14] border border-[#202030] space-y-3">
+          {/* Card 2: Skills to Develop */}
+          <div className="p-7 rounded-3xl bg-[#09090e] border border-white/10 space-y-3 shadow-xl">
             <div className="flex items-center gap-2 text-acid font-mono text-xs font-bold uppercase">
               <Target className="w-4 h-4" />
               <span>Skills to Develop</span>
             </div>
-            <p className="text-xs text-text-secondary leading-relaxed font-sans">
-              Systems-level performance profiling, zero-allocation memory pooling in real-time interfaces, and organic product-led growth mechanics for developer tools.
+            <p className="text-xs text-[#A1A1AA] leading-relaxed font-sans">
+              Low-latency Web Audio pipelines, local ONNX neural network execution in the browser, and product-led community flywheels for technical developer tools.
             </p>
           </div>
 
-          {/* Card 4: Contribution to Wispr Flow */}
-          <div className="p-6 rounded-2xl bg-acid/5 border border-acid/30 space-y-3">
+          {/* Card 3: What I Can Contribute */}
+          <div className="p-7 rounded-3xl bg-acid/10 border border-acid/30 space-y-3 shadow-xl">
             <div className="flex items-center gap-2 text-acid font-mono text-xs font-bold uppercase">
               <Zap className="w-4 h-4" />
-              <span>Contribution to Wispr Flow</span>
+              <span>What I Can Contribute</span>
             </div>
-            <p className="text-xs text-text-primary leading-relaxed font-sans">
-              Bringing hungry builder initiative, deep student empathy, rapid UI prototyping speed, and grassroots college hackathon evangelism to expand Wispr Flow's developer footprint across India.
+            <p className="text-xs text-white leading-relaxed font-sans font-medium">
+              Relentless builder initiative, full-stack prototyping speed, authentic student developer empathy, and grassroots hackathon distribution strategies across Indian tech hubs.
+            </p>
+          </div>
+
+          {/* Card 4: WhisperCode Experiment */}
+          <div className="p-7 rounded-3xl bg-[#09090e] border border-white/10 space-y-3 shadow-xl">
+            <div className="flex items-center gap-2 text-acid font-mono text-xs font-bold uppercase">
+              <Sparkles className="w-4 h-4" />
+              <span>Upcoming Experiment</span>
+            </div>
+            <p className="text-xs text-[#A1A1AA] leading-relaxed font-sans">
+              "WhisperCode": a local voice macro engine mapping conversational developer speech directly to AST syntax modifications and multi-file Git diffs.
             </p>
           </div>
         </div>
 
-        {/* $3,000 Productivity Setup Proposal */}
-        <div className="p-6 sm:p-8 lg:p-10 rounded-3xl bg-[#0c0c14] border border-[#242436] shadow-2xl relative space-y-8">
-          {/* Header & Notice */}
-          <div className="flex flex-wrap items-center justify-between gap-4 pb-6 border-b border-[#1c1c28]">
+        {/* $3,000 Productivity Setup Deck */}
+        <div className="p-7 sm:p-10 rounded-3xl bg-[#09090e] border border-white/10 shadow-2xl relative space-y-8">
+          {/* Header & Transparency Notice */}
+          <div className="flex flex-wrap items-center justify-between gap-4 pb-6 border-b border-white/10">
             <div>
               <div className="flex items-center gap-2 mb-2">
-                <span className="font-mono text-xs uppercase px-2.5 py-0.5 rounded bg-acid text-black font-bold">
+                <span className="font-mono text-xs uppercase px-3 py-0.5 rounded-full bg-acid text-black font-bold">
                   TRANSPARENT PROPOSAL
                 </span>
-                <span className="font-mono text-xs text-text-muted">
-                  Illustrative Budget Calculator
+                <span className="font-mono text-xs text-[#71717A]">
+                  Interactive Budget Calculator
                 </span>
               </div>
-              <h3 className="text-2xl sm:text-3xl font-display font-extrabold text-text-primary">
+              <h3 className="text-2xl sm:text-3xl font-display font-black text-white">
                 $3,000 Productivity Acceleration Setup
               </h3>
-              <p className="text-xs text-text-muted font-mono mt-1">
-                Notice: Illustrative allocation framework. Not an awarded grant. Demonstrates resource prioritization and calculated ROI.
+              <p className="text-xs text-[#8E8E98] font-mono mt-1">
+                Notice: Illustrative allocation framework. Not an awarded grant. Demonstrates calculated hardware ROI.
               </p>
             </div>
 
             <button
               onClick={handleReset}
-              className="px-3 py-1.5 rounded-lg bg-[#161622] border border-border-subtle hover:border-acid text-xs font-mono text-text-secondary flex items-center gap-1.5 transition"
+              className="px-4 py-2 rounded-xl bg-[#141420] border border-white/10 hover:border-acid text-xs font-mono text-white flex items-center gap-2 transition"
             >
               <RotateCcw className="w-3.5 h-3.5 text-acid" />
-              <span>RESET DEFAULTS</span>
+              <span>RESET TO DEFAULT</span>
             </button>
           </div>
 
           {/* Real-time Budget Counter Bar */}
-          <div className="p-5 rounded-2xl bg-[#11111a] border border-border-medium flex flex-wrap items-center justify-between gap-4">
+          <div className="p-6 rounded-2xl bg-[#101018] border border-white/10 flex flex-wrap items-center justify-between gap-4">
             <div className="space-y-1">
-              <span className="font-mono text-xs text-text-muted uppercase">
+              <span className="font-mono text-xs text-[#71717A] uppercase">
                 TOTAL PROPOSED ALLOCATION
               </span>
               <div className="flex items-baseline gap-2">
                 <span className="text-3xl sm:text-4xl font-display font-black text-acid">
                   ${totalBudget.toLocaleString()}
                 </span>
-                <span className="text-sm font-mono text-text-muted">
+                <span className="text-sm font-mono text-[#71717A]">
                   / ${budgetLimit.toLocaleString()} TARGET
                 </span>
               </div>
@@ -164,10 +163,10 @@ export const NextChapterSection: React.FC = () => {
 
             <div className="flex items-center gap-3 font-mono text-xs">
               <div
-                className={`px-3 py-1.5 rounded-xl border ${
+                className={`px-4 py-2 rounded-xl border ${
                   remainingBudget >= 0
-                    ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-400'
-                    : 'bg-red-500/10 border-red-500/30 text-red-400'
+                    ? 'bg-emerald-500/15 border-emerald-500/30 text-emerald-400 font-bold'
+                    : 'bg-red-500/15 border-red-500/30 text-red-400 font-bold'
                 }`}
               >
                 {remainingBudget >= 0 ? (
@@ -180,9 +179,9 @@ export const NextChapterSection: React.FC = () => {
           </div>
 
           {/* Interactive Item List with Editable Price Placeholders */}
-          <div className="space-y-4">
-            <div className="flex items-center justify-between text-xs font-mono text-text-muted px-2">
-              <span>ITEM & PRODUCTIVITY RATIONALE</span>
+          <div className="space-y-3.5">
+            <div className="flex items-center justify-between text-xs font-mono text-[#71717A] px-2">
+              <span>HARDWARE / TOOLING & PRODUCTIVITY ROI</span>
               <span>EDITABLE PRICE (USD)</span>
             </div>
 
@@ -190,14 +189,14 @@ export const NextChapterSection: React.FC = () => {
               {items.map((item) => (
                 <div
                   key={item.id}
-                  className={`p-4 sm:p-5 rounded-2xl border transition flex flex-col md:flex-row items-start md:items-center justify-between gap-4 ${
+                  className={`p-5 rounded-2xl border transition-all duration-150 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 ${
                     item.selected
-                      ? 'bg-[#12121b] border-border-medium shadow-md'
-                      : 'bg-[#0a0a0f] border-[#181822] opacity-60'
+                      ? 'bg-[#101018] border-white/10 shadow-lg'
+                      : 'bg-[#09090e] border-white/5 opacity-50'
                   }`}
                 >
                   {/* Left: Checkbox & Info */}
-                  <div className="flex items-start gap-3.5 max-w-2xl">
+                  <div className="flex items-start gap-4 max-w-2xl">
                     <input
                       type="checkbox"
                       checked={item.selected}
@@ -207,23 +206,23 @@ export const NextChapterSection: React.FC = () => {
 
                     <div className="space-y-1">
                       <div className="flex flex-wrap items-center gap-2">
-                        <span className="p-1 rounded bg-[#181824] border border-border-subtle">
+                        <span className="p-1 rounded bg-[#161622] border border-white/10">
                           {categoryIcons[item.category]}
                         </span>
-                        <span className="text-xs font-mono text-text-muted uppercase">
+                        <span className="text-xs font-mono text-[#71717A] uppercase">
                           {item.category}
                         </span>
-                        <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-acid/10 text-acid border border-acid/20">
+                        <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-acid/15 text-acid border border-acid/30 font-bold">
                           {item.urgency}
                         </span>
                       </div>
 
-                      <h4 className="font-display font-bold text-sm sm:text-base text-text-primary">
+                      <h4 className="font-display font-bold text-sm sm:text-base text-white">
                         {item.name}
                       </h4>
 
-                      <p className="text-xs text-text-secondary leading-relaxed font-sans">
-                        <strong className="text-text-primary">Productivity ROI:</strong>{' '}
+                      <p className="text-xs text-[#A1A1AA] leading-relaxed font-sans">
+                        <strong className="text-white">Productivity Benefit:</strong>{' '}
                         {item.productivityBenefit}
                       </p>
                     </div>
@@ -231,12 +230,12 @@ export const NextChapterSection: React.FC = () => {
 
                   {/* Right: Editable Price Input */}
                   <div className="flex items-center gap-2 self-end md:self-center font-mono">
-                    <span className="text-text-muted text-xs">$</span>
+                    <span className="text-[#71717A] text-xs">$</span>
                     <input
                       type="number"
                       value={item.estimatedPriceUSD}
                       onChange={(e) => handlePriceChange(item.id, Number(e.target.value))}
-                      className="w-24 px-3 py-1.5 bg-[#181824] border border-border-medium rounded-lg text-sm text-acid font-bold focus:outline-none focus:border-acid text-right"
+                      className="w-24 px-3.5 py-2 bg-[#161622] border border-white/10 rounded-xl text-sm text-acid font-bold focus:outline-none focus:border-acid text-right"
                     />
                   </div>
                 </div>

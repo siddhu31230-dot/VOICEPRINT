@@ -14,11 +14,11 @@ import {
 export const PERSONAL_INFO = {
   name: 'Siddharth Singh',
   role: 'Student, Builder & Product Explorer',
-  tagline: 'The Human Behind the Build.',
+  tagline: 'THE HUMAN BEHIND THE BUILD.',
   heroLabel: 'INDEPENDENT THINKER. CONSTANT BUILDER.',
   heroHeadline: "I DON'T JUST HAVE IDEAS.\nI TURN THEM INTO THINGS.",
   heroDescription:
-    "I'm Siddharth Singh. A student, entrepreneur and builder exploring how technology, creativity and ambitious ideas can solve real problems.",
+    'An independent thinker, ambitious builder and curious mind exploring the intersection of technology, creativity and execution.',
   centralMessage: "I DON'T JUST HAVE IDEAS. I TURN THEM INTO THINGS.",
   supportingMessage:
     'Every idea has a story. Every experiment teaches something. Every failure creates a better version.',
@@ -39,6 +39,7 @@ export const ORIGIN_SECTIONS = [
     id: 'where-i-started',
     title: 'Where I Started',
     badge: 'Roots',
+    quote: 'Curiosity before code. The itch to understand how things work behind the screen.',
     summary: 'Curiosity before code. The itch to understand how things work behind the screen.',
     content: `I didn't start with polished frameworks or grand startup theories. I started with a genuine itch to tinker. 
 Whenever I encountered a friction point in daily life—whether it was ordering food with hostel mates, feeling the isolation of college living, or watching architects struggle to convey 3D spatial scale to non-designers—my reflex was never "someone should fix this." My reflex was: "What would it look like if I built a prototype this weekend?"
@@ -49,6 +50,7 @@ Whenever I encountered a friction point in daily life—whether it was ordering 
     id: 'what-makes-me-curious',
     title: 'What Makes Me Curious',
     badge: 'Cognition',
+    quote: 'The gap where a user hesitates because a tool demands unnatural rigidity is where the best products are born.',
     summary: 'The intersection of human friction, interface velocity, and autonomous tooling.',
     content: `I am deeply curious about cognitive load and human friction. Why do we still type out 500-word PRDs when spoken natural language can be distilled in 45 seconds? Why are interfaces still built for keyboard and mouse bottlenecks when voice and ambient intelligence can bridge intent directly to execution?
 When I watch how everyday people interact with software, I look for the hesitation gaps—the moments where a user pauses because the tool demands unnatural rigidity. That gap is where the best products are born.`,
@@ -57,6 +59,7 @@ When I watch how everyday people interact with software, I look for the hesitati
     id: 'why-i-enjoy-building',
     title: 'Why I Enjoy Building Products',
     badge: 'Builder DNA',
+    quote: 'An idea trapped in your head is a comfortable illusion. Building forces honesty.',
     summary: 'Building is the ultimate feedback loop. Code does not lie; users do not pretend.',
     content: `An idea trapped in your head is a comfortable illusion. It feels flawless until you compile it, deploy it, and hand it to a stressed user. 
 Building forces honesty. When a multi-restaurant basket synchronization fails on poor hostel Wi-Fi, you don't get to defend your architecture; you rewrite the state machine. The sheer dopamine of going from a scribble in a notebook to a live URL that solves someone's immediate headache is unmatched.`,
@@ -65,6 +68,7 @@ Building forces honesty. When a multi-restaurant basket synchronization fails on
     id: 'what-i-believe',
     title: 'What I Believe About Technology',
     badge: 'Convictions',
+    quote: 'Speed of iteration beats perfectionism every single time. Voice is the highest-bandwidth modality we have.',
     summary: 'Tools should amplify human bandwidth, not trap human attention in dopamine loops.',
     content: `1. Speed of iteration beats perfectionism every single time.
 2. Voice is not a gimmick or an accessibility afterthought—it is the highest-bandwidth modality human beings have evolved for externalizing thought.
@@ -75,6 +79,7 @@ Building forces honesty. When a multi-restaurant basket synchronization fails on
     id: 'what-i-am-learning',
     title: 'What I Am Learning',
     badge: 'Current Stack',
+    quote: 'Low-latency audio pipelines, local-first state machines, and organic growth loops.',
     summary: 'High-performance React architectures, Web Audio API, voice UX, and go-to-market mechanics.',
     content: `Right now, my active study and experiment hours are split between:
 • Real-time audio pipelines: Web Audio API, streaming WebSocket protocols, and low-latency client-side audio processing.
@@ -85,6 +90,7 @@ Building forces honesty. When a multi-restaurant basket synchronization fails on
     id: 'what-i-want-to-accomplish',
     title: 'What I Want to Accomplish',
     badge: 'Mission',
+    quote: 'Join a team of obsessive builders to make voice-first execution the default developer reality.',
     summary: 'Ship products that eliminate cognitive drudgery and empower independent thinkers.',
     content: `I want to join a team of obsessive builders where high-speed execution is the default culture. At Wispr Flow, my ambition is to help pioneer the next generation of voice-first workflows—proving that dictation isn't just transcription, but an intelligent cognitive co-processor that makes builders 10x faster.`,
   },
@@ -769,36 +775,67 @@ export const FLAGSHIP_CAMPAIGNS: CampaignProposal[] = [
   },
 ];
 
+// Curated questions strictly aligned with Prompt Section 9 & Master Guidelines
 export const RECRUITER_QA: RecruiterQAItem[] = [
+  {
+    id: 'what-have-you-built',
+    category: 'Projects',
+    question: 'What have you built?',
+    shortAnswer: 'Three distinct prototypes born from real friction: GoDuet (multi-restaurant food logistics), Private Wellness Check-in (zero-knowledge hostel mental health), and Floor Plan to 3D Viewer (2D architectural WebGL extrusion).',
+    detailedAnswer:
+      'Rather than cloning tutorials or creating generic todo lists, I build products inspired by acute daily friction. GoDuet tackles roommate food ordering conflicts with a unified multi-restaurant cart. Private Wellness Check-in provides zero-knowledge encrypted mental health tracking for stigmatized hostel environments. Floor Plan to 3D Viewer turns static 2D blueprint lines into interactive 3D spatial geometry in the browser. Every single project has working code, architecture tradeoffs, and documented operational learnings.',
+    keyTakeaway: 'Focus on authentic problem-solving and full-stack ownership over superficial vanity clones.',
+    relatedTags: ['Projects', 'GoDuet', 'Wellness', '3D Floor Plan', 'Architecture'],
+  },
+  {
+    id: 'what-is-goduet',
+    category: 'Projects',
+    question: 'What is GoDuet?',
+    shortAnswer: 'GoDuet is a multi-restaurant food delivery concept that lets roommates combine items from different menus into a single checkout with one shared courier fee.',
+    detailedAnswer:
+      'In hostel living, group ordering is universal, but existing aggregators (Zomato, Swiggy) force you to order from a single vendor or place separate orders with doubled delivery charges and unsynchronized couriers. GoDuet solves this by clustering partner restaurants within a 600m micro-hub radius. A single courier collects from both kitchens in one run, cutting customer fees by 35% while increasing average order value for vendors. I engineered the distributed cart state machine with atomic rollback for out-of-stock items.',
+    keyTakeaway: 'Product desirability is useless without operational unit economics and resilient cart state machines.',
+    relatedTags: ['GoDuet', 'Food Tech', 'Distributed Cart', 'Unit Economics'],
+  },
+  {
+    id: 'biggest-technical-challenge',
+    category: 'Technical',
+    question: 'What was your biggest technical challenge?',
+    shortAnswer: 'Managing distributed state reconciliation in GoDuet and client-side polygon normal calculations for 3D floor plan extrusion.',
+    detailedAnswer:
+      'In GoDuet, the hardest technical hurdle was handling network latency races: when a user on poor 3G toggles between restaurants rapidly, asynchronous menu responses can resolve out of order, corrupting the cart total. I fixed this by implementing sequence-guarded reducers and AbortControllers. In the 3D Floor Plan project, the challenge was calculating correct vertex winding orders and boolean CSG subtraction for window/door openings without dropping below 60 FPS in WebGL.',
+    keyTakeaway: 'Anticipate dirty network states and geometric edge cases rather than coding for the happy path.',
+    relatedTags: ['State Machines', 'WebGL', 'Three.js', 'Race Conditions', 'Optimization'],
+  },
+  {
+    id: 'what-did-you-learn-from-failures',
+    category: 'Failures',
+    question: 'What did you learn from your failures?',
+    shortAnswer: 'GoDuet failed on kitchen prep desynchronization, teaching me that software design without physical operational physics is wishful thinking.',
+    detailedAnswer:
+      'When I prototyped GoDuet, I assumed users only cared about a shared cart UI. In live trials with hostel mates, Restaurant A cooked burgers in 8 minutes, but Restaurant B took 28 minutes for biryani. By the time the courier arrived, the burgers were cold. That failure taught me that operational unit economics and physical bottlenecks dictate marketplace survival. I redesigned the algorithm to only bundle orders within strict prep-time tolerance bands.',
+    keyTakeaway: 'Respect physical constraints and operational physics before celebrating UI aesthetics.',
+    relatedTags: ['Failures', 'GoDuet', 'Operational Physics', 'Iteration'],
+  },
   {
     id: 'why-wispr-flow',
     category: 'Wispr Flow',
-    question: 'Why are you specifically interested in Wispr Flow?',
-    shortAnswer: 'Because voice is the only input modality with human-level bandwidth, and Wispr Flow is doing the hard work of making it ergonomic for builders.',
+    question: 'Why are you interested in Wispr Flow?',
+    shortAnswer: 'Because voice is the only input modality with human-level cognitive bandwidth, and Wispr Flow is removing the ergonomic barrier between speech and digital execution.',
     detailedAnswer:
-      'Most AI companies are building chatbot wrappers that sit in a separate browser tab, demanding that users abandon their active flow. Wispr Flow is different: it sits at the operating system level, turning organic speech into immediate structured execution wherever your cursor already lives. For someone like me who builds prototypes rapidly, eliminating the mechanical keyboard bottleneck between thought and code is the most exciting frontier in human-computer interaction.',
-    keyTakeaway: 'Focus on low-friction ambient ergonomics rather than isolated chatbot novelties.',
+      'Most AI companies build chatbot wrappers that sit isolated in a separate tab, forcing users to context-switch away from their active flow. Wispr Flow is fundamentally different: it sits at the operating system layer, turning organic stream-of-consciousness speech into structured code, PRDs, and communication wherever your cursor lives. For someone like me who builds prototypes rapidly, eliminating the mechanical typing tax is the most impactful productivity shift since the graphical user interface.',
+    keyTakeaway: 'Ambient ergonomics at the OS layer beat isolated chatbot wrappers every single time.',
     relatedTags: ['Voice UX', 'Productivity', 'HCI', 'Wispr Flow'],
   },
   {
-    id: 'how-i-learn-from-failure',
-    category: 'Failures',
-    question: 'Tell me about an experiment that failed and what you actually changed.',
-    shortAnswer: 'GoDuet taught me that multi-restaurant ordering fails on kitchen prep synchronization, not UI design.',
+    id: 'how-do-you-use-ai-tools',
+    category: 'Product Mindset',
+    question: 'How do you use AI tools?',
+    shortAnswer: 'As an active cognitive co-processor: voice-prompting architecture specs, accelerating boilerplate scaffolding, and stress-testing edge cases.',
     detailedAnswer:
-      'When I prototyped GoDuet, my initial assumption was that users just wanted a single cart for multiple restaurants. I built the frontend and simulated orders with hostel mates. The catastrophic failure point was kitchen timing: Restaurant A finished burgers in 8 minutes, while Restaurant B took 26 minutes for biryani. By the time the single courier reached the hostel, half the food was cold. That failure taught me that product design without operational unit physics is just wishful thinking. I pivoted the design to cluster restaurants with synchronized prep-window guarantees.',
-    keyTakeaway: 'Respect physical constraints and operational unit economics before celebrating UI aesthetics.',
-    relatedTags: ['GoDuet', 'Failures', 'Operational Physics', 'Iteration'],
-  },
-  {
-    id: 'technical-decisions',
-    category: 'Technical',
-    question: 'How do you choose your technical stack for a new project?',
-    shortAnswer: 'I choose tools that optimize for iteration velocity and zero runtime surprises.',
-    detailedAnswer:
-      'I rely on React, TypeScript, and Tailwind because they provide type-safety, rapid composability, and predictable maintenance. However, when a project demands specialized capability—like client-side cryptography for the Wellness Check-in (Web Crypto API) or spatial 3D rendering for the Floor Plan viewer (Three.js)—I delve directly into foundational browser standards rather than layering bloated third-party abstractions that I cannot debug.',
-    keyTakeaway: 'Pragmatic velocity over tech vanity; foundational web APIs over opaque wrappers.',
-    relatedTags: ['Architecture', 'TypeScript', 'Web Crypto', 'Three.js'],
+      'I don’t use AI to write blind copy or generate unreviewed code. I use voice-first dictation (as shown in the Voice Lab) to externalize complex architecture thoughts in seconds, convert them into high-signal structured prompts, and use LLMs to scaffold TypeScript types, test boundary cases, and write rigorous PRDs. It shifts my role from mechanical typist to systems orchestrator and product architect.',
+    keyTakeaway: 'Use AI to amplify intent velocity and stress-test assumptions, never as a replacement for core engineering judgment.',
+    relatedTags: ['AI Workflow', 'Voice Lab', 'Productivity', 'Systems Thinking'],
   },
   {
     id: 'product-mindset',
@@ -806,7 +843,7 @@ export const RECRUITER_QA: RecruiterQAItem[] = [
     question: 'How do you decide what NOT to build?',
     shortAnswer: 'If a feature doesn’t directly eliminate user hesitation or prove the core hypothesis, it gets cut.',
     detailedAnswer:
-      'When designing the Private Wellness Check-in, my initial notebook had 18 different tracking metrics: hydration, social interaction score, study hours, screen time. I realized that asking a depressed hostel student to fill out 18 metrics guaranteed 0% retention by day 3. I violently trimmed the scope down to 3 visual micro-sliders that take 15 seconds. Relentless subtraction is what makes products actually get used.',
+      'When designing the Private Wellness Check-in, my initial notebook had 18 different tracking metrics: hydration, social interaction score, study hours, screen time. I realized that asking a depressed hostel student to fill out 18 metrics guaranteed 0% retention by day 3. I trimmed the scope down to 3 visual micro-sliders that take 15 seconds. Relentless subtraction is what makes products actually get used.',
     keyTakeaway: 'Perfection is achieved not when there is nothing more to add, but when there is nothing left to take away.',
     relatedTags: ['Product Design', 'Scope Trimming', 'Hostel Wellness'],
   },
@@ -816,19 +853,9 @@ export const RECRUITER_QA: RecruiterQAItem[] = [
     question: 'How do you approach marketing when you don’t have an ad budget?',
     shortAnswer: 'Build the distribution mechanism directly into the product’s core utility.',
     detailedAnswer:
-      'Paid ads on social media produce rented attention with high churn. True grassroots growth comes from creating an "artifact of value" that people naturally want to show off. For Wispr Flow in the Growth Arena, my proposal isn’t to buy Instagram ads—it is to run 60-second live speedrun challenges at hackathons where builders compare their voice output on a live screen. When someone sees their friend dictate a 50-line component spec in 30 seconds, they download the app immediately without any marketing pitch.',
+      'Paid ads on social media produce rented attention with high churn. True grassroots growth comes from creating an "artifact of value" that people naturally want to show off. For Wispr Flow in the Growth Arena, my proposal is to run 60-second live speedrun challenges at hackathons where builders compare their voice output on a live screen. When someone sees their friend dictate a 50-line component spec in 30 seconds, they download the app immediately without any marketing pitch.',
     keyTakeaway: 'Distribution is an engineering and UX problem, not just a media-buying problem.',
     relatedTags: ['Growth Strategy', 'Organic Loops', 'Hackathons'],
-  },
-  {
-    id: 'ownership-and-initiative',
-    category: 'Learning',
-    question: 'What does "taking ownership" mean to you as a builder?',
-    shortAnswer: 'Never saying "that wasn’t my job" when something breaks between the user and the code.',
-    detailedAnswer:
-      'Taking ownership means following the idea all the way to the end of the wire. If a database query is slow, if the user onboarding copy sounds robotic, if the mobile layout overflows on an iPhone SE, or if the user doesn’t understand what a button does—that is entirely my responsibility as the builder. I don’t wait for detailed tickets; I spot the leak, diagnose the cause, and ship the fix.',
-    keyTakeaway: 'Full-spectrum accountability from customer empathy to production deployment.',
-    relatedTags: ['Ownership', 'Initiative', 'Builder Culture'],
   },
   {
     id: 'authenticity-note',
