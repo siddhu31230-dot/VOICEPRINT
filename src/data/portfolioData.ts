@@ -161,8 +161,7 @@ export const HACKATHON_ACHIEVEMENT = {
   venue: 'SMRU Campus, Hyderabad',
   city: 'Hyderabad, India',
   organizers: [
-    'Newton School of Technology',
-    "St. Mary's Rehabilitation University (SMRU)"
+    'Newton School of Technology X SMRU'
   ],
   poweredBy: [
     'Major League Hacking (MLH)',
@@ -216,7 +215,7 @@ export const TIMELINE_EVENTS: TimelineEvent[] = [
     period: 'Hackathon Championship',
     title: '1st Place Winner — Hacktoberfest 2026 (Best Use of Google Gemma 4)',
     category: 'Hackathon Win',
-    description: "Won 1st Place in Track 2 (Best Use of Google Gemma 4) at the 24-hour overnight Hacktoberfest 2026 hackathon held at SMRU Campus, Hyderabad (Oct 30–31, 2026). Organized by Newton School of Technology & St. Mary's Rehabilitation University, powered by MLH, DEV, and Google Gemma.",
+    description: "Won 1st Place in Track 2 (Best Use of Google Gemma 4) at the 24-hour overnight Hacktoberfest 2026 hackathon held at SMRU Campus, Hyderabad (Oct 30–31, 2026). Organized by Newton School of Technology X SMRU, powered by MLH, DEV, and Google Gemma.",
     learning: 'High-pressure 24-hour hackathons prove that voice-first intent and grounded AI architectures turn raw ideas into winning products overnight.',
   },
   {
@@ -1007,7 +1006,7 @@ export const RECRUITER_QA: RecruiterQAItem[] = [
     question: 'Have you won any hackathons or competitions?',
     shortAnswer: 'Yes! Our team won 1st Place in Track 2 (Best Use of Google Gemma 4) at Hacktoberfest 2026 (24-Hour Overnight Hackathon in Hyderabad, powered by MLH, DEV, and Google Gemma).',
     detailedAnswer:
-      "At Hacktoberfest 2026—a 24-hour overnight hackathon held at SMRU Campus, Hyderabad (October 30–31, 2026) organized by Newton School of Technology and St. Mary's Rehabilitation University, powered by Major League Hacking (MLH) and DEV—our team competed in Track 2 (Best Use of Google Gemma 4) and won 1st Place. Building under intense 24-hour time pressure proved that combining voice-first intent with Google Gemma 4 instruction models allows a focused team to take a raw concept to a winning, production-ready prototype overnight.",
+      "At Hacktoberfest 2026—a 24-hour overnight hackathon held at SMRU Campus, Hyderabad (October 30–31, 2026) organized by Newton School of Technology X SMRU, powered by Major League Hacking (MLH) and DEV—our team competed in Track 2 (Best Use of Google Gemma 4) and won 1st Place. Building under intense 24-hour time pressure proved that combining voice-first intent with Google Gemma 4 instruction models allows a focused team to take a raw concept to a winning, production-ready prototype overnight.",
     keyTakeaway: 'Competitive 24-hour hackathons validate speed of execution, team coordination, and practical AI implementation under pressure.',
     relatedTags: ['Hackathon', '1st Place Winner', 'MLH', 'Google Gemma 4', 'Best Use of Google Gemma 4', 'Hacktoberfest 2026', 'Hyderabad'],
   },

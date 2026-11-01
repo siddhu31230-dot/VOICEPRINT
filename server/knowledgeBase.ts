@@ -105,7 +105,7 @@ export const PORTFOLIO_KNOWLEDGE_BASE = `
 - Award / Result: 1ST PLACE WINNER — TRACK 2: BEST USE OF GOOGLE GEMMA 4 (CHAMPION)
 - Date: October 30–31, 2026
 - Location / Venue: SMRU Campus, Hyderabad, India
-- Organizers: Newton School of Technology & St. Mary's Rehabilitation University (SMRU)
+- Organizers: Newton School of Technology X SMRU
 - Partners: Powered by Major League Hacking (MLH), DEV; in partnership with Hacktoberfest 26
 - Track Category: Best Use of Google Gemma 4 (Track 2)
 - Key Context: Track 2 focused on the Best Use of Google Gemma 4 AI models, agentic workflows, and developer tooling. Competing over 24 continuous hours against collegiate engineering teams in Hyderabad, Siddharth's team built and shipped an overnight prototype that claimed First Place in Track 2.

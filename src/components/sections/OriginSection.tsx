@@ -307,10 +307,10 @@ export const OriginSection: React.FC<OriginSectionProps> = ({ onOpenConfigLinks 
 
               {/* Verified Partner Badges */}
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-1">
-                <div className="p-2.5 rounded-xl bg-black/40 border border-white/10">
+                <div className="p-2.5 rounded-xl bg-black/40 border border-white/10" title="Newton School of Technology X SMRU">
                   <span className="text-[10px] font-mono text-[#71717A] uppercase block">ORGANIZERS</span>
                   <span className="text-xs font-mono font-bold text-white block mt-0.5 truncate">
-                    Newton School & SMRU
+                    Newton School of Technology X SMRU
                   </span>
                 </div>
                 <div className="p-2.5 rounded-xl bg-black/40 border border-white/10">

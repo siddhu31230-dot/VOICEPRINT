@@ -295,7 +295,7 @@ Siddharth and his team won **1st Place in Track 2 (Best Use of Google Gemma 4)**
 
 **Key Event Details:**
 - **Event:** Hacktoberfest 2026 (24-Hour Overnight Hackathon)
-- **Organizers:** Newton School of Technology & St. Mary's Rehabilitation University (SMRU)
+- **Organizers:** Newton School of Technology X SMRU
 - **Official Partners:** Powered by Major League Hacking (MLH) and DEV; in partnership with Hacktoberfest 26
 - **Track Category:** **Best Use of Google Gemma 4** (Track 2)
 - **Result:** **1st Place (Championship)**
