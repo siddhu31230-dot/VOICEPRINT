@@ -42,11 +42,16 @@ export default {
       animation: {
         'pulse-subtle': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
         'wave-bar': 'waveBar 1.2s ease-in-out infinite alternate',
+        'waveform-pulse': 'waveformPulse 0.8s ease-in-out infinite alternate',
       },
       keyframes: {
         waveBar: {
           '0%': { height: '12%' },
           '100%': { height: '96%' },
+        },
+        waveformPulse: {
+          '0%': { transform: 'scaleY(0.2)', opacity: '0.4' },
+          '100%': { transform: 'scaleY(1.0)', opacity: '1.0' },
         }
       }
     },

@@ -82,15 +82,53 @@ Open `http://localhost:3001/` in your browser.
 
 ---
 
+## Voice-Command Experience & Speech-to-Text
+
+VOICEPRINT features a voice-first command terminal integrated into the **Ask Me** section, powered by the browser's native Web Speech API (`SpeechRecognition`) and routed through Gemma 4:
+
+### 1. Natural Voice Commands Supported
+- **"Explain GoDuet."** → Queries Gemma 4 for GoDuet multi-restaurant architecture and operational lessons.
+- **"Show me my projects."** → Smoothly scrolls to the `#experiments` section.
+- **"Explain the encryption system."** → Queries Gemma 4 for the client-side AES-256-GCM zero-knowledge vault.
+- **"Tell me how I use Wispr Flow."** → Queries Gemma 4 for voice velocity and developer productivity gains.
+- **"Explain the technology stack."** → Queries Gemma 4 for framework choices and architecture decisions.
+- **"Go to the contact section."** → Smoothly scrolls to the `#contact` section.
+- **Section Navigation:** "Go to origin", "Go to voice lab", "Go to growth arena", "Go to next chapter", "Go to top".
+- **Confirmation-Guarded Actions:** Spoken actions such as "Reset conversation" or "Clear contact form" require explicit confirmation before execution to protect user state.
+
+### 2. Multi-Language Speech Recognition
+- **English (US/India):** `en-US` / `en-IN`
+- **Hindi (हिन्दी):** `hi-IN`
+- **Telugu (తెలుగు):** `te-IN`
+
+### 3. Voice Controls & Accessibility
+- **Microphone Button:** Beside Ask Me input with animated pulsing rings and soundwave visualization (`Alt+V` shortcut).
+- **Editable Transcript:** Spoken words are displayed in the input field in real time, allowing users to review and edit before sending.
+- **Controls:** Stop, Cancel, and Retry buttons.
+- **Reduced Motion:** Adheres to `prefers-reduced-motion` settings.
+- **Privacy Notice:** Microphone access is strictly on-demand; audio is never stored, recorded, or sent to any server. Browser Web Speech recognition is explicitly distinct from Wispr Flow desktop software.
+
+### 4. Browser Compatibility Matrix
+- **Native Support (Microphone Speech Recognition):** Google Chrome, Microsoft Edge, Safari (macOS/iOS), Brave, Android Chrome.
+- **Fallback Simulation (Firefox / Unsupported Environments):** Interactive preset command chips allow testing all voice commands and routing without requiring browser Web Speech API.
+
+---
+
 ## Automated Verification & Testing
 
-### 1. Web Crypto AES-256-GCM Unit Tests
+### 1. Voice Command Parser & Navigation Unit Tests
+```bash
+node scripts/test-voice-commands.mjs
+```
+Verifies all 6 primary natural voice commands, multi-language definitions, full section navigation, confirmation guards for destructive actions, and general query passthrough.
+
+### 2. Web Crypto AES-256-GCM Unit Tests
 ```bash
 npm run test:crypto
 ```
 Verifies 256-bit key generation, Base64 export/import round-tripping, PBKDF2 key derivation (600,000 rounds), fresh 12-byte IV invariants, encryption/decryption integrity, and GCM authentication tag tamper detection.
 
-### 2. Full Security & Gemma 4 AI Gateway Verification
+### 3. Full Security & Gemma 4 AI Gateway Verification
 ```bash
 node scripts/test-security.mjs
 ```
@@ -101,7 +139,7 @@ Executes:
 4. Anti-hallucination adversarial test suite.
 5. Concurrent burst rate-limiting enforcement (HTTP 429).
 
-### 3. Production Build
+### 4. Production Build
 ```bash
 npm run build
 ```
